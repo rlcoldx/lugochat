@@ -1,5 +1,5 @@
-vendor/
-uploads/
+/vendor
+/uploads
 config/config.php
 node_modules/
 composer.lock
