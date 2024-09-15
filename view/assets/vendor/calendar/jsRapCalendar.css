@@ -1,0 +1,30 @@
+.agendamento .table td, .agendamento .table th {
+    padding: 8px 0;
+}
+.calSelectable.calSelected {
+    background-color: #fe634e;
+    color: #FFF;
+}
+.agendamento .mes {
+	display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+	color: #fe634e;
+	padding-top: 0.75rem;
+	padding-bottom: 0.75rem;
+}
+.agendamento .calDisable {
+    opacity: 0.3;
+}
+.calSelectable, .rarr, .larr {
+    cursor: pointer;
+}
+.agendamento .mes span {
+    font-weight: bold;
+}
+.agendamento .table th {
+    background-color: #fe634e;
+    border-color: #d9a29a;
+    color: #FFF;
+}

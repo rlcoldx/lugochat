@@ -1,0 +1,11 @@
+/vendor
+/uploads
+config/config.php
+node_modules/
+composer.lock
+.idea
+backup
+.DS_Store
+view/assets/dist
+log_error
+error_log
