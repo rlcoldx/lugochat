@@ -101,7 +101,6 @@ class Controller
             $this->dataCompany = $company->getResult()[0];
         
         } else {
-            //echo $this->template->render('pages/error/404.twig');
         }
     }
 
