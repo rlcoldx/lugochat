@@ -9,5 +9,3 @@ backup
 view/assets/dist
 log_error
 error_log
-legacy/pdf/downloads
-legacy/config/db.php
