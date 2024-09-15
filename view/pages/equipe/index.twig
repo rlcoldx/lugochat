@@ -1,0 +1,62 @@
+{% extends "layout/layoutMaster.twig" %}
+
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block body %}
+
+<div class="content-body">
+    
+    <!-- row -->
+    <div class="container-fluid">
+        <div class="page-titles">
+            <div class="d-flex flex-wrap align-items-center justify-content-between">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ DOMAIN }}">Home</a></li>
+                    <li class="breadcrumb-item active"><a href="javascript:void(0)">{{ titulo }}</a></li>
+                </ol>
+                <a href="javascript:void(0)" class="btn btn-primary text-nowrap"><i class="fa-solid fa-plus me-2"></i>Add Novo</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="datatable" class="table dataTable">
+                        <thead>
+                            <tr role="row">
+                                <th class="sorting_asc">Nome</th>
+                                <th class="sorting">Email</th>
+                                <th class="sorting">Telefone</th>
+                                <th class="sorting">Cargo</th>
+                                <th class="sorting">Status</th>
+                                <th class="sorting" width="80">Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="sorting_1">Airi Satou</td>
+                                <td>airi@gmail.com</td>
+                                <td>11 99999-9999</td>
+                                <td>Atendente</td>
+                                <td><span class="badge bg-success">Ativo</span></td>
+                                <td>
+                                    <div class="d-flex">
+                                        <a href="#" class="btn btn-success shadow btn-xs sharp me-1"><i class="fa fa-pencil"></i></a>
+                                        <a href="#" class="btn btn-danger shadow btn-xs sharp"><i class="fa fa-trash"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- Datatable -->
+
+<script src="{{ DOMAIN }}/view/assets/vendor/datatables/js/jquery.dataTables.min.js"></script>
+<script src="{{ DOMAIN }}/view/assets/js/plugins-init/datatables.init.js"></script>
+
+{% endblock %}

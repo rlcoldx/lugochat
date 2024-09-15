@@ -1,0 +1,18 @@
+<form action="javscript:void(0)" method="POST">
+	<div class="mb-3">
+		<label class="d-block">Opção <i class="fa-solid fa-circle-question float-end" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Será exibido logo após o texto anexado a essa opção"></i></label>
+		<input type="text" class="form-control" name="texto" placeholder="Digite sua opção">
+	</div>
+	<div class="mb-3">
+		<label class="d-block">Selecione uma ação (Opcional) <i class="fa-solid fa-circle-question float-end" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Irá executar uma ação após clicado como abrir a janelas de suítes ou abrir o mapa."></i></label>
+		<select class="form-control" name="action">
+			<option selected>Selecione</option>
+			<option value="suite">Abrir Suítes</option>
+			<option value="map">Exibir Mapa</option>
+		</select>
+	</div>
+	<div>
+		<input type="hidden" name="parent" value="1">
+		<button type="submit" class="btn btn-primary"> SALVAR INFORMAÇÕES </button>
+	</div>
+</form>

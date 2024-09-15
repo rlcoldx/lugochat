@@ -1,0 +1,55 @@
+{% extends "layout/layoutLogin.twig" %}
+
+{% block title %} - Painel Login{% endblock %}
+
+{% block body %}
+
+<div class="authincation h-100">
+    <div class="container h-100">
+        <div class="row justify-content-center h-100 align-items-center">
+            <div class="col-md-6">
+                <div class="authincation-content">
+                    <div class="row no-gutters">
+                        <div class="col-xl-12">
+                            <div class="auth-form">
+                                <div class="text-center mb-3">
+                                    <a href="javascript:void(0)"><img src="{{ PATH }}/view/assets/images/logo-full.png" alt=""></a>
+                                </div>
+                                <h4 class="text-center mb-4 text-white">Faça login em sua conta</h4>
+                                <form id="login-form" action="javascript:void(0)">
+                                    <div class="form-group">
+                                        <label class="mb-1 text-white"><strong>Email</strong></label>
+                                        <input class="form-control" name="email" placeholder="Digite seu Email" type="email">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="mb-1 text-white"><strong>Senha</strong></label>
+                                        <input class="form-control" name="password" placeholder="Digite sua Senha" type="password">
+                                    </div>
+                                    <div class="form-row d-flex justify-content-between mt-4 mb-2">
+                                        <div class="form-group">
+                                           <div class="custom-control custom-checkbox ml-1 text-white">
+                                                <input type="checkbox" class="custom-control-input" id="basic_checkbox_1">
+                                                <label class="custom-control-label" for="basic_checkbox_1">Lembrar de mim</label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <a class="text-white" href="#">Esqueceu a sua Senha?</a>
+                                        </div>
+                                    </div>
+                                    <div class="text-center">
+                                        <button type="submit" class="btn bg-white text-primary btn-block">FAÇA LOGIN</button>
+                                    </div>
+
+                                    <div id="info-login" class="col-md-12 alert alert-danger text-center rounded-0" style="display: none;">Usuário ou Senha incorreto.</div>
+
+                                    <div class="login-load" style="display: none;"><i class="fa-solid fa-spinner fa-spin-pulse"></i></div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>    
+{% endblock %}

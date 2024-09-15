@@ -1,0 +1,202 @@
+{% extends "layout/layoutMaster.twig" %}
+
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block body %}
+
+<link rel="stylesheet" href="{{ DOMAIN }}/view/assets/vendor/froala/css/froala_editor.min.css">
+
+<div class="content-body">
+    
+    <!-- row -->
+    <div class="container-fluid">
+        <div class="page-titles">
+            <div class="d-flex flex-wrap align-items-center justify-content-between">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ DOMAIN }}">Home</a></li>
+                    <li class="breadcrumb-item active"><a href="javascript:void(0)">{{ titulo }}</a></li>
+                </ol>
+            </div>
+        </div>
+
+        {% if questions %}
+            <div class="row">
+                
+                <div class="col-md-4 col-sm-12">
+                    <div class="card">
+                        <div class="card-body p-3">
+                            
+                        <div class="card border-0">
+                            <div class="card-body p-0 question-list">
+
+                                {% macro list(questions) %}
+                                    {% for question in questions %}
+
+                                        {% if question.tipo == 'questao' %}
+                                            <a href="{{ DOMAIN }}/chatbot?q={{ question.id }}" class="sub-card p-2 mb-3 rounded active">
+                                                {% if question.father %}
+                                                <small class="badge bg-parent-god"><i class="fa-solid fa-arrow-turn-up fa-flip-horizontal"></i> {{ question.father }}</small>
+                                                {% endif %}        
+                                                <div class="question">
+                                                    {{ question.texto|striptags }}
+                                                </div>
+
+                                                {% if question.tipo == 'questao' %}
+                                                <div class="options">
+                                                    {% for opcional in question.children %}
+                                                        <span class="badge text-bg-light"><i class="fa-solid fa-circle text-success"></i> {{ opcional.texto }}</span>
+                                                    {% endfor %}
+                                                </div>
+                                                {% endif %}
+
+                                            </a>
+                                        {% endif %}
+
+                                        
+                                        {{ _self.list(question) }}
+
+                                    {% endfor %}
+                                {% endmacro %}
+
+                                {% if questions %}
+                                    {{ _self.list(questions) }}
+                                {% endif %}
+
+                            </div>
+                        </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-8 col-sm-12">
+                    <div class="card">
+                        <div class="card-body p-3">
+                            <div class="row">
+                                <div class="col-md-8 col-sm-12">
+                                    <form action="javascript:void(0)" metod="POST" id="edit_question">
+                                    
+                                        {% if edit[0].parent != '0' %}
+                                            <div class="mb-3">
+                                                <select class="form-control" name="parent">
+                                                    <option>Selecione</option>
+                                                    {% for opcional in opcionais %}
+                                                    <option value="{{ opcional.id }}" {{ opcional.id == edit[0].parent ? 'selected' }}>{{ opcional.texto }}</option>                                                        
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        {% else %}
+                                            <input type="hidden" name="parent" value="0">
+                                        {% endif %}
+
+                                        <div class="mb-3">
+                                            <textarea name="texto" id="question">{{ edit[0].texto }}</textarea>
+                                        </div>
+
+                                        <div>
+                                            <input type="hidden" name="id" value="{{ edit[0].id }}">
+                                            <button type="submit" class="btn btn-primary"> SALVAR INFORMAÇÕES </button>
+                                        </div>
+
+                                    </form>
+                                </div>
+                                <div class="col-md-4 col-sm-12">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h5 class="m-0">Criar perguntas opcionais</h5>
+                                        <button type="button" class="badge text-bg-primary" data-bs-remote="modal" data-bs-toggle="modal" data-bs-target="#editor_remoto" data-remote="{{ DOMAIN }}/chatbot/options/new/{{ edit[0].id }}"><i class="fa-light fa-plus"></i> Add</button>
+                                    </div>
+                                    <hr>
+
+                                    <div class="options-editor">
+                                        {% for opcoes in edit[0].children %}
+                                            <div class="mb-1">
+                                                <span class="badge text-start w-100 text-bg-light d-flex justify-content-start">
+                                                    <span class="me-1"><i class="fa-solid fa-circle text-success"></i></span>
+                                                    <span>{{ opcoes.texto }}</span>
+                                                    <span class="ms-auto">
+                                                        <a href="javascript:void(0);" data-bs-remote="modal" data-bs-toggle="modal" data-bs-target="#editor_remoto" data-remote="{{ DOMAIN }}/chatbot/options/edit/{{ edit[0].id }}/{{ opcoes.id }}">
+                                                            <i class="fa-solid fa-edit text-dark"></i>
+                                                        </a>
+                                                    </span>
+                                                </span>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        {% else %}
+
+            <div class="row">
+                
+                <div class="col-md-4 col-sm-12">
+                    <div class="card">
+                        <div class="card-body p-3">
+                            
+                        <div class="card border-0">
+                            <div class="card-body p-0">
+
+                                <a href="javascript:void(0);" class="sub-card p-2 mb-3 rounded active">
+                                    <div class="question">
+                                        Cadastre a mensagem de boas vindas ao lado para iniciar as configurações, perguntas e respostas relacionadas ao Bot. 
+                                        <div class="mt-2"><i>Deixamos um exemplo de mensagem de boas vindas que você pode usar, caso queira, basta apenas clicar em SALVAR INFORMAÇÕES.</i></div>
+                                    </div>
+                                </a>
+
+                            </div>
+                        </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-8 col-sm-12">
+                    <div class="card">
+                        <div class="card-body p-3">
+                            <div class="row">
+                                <div class="col-md-8 col-sm-12">
+                                    <div class="login-load" style="display: none;"><i class="fa-solid fa-spinner fa-spin-pulse"></i></div>
+
+                                    <form action="javascript:void(0)" metod="POST" id="bem_vindo">
+                                        <div class="mb-3">
+                                            <textarea name="question" id="question">Seja bem-vindo ao {{ dataCompany.nome }} Sou a Julia, assistente digital, e estou aqui 24h para auxiliar você no que for preciso! Como posso te ajudar? 😊</textarea>
+                                        </div>
+                                        <div>
+                                            <button type="submit" class="btn btn-primary"> SALVAR INFORMAÇÕES </button>
+                                        </div>
+                                    </form>
+                                    
+                                </div>
+                                <div class="col-md-4 col-sm-12">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        {% endif %}
+    </div>
+</div>
+
+<!-- Modal Structure in Bootstrap 5 -->
+<div class="modal fade" id="editor_remoto" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+            <!-- O conteúdo remoto será carregado aqui -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{{ DOMAIN }}/view/assets/vendor/froala/js/froala_editor.pkgd.min.js"></script>
+<script src='{{ DOMAIN }}/view/assets/vendor/froala/js/languages/pt_br.js'></script>
+<script src="{{ DOMAIN }}/view/assets/js/pages/bot.js"></script>
+
+<!-- Datatable -->
+{% endblock %}

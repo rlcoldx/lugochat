@@ -1,0 +1,53 @@
+{% extends "layout/layoutWidget.twig" %}
+
+{% block title %} - Widget{% endblock %}
+
+{% block body %}
+
+<div id="widget_start" class="widget" data-empresa="{{ empresa.id }}">
+
+    <div id="chat_bot" class="chatbox active">
+        <div class="custom-tab-1">
+
+            <div class="tab-content">
+                <div class="tab-pane fade active show" id="chat" role="tabpanel">
+                    <div class="card border-0 chat dz-chat-history-box">
+                        <div class="card-header wc-header chat-list-header rounded-0">
+                            
+                            <div class="d-flex align-items-stretch w-100">
+                                <div class="wc-header-body">
+                                    <div class="wc-header-image-frame">
+                                        <div class="user-avatar -large -online-bubble user-avatar-img" style="background-image: url({{ DOMAIN }}/view/widget/icone.png);"></div>
+                                    </div>
+                                </div>
+                                <div class="wc-header-footer ps-2">
+                                    <div class="wc-header-title text-uppercase fw-bold">{{ dataCompany.nome }}</div>
+                                    <div class="wc-header-hotel-name">Atendimento 24 horas</div>
+                                    <div class="wc-header-hotel-name">LugoChat Online</div>
+                                </div>
+                                <div class="wc-header-links d-flex align-items-end flex-column ms-auto text-end">
+                                    <a href="javascript:void(0)" class="open_tab" data-tab="chat_suites"><i class="fa-solid fa-person-shelter"></i> Suites</a>
+                                    <a href="javascript:void(0)" class="open_tab mt-auto" data-tab="chat_map"><i class="fa-solid fa-location-dot"></i> Mapa</a>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="card-body msg_card_body dz-scroll" id="chat_content"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="chat_suites" class="chatbox suites" data-open="no">
+        {{ include('pages/widget/suites.twig') }}
+    </div>
+
+    <div id="chat_map" class="chatbox map" data-open="no">
+        {{ include('pages/widget/mapa.twig') }}
+    </div>
+
+</div>  
+
+{% endblock %}

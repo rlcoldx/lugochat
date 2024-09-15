@@ -1,0 +1,278 @@
+{% extends "layout/layoutMaster.twig" %}
+
+{% block title %} Criar Suíte {% endblock %}
+
+{% block body %}
+
+<link rel="stylesheet" href="{{ DOMAIN }}/view/assets/vendor/froala/css/froala_editor.min.css">
+
+<div class="content-body">
+    
+    <!-- row -->
+    <div class="container-fluid">
+        <div class="page-titles">
+            <div class="d-flex flex-wrap align-items-center justify-content-between">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ DOMAIN }}">Home</a></li>
+                    <li class="breadcrumb-item active"><a href="javascript:void(0)">Criar Suíte</a></li>
+                </ol>
+            </div>
+        </div>
+
+        <form action="javascript:void(0)" id="cadastrar_suite" method="POST">
+	        <div class="row">
+
+	        	{# COLUNA PRINCIPAL #}
+	            <div class="col-sm-12 col-md-6 col-lg-6 col-xl-8 col-xxl-8">
+
+					<div class="card">
+						<div class="card-body">
+							<input value="{{ suite.nome }}" type="text" id="suite_nome" class="form-control text-uppercase {{ (suite.id == '') ? 'nova_suite' : 'editar_suite' }}" name="nome" placeholder="NOME DA SUÍTE" required="required" onfocusout="format_slug($(this).val(), 'slug_link')">
+							<input type="hidden" name="slug" id="slug" value="{{ suite.slug }}">
+						</div>
+					</div>
+
+					<div class="card">
+						<div class="card-body">
+							<textarea name="texto" id="texto">{{ suite.texto }}</textarea>
+						</div>
+					</div>
+
+					<div class="card">
+                        <div class="card-header py-2">Galeria de Imagens</div>
+                        <div class="card-body px-3">
+                            {{ include('pages/suites/imagens.twig') }}
+                        </div>
+                    </div>
+
+	            </div>
+
+
+	            {# COLUNA LATERAL #}
+	            <div class="col-sm-12 col-md-6 col-lg-6 col-xl-4 col-xxl-4">
+
+					<div class="card">
+					    <div class="card-header py-2">
+					        <div class="d-flex justify-content-between align-items-center w-100">
+					            <div>Finalizar</div>
+					            <div>
+					                <input type="hidden" name="id" id="id_suite" value="{{ suite.id }}">
+					                <button type="submit" id="salvar" class="btn btn-primary py-0 waves-effect waves-float waves-light">{{ suite.id == '' ? 'Publicar' : 'Salvar' }}</button>
+					            </div>
+					        </div>
+					    </div>
+					    <div class="card-body">
+					        <div class="w-100 mb-25 d-flex justify-content-between">
+					            <div><i class="fa-regular fa-key-skeleton me-1"></i>Status: <b>{{ (suite.status) ? suite.status : 'Rascunho' }}</b></div>
+					            <div><a class="text-primary" data-bs-toggle="collapse" href="#suiteStatus" role="button" aria-expanded="false" aria-controls="suiteStatus">Editar</a></div>
+					        </div>
+					        <div class="collapse {{ (suite.status == 'Rascunho') ? 'show' }}" id="suiteStatus">
+					           <select name="status" class="form-control">
+					               <option value="Publicado" {{ (suite.status == 'Publicado') ? 'selected' }}>Publicado</option>
+					               <option value="Rascunho" {{ (suite.status == 'Rascunho') ? 'selected' }}>Rascunho</option>
+					           </select>
+					        </div>
+					        <div class="w-100 d-flex justify-content-between mt-1">
+					            {% if (suite.date_create) %}
+					            <div><i class="fa-duotone fa-calendar-days me-1"></i>Publicado: <b>{{ suite.date_create|date("d-m-Y \\a\\s H:i", "America/Sao_Paulo") }}</b></div>
+					            {% else %}
+					            <div><i class="fa-duotone fa-calendar-days me-1"></i>Publicar: <b>Imediatamente</b></div>
+					            {% endif %}
+					            <div><a class="text-primary" data-bs-toggle="collapse" href="#suiteData" role="button" aria-expanded="false" aria-controls="suiteData">Editar</a></div>
+					        </div>
+					        <div class="collapse mt-1" id="suiteData">
+					            <input class="form-control" type="datetime-local" name="date_create" value="{{ (suite.date_create) ? suite.date_create|date("Y-m-d\\TH:i", "America/Sao_Paulo") : "now"|date("Y-m-d\\TH:i", "America/Sao_Paulo") }}">
+					        </div>
+					    </div>
+					</div>
+
+	                <div class="card">
+	                    <div class="card-body">
+	                    	<textarea rows="3" name="observacoes" class="form-control" placeholder="Digite alguns Observações sobre a suíte ou valores.">{{ suite.observacoes }}</textarea>
+	                    </div>
+	                </div>
+
+	                <div class="card repeater">
+                       
+					    <div class="card-header py-2">
+                        	Tabela de Preços
+                        	<button data-repeater-create type="button" class="btn btn-primary py-0">Add</button>
+                        </div>
+
+                        <div class="card-body pb-2">
+                            <div class="repeater">
+							    <div data-repeater-list="preco">
+
+									{% if precos == '' %}
+										<div data-repeater-item class="mb-3">
+
+											<div class="d-flex justify-content-between">
+
+												<div>
+													<input type="text" name="valor" class="form-control form-control-sm money price_chance" placeholder="0,00" value="">
+												</div>
+												<div class="mx-2">
+													<select class="form-control form-control-sm price_chance" name="periodo">
+														<option value="01:00">1hs</option>
+														<option value="02:00">2hs</option>
+														<option value="03:00">3hs</option>
+														<option value="04:00">4hs</option>
+														<option value="06:00">6hs</option>
+														<option value="12:00">12hs</option>
+														<option value="Pernoite">Pernoite</option>
+													</select>
+												</div>
+
+												<div class="btn-group btn-group-sm" role="group">
+													
+													<label class="btn btn-outline-primary border-0 border-bottom p-1">
+														<input type="checkbox" class="btn-check price_chance" name="dias" value="seg" autocomplete="off" onclick="toggleCheckbox(this)">seg
+													</label>
+
+													<label class="btn btn-outline-primary border-0 border-bottom p-1">
+														<input type="checkbox" class="btn-check price_chance" name="dias" value="ter" autocomplete="off" onclick="toggleCheckbox(this)">ter
+													</label>
+
+													<label class="btn btn-outline-primary border-0 border-bottom p-1">
+														<input type="checkbox" class="btn-check price_chance" name="dias" value="qua" autocomplete="off" onclick="toggleCheckbox(this)">qua
+													</label>
+
+													<label class="btn btn-outline-primary border-0 border-bottom p-1">
+														<input type="checkbox" class="btn-check price_chance" name="dias" value="qui" autocomplete="off" onclick="toggleCheckbox(this)">qui
+													</label>
+
+													<label class="btn btn-outline-primary border-0 border-bottom p-1">
+														<input type="checkbox" class="btn-check price_chance" name="dias" value="sex" autocomplete="off" onclick="toggleCheckbox(this)">sex
+													</label>
+
+													<label class="btn btn-outline-primary border-0 border-bottom p-1">
+														<input type="checkbox" class="btn-check price_chance" name="dias" value="sab" autocomplete="off" onclick="toggleCheckbox(this)">sab
+													</label>
+
+													<label class="btn btn-outline-primary border-0 border-bottom p-1">
+														<input type="checkbox" class="btn-check price_chance" name="dias" value="dom" autocomplete="off" onclick="toggleCheckbox(this)">dom
+													</label>
+
+												</div>
+
+												<div><button data-repeater-delete type="button" class="btn btn-sm btn-danger position-absolute p-1 ms-1"><i class="fa-solid fa-trash"></i></button></div>
+												
+											</div>
+										
+
+										</div>
+									{% endif %}
+							      
+									{% for preco in precos %}
+										
+										<div data-repeater-item class="mb-3">
+
+											<div class="d-flex justify-content-between">
+
+												<div>
+													<input type="text" name="valor" class="form-control form-control-sm money price_chance" placeholder="0,00" value="{{ preco.valor }}">
+												</div>
+												<div class="mx-2">
+													<select class="form-control form-control-sm price_chance" name="periodo">
+														<option {{ preco.periodo == '01:00' ? 'selected' }} value="01:00">1hs</option>
+														<option {{ preco.periodo == '02:00' ? 'selected' }} value="02:00">2hs</option>
+														<option {{ preco.periodo == '03:00' ? 'selected' }} value="03:00">3hs</option>
+														<option {{ preco.periodo == '04:00' ? 'selected' }} value="04:00">4hs</option>
+														<option {{ preco.periodo == '06:00' ? 'selected' }} value="06:00">6hs</option>
+														<option {{ preco.periodo == '12:00' ? 'selected' }} value="12:00">12hs</option>
+														<option {{ preco.periodo == 'Pernoite' ? 'selected' }} value="Pernoite">Pernoite</option>
+													</select>
+												</div>
+
+												<div class="btn-group btn-group-sm dias-semana" role="group">
+													
+													<label class="btn btn-outline-primary border-0 border-bottom p-1 {{ 'seg' in preco.dias ? 'active' }}">
+														<input type="checkbox" class="btn-check price_chance" {{ 'seg' in preco.dias ? 'checked' }} name="dias" value="seg" autocomplete="off" onclick="toggleCheckbox(this)">seg
+													</label>
+
+													<label class="btn btn-outline-primary border-0 border-bottom p-1 {{ 'ter' in preco.dias ? 'active' }}">
+														<input type="checkbox" class="btn-check price_chance" {{ 'ter' in preco.dias ? 'checked' }} name="dias" value="ter" autocomplete="off" onclick="toggleCheckbox(this)">ter
+													</label>
+
+													<label class="btn btn-outline-primary border-0 border-bottom p-1 {{ 'qua' in preco.dias ? 'active' }}">
+														<input type="checkbox" class="btn-check price_chance" {{ 'qua' in preco.dias ? 'checked' }} name="dias" value="qua" autocomplete="off" onclick="toggleCheckbox(this)">qua
+													</label>
+
+													<label class="btn btn-outline-primary border-0 border-bottom p-1 {{ 'qui' in preco.dias ? 'active' }}">
+														<input type="checkbox" class="btn-check price_chance" {{ 'qui' in preco.dias ? 'checked' }} name="dias" value="qui" autocomplete="off" onclick="toggleCheckbox(this)">qui
+													</label>
+
+													<label class="btn btn-outline-primary border-0 border-bottom p-1 {{ 'sex' in preco.dias ? 'active' }}">
+														<input type="checkbox" class="btn-check price_chance" {{ 'sex' in preco.dias ? 'checked' }} name="dias" value="sex" autocomplete="off" onclick="toggleCheckbox(this)">sex
+													</label>
+
+													<label class="btn btn-outline-primary border-0 border-bottom p-1 {{ 'sab' in preco.dias ? 'active' }}">
+														<input type="checkbox" class="btn-check price_chance" {{ 'sab' in preco.dias ? 'checked' }} name="dias" value="sab" autocomplete="off" onclick="toggleCheckbox(this)">sab
+													</label>
+
+													<label class="btn btn-outline-primary border-0 border-bottom p-1 {{ 'dom' in preco.dias ? 'active' }}">
+														<input type="checkbox" class="btn-check price_chance" {{ 'dom' in preco.dias ? 'checked' }} name="dias" value="dom" autocomplete="off" onclick="toggleCheckbox(this)">dom
+													</label>
+
+												</div>
+
+												<div><button data-repeater-delete type="button" class="btn btn-sm btn-danger position-absolute p-1 ms-1"><i class="fa-solid fa-trash"></i></button></div>
+												
+											</div>
+										
+
+										</div>
+
+									{% endfor %}
+
+							    </div>
+							    
+							</div>
+							<input type="hidden" name="price_chance" id="price_chance" value="nao">
+                        </div>
+
+						<div class="card-footer py-2">
+							<a class="text-primary {{ suite.promocao == '' ? 'collapsed' }}" data-bs-toggle="collapse" href="#promocao" role="button" aria-expanded="false" aria-controls="promocao">
+								<i class="fa-solid fa-stars"></i> Programar Valor Promocional
+							</a>
+							<div class="collapse {{ suite.promocao != '' ? 'show' }}" id="promocao">
+								<div class="row">
+									<div class="col-md-6 col-sm-12">
+										<select class="form-control form-control-sm" name="promocao_tipo">
+											<option value="fixo" {{ suite.promocao_tipo == 'fixo' ? 'selected' }}>Valor Fixo</option>
+											<option value="porcentagem" {{ suite.promocao_tipo == 'porcentagem' ? 'selected' }}>Porcentagem</option>
+										</select>
+									</div>
+									<div class="col-md-6 col-sm-12">
+										<input type="text" name="promocao" class="form-control form-control-sm" value="{{ suite.promocao|number_format(2, ',', '.')  }}" placeholder="Valor Fixo ou Porcentagem">
+									</div>
+								</div>
+								<div class="row mt-2">
+									<div class="col-md-6 col-sm-12">
+										<input class="form-control form-control-sm" type="datetime-local" name="promocao_de" value="{{ (suite.promocao_de) ? suite.promocao_de|date("Y-m-d\\TH:i", "America/Sao_Paulo") : "now"|date("Y-m-d\\TH:i", "America/Sao_Paulo") }}">
+									</div>
+									<div class="col-md-6 col-sm-12">
+										<input class="form-control form-control-sm" type="datetime-local" name="promocao_ate" value="{{ (suite.promocao_ate) ? suite.promocao_ate|date("Y-m-d\\TH:i", "America/Sao_Paulo") : "now"|date("Y-m-d\\TH:i", "America/Sao_Paulo") }}">
+									</div>
+								</div>
+							</div>
+						</div>
+
+                    </div>
+
+	            </div>
+
+			</div>
+		</form>
+
+    </div>
+</div>
+
+{% if suite.id %}<script>start_product_gallery()</script>{% endif %}
+<script src="{{ PATH }}/view/assets/vendor/repeater/jquery.repeater.min.js"></script>
+
+<script src="{{ DOMAIN }}/view/assets/vendor/froala/js/froala_editor.pkgd.min.js"></script>
+<script src='{{ DOMAIN }}/view/assets/vendor/froala/js/languages/pt_br.js'></script>
+<script src="{{ DOMAIN }}/view/assets/js/pages/suites.js"></script>
+
+{% endblock %}

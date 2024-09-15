@@ -1,0 +1,80 @@
+:root {
+    --primary-color: #ef6350;
+}
+body {
+    background-color: transparent;
+}
+.lugochat_floatmain {
+    visibility: hidden;
+    cursor: pointer;
+    display: block;
+    right: 21px;
+    bottom: 10px;
+    width: 68px;
+    height: 68px;
+}
+#lugochat_content {
+    overflow: hidden;
+    position: fixed;
+    border: medium none;
+    width: 428px;
+    height: 0px;
+    bottom: 85px;
+    right: 0px;
+    max-height: 95vh;
+    background-color: white;
+    color: rgb(255, 255, 255);
+    z-index: 1000;
+    box-shadow: rgba(0, 0, 0, 0.3) 0px 0px 20px 0px;
+    transition: all 0.3s ease-out;
+    transform: scaleY(0);
+}
+#lugochat_content.open {
+    height: 770px;
+    transform: scaleY(1);
+}
+
+#lugochat_content iframe {
+    position: static;
+    height: 100%;
+    box-shadow: 0 0 20px 0 rgba(0,0,0,.3);
+    max-width: 100%;
+}
+
+.lugochat_floatmain {
+    visibility: hidden;
+    display: block;
+    right: 20px;
+    bottom: 10px;
+    width: 68px;
+    height: 68px;
+    position: fixed;
+    animation: .3s zoomIn;
+    -webkit-animation: .3s zoomIn;
+    -moz-animation: .3s zoomIn;
+    -o-animation: .3s zoomIn;
+    -ms-animation: .3s zoomIn;
+    z-index: 1000;
+    opacity: 1;
+    visibility: visible;
+    -webkit-transition: all .3s cubic-bezier(.25,.8,.25,1);
+    -moz-transition: all .3s cubic-bezier(.25,.8,.25,1);
+    -o-transition: all .3s cubic-bezier(.25,.8,.25,1);
+    transition: all .3s cubic-bezier(.25,.8,.25,1);
+    transform-origin: center center;
+}
+.lugochat_icon_content {
+    background-color: var(--primary-color);
+    border-radius: 70px;
+    border: 2px solid rgb(255, 255, 255);
+    position: relative;
+    padding: 0;
+    width: 70px;
+    height: 70px;
+    font-size: 14px;
+    line-height: 100%;
+}
+.lugochat_icon_content img {
+    border-radius: 70px;
+    max-width: 100%;
+}

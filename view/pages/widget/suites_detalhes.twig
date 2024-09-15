@@ -1,0 +1,178 @@
+<link href="{{ DOMAIN }}/view/assets/vendor/lightgallery/css/lightgallery.min.css" rel="stylesheet">
+<script src="{{ DOMAIN }}/view/assets/vendor/lightgallery/js/lightgallery-all.min.js"></script>
+<link href="{{ DOMAIN }}/view/assets/vendor/owl-carousel/owl.carousel.css" rel="stylesheet">
+<script src="{{ DOMAIN }}/view/assets/vendor/owl-carousel/owl.carousel.js"></script>
+<link href="{{ DOMAIN }}/view/assets/vendor/calendar/jsRapCalendar.css" rel="stylesheet">
+<script src='{{ DOMAIN }}/view/assets/vendor/calendar/jsRapCalendar.js'></script>
+
+<div class="sub-menu-action bg-primary">
+	<div class="py-2 px-3">
+		<a href="javascript:void(0)" onclick="openSuites()" class="text-white"><i class="fa-solid fa-arrow-left"></i> Voltar as Suítes</a>
+		<a href="javascript:void(0)" onclick="openAgendamento('sYkBAHJm')" class="text-white"><i class="fa-solid fa-arrow-left"></i> ESPERA</a>
+	</div>
+</div>
+
+<div class="gallery-suite">
+	<div id="lightgallery" class="owl-carousel">
+		{% for imagem in imagens %}
+		<a href="{{ imagem.imagem }}" data-exthumbimage="{{ imagem.imagem }}" data-src="{{ imagem.imagem }}">
+			<img src="{{ imagem.imagem }}" class="img-fluid">
+		</a>
+		{% endfor %}
+	</div>
+</div>
+
+<div class="p-4 mb-5">
+
+	<h2 class="text-uppercase text-primary m-0">{{ suite.nome }}</h2>
+	<hr class="bg-primary">
+
+	<div class="collapse-div">
+		{{ suite.texto|raw }}
+	</div>
+	<a href="javascript:void(0);" class="expand-link text-primary my-2"><i class="fa-light fa-arrow-down-to-arc"></i> Ver mais</a>
+	<hr class="bg-primary">
+
+	{% if suite.observacoes %}
+	<div class="collapse-div">
+		{{ suite.observacoes }}
+	</div>
+	<hr class="bg-primary">
+	{% endif %}
+
+	<H5 class="text-uppercase m-0">FAÇA SEU AGENDAMENTO</H5>
+	
+	{# CALENDARIO #}
+	<div class="agendamento" id="agendamento"></div>
+	{#  #}
+
+	<div class="d-flex justify-content-end">
+		<a href="javascript:void(0);" class="text-primary" data-bs-toggle="modal" data-bs-target="#tabelaPreco"><i class="fa-light fa-money-check-dollar"></i> VER TABELA DE PREÇOS</a>
+	</div>
+
+	<form action="javascript:void(0)" method="POST" id="agendamento_save">
+
+		<div class="login-load" style="display: none;"><i class="fa-solid fa-spinner fa-spin-pulse"></i></div>
+
+		<div class="mb-2 mt-2 d-none">
+			<label>Data do Agendamento</label>
+			<input type="hidden" id="agendamento_data" name="agendamento_data" class="form-control" value="{{ now|date('d-m-Y') }}" readonly>
+		</div>
+
+		<div class="row">
+			<div class="mb-2 mt-2 col-6 position-relative">
+				<label>Horário de chegada</label>
+				<select class="form-select select2" id="horario_chegada" name="horario_chegada" data-placeholder="Selecione" required>
+					<option value="" disabled selected hidden>Selecione</option>
+					{% for horas in listaHoras %}
+					<option value="{{ horas }}">{{ horas }}</option>
+					{% endfor %}
+				</select>
+				<div class="select-preload"></div>
+			</div>
+			
+			<div class="mb-2 mt-2 col-6 position-relative">
+				<label>Período Permanência</label>
+				<select class="form-select select2" id="agendamento_periodo" name="agendamento_periodo" data-placeholder="Selecione" required>
+					<option value="" disabled selected hidden>Selecione</option>
+					{% for preco in precos %}
+					<option data-price="{{ preco.valor }}" data-valor="R$ {{ preco.valor|number_format(2, ',', '.') }}" value="{{ preco.periodo }}">{{ preco.periodo }}</option>
+					{% endfor %}
+				</select>
+				<div class="select-preload"></div>
+			</div>
+		</div>
+
+		<div class="mb-2 mt-2 position-relative">
+			<label>Digite seu Email</label>
+			<input type="email" id="email" name="email" class="form-control" value="" placeholder="Ex. jhon@gmail.com" required>
+		</div>
+
+		<hr class="bg-primary">
+
+		<label class="mb-2">Resumo do Agendamento</label>
+
+		<div class="d-flex justify-content-between border-bottom border-primary mb-2">
+			<div>Data</div>
+			<div><h5 class="text-primary" id="dataSelect">{{ now|date('d-m-Y') }}</h5></div>
+		</div>
+
+		<div class="d-flex justify-content-between border-bottom border-primary mb-2">
+			<div>Chegada</div>
+			<div><h5 class="text-primary" id="chegadaSelect">--</h5></div>
+		</div>
+
+		<div class="d-flex justify-content-between border-bottom border-primary mb-2">
+			<div>Período</div>
+			<div><h5 class="text-primary" id="periodoSelect">--</h5></div>
+		</div>
+
+		<div class="d-flex justify-content-between border-bottom border-primary mb-2">
+			<div>Valor Total</div>
+			<div><h5 class="text-primary" id="valorSelect">--</h5></div>
+		</div>
+
+		<div class="my-4">
+			<div class="form-check mb-4">
+				<input class="form-check-input" type="checkbox" value="sim" name="termosdeuso" id="termosdeuso" required>
+				<label class="form-check-label fw-normal" for="termosdeuso">
+					Concordo e aceito os <a href="javascript:void(0)" class="text-primary" data-bs-toggle="modal" data-bs-target="#termosDeUsoModal">Termos de Uso</a>.
+				</label>
+			</div>
+			<input type="hidden" id="select_valor" name="select_valor" value="">
+			<input type="hidden" id="id_suite" name="id_suite" value="{{ suite.id }}">
+			<button type="submit" id="salvar" class="btn btn-primary btn-lg w-100 rounded-0" disabled>CONTINUAR AGENDAMENTO</button>
+		</div>
+
+	</form>
+
+	{# TABELA DE PREÇOS #}
+	<div class="modal fade" id="tabelaPreco" tabindex="1"  aria-labelledby="tabelaPreco" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable m-0">
+			<div class="modal-content rounded-0 p-0">
+				<div class="modal-header align-items-center px-3 py-2">
+					<h5 class="modal-title">TABELA DE PREÇOS</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body p-2">
+					<table class="table">
+						<thead>
+							<tr>
+								<th>Valor</th>
+								<th class="text-center">Período</th>
+								<th class="text-end">Dias</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for preco in precosall %}
+							<tr>
+								<td>R$ {{ preco.valor|number_format(2, ',', '.') }}</td>
+								<td class="text-center">{{ preco.periodo }}</td>
+								<td class="text-end text-capitalize">{{ preco.dias|replace({',': ', '}) }}</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	{# TERMOS #}
+	<div class="modal fade" id="termosDeUsoModal" tabindex="1"  aria-labelledby="termosDeUsoModal" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable m-0">
+			<div class="modal-content rounded-0 p-0">
+				<div class="modal-header align-items-center px-3 py-2">
+					<h5 class="modal-title">TERMOS DE USO</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body p-2">
+					dfsdfsdf
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>
+
+<script src="{{ DOMAIN }}/view/assets/js/pages/suites-detalhes.js"></script>

@@ -1,0 +1,33 @@
+
+{% for historico in historicos %}
+
+	{% if historico.id_bot != '' %}
+		{% set item_id = historico.id_bot %}
+	{% else %}
+		{% set item_id = historico.id %}
+	{% endif %}		
+
+	{% if historico.tipo == 'questao' %}
+		{% set pergunta_id = item_id %}
+		<div class="d-flex justify-content-start mt-2 mb-2 w-100">
+			<div class="msg_cotainer">
+				<span class="chat-question-{{ item_id }}">{{ historico.texto|raw }}</span>
+				<span class="msg_time">{{ inical == 'S' ? "now"|date("Y-m-d H:i:s")|dateDiff : historico.data|dateDiff }}</span>
+			</div>
+		</div>
+	{% endif %}
+
+	{% if historico.tipo == 'resposta' %}
+		<div class="d-flex justify-content-end mt-4 mb-2 w-100">
+			<div class="msg_cotainer_send">
+				<span class="chat-question-{{ item_id }}">{{ historico.texto|raw }}</span>
+				<span class="msg_time_send">{{ inical == 'S' ? "now"|date("Y-m-d H:i:s")|dateDiff : historico.data|dateDiff }}</span>
+			</div>
+		</div>
+	{% endif %}
+
+	{% if historico.tipo == 'opcao' %}
+		<a href="javascript:void(0)" class="btn btn btn-outline-primary rounded-pill chat-action inline-block me-2" data-action="{{ historico.action }}" data-inicial="{{ inical }}" data-question="{{ pergunta_id }}" data-option="{{ item_id }}">{{ historico.texto }}</a>
+	{% endif %}
+	
+{% endfor %}

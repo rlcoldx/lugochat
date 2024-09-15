@@ -1,0 +1,15 @@
+<div class="p-4">
+	<div class="row">
+		{% for suite in suites %}
+			<div class="col-6 px-1">
+				<div class="card rounded-1 open_suite" onclick="openDetalhes('{{ suite.id }}')">
+					<img src="{{ suite.imagem }}" class="card-img rounded-1 rounded-bottom-0">
+					<div class="card-body py-2 text-center">
+						<div class="card-title text-primary mb-1">{{ suite.nome }}</div>
+						<div class="">A partir de <b class="text-primary">R$ {{ suite.valor|number_format(2, ',', '.') }}</b> </div>
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+	</div>
+</div>

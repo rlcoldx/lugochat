@@ -1,0 +1,65 @@
+{% extends "layout/layoutMaster.twig" %}
+
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block body %}
+
+<div class="content-body">
+    
+    <!-- row -->
+    <div class="container-fluid">
+        <div class="page-titles">
+            <div class="d-flex flex-wrap align-items-center justify-content-between">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ DOMAIN }}">Home</a></li>
+                    <li class="breadcrumb-item active"><a href="javascript:void(0)">{{ titulo }}</a></li>
+                </ol>
+                <a href="{{ DOMAIN }}/suites/new" class="btn btn-primary text-nowrap"><i class="fa-solid fa-plus me-2"></i>Add Novo</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="datatable" class="table dataTable">
+                        <thead>
+                            <tr role="row">
+                                <th class="sorting" width="50"></th>
+                                <th class="sorting">Nome</th>
+                                <th class="sorting">Apartir de</th>
+                                <th class="sorting_asc">Status</th>
+                                <th class="sorting_asc">Data</th>
+                                <th class="sorting" width="80">Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for suite in suites %}
+                            <tr class="produto-{{ suite.id }}">
+                                <td width="50">#{{ loop.index }}</td>
+                                <td>{{ suite.nome }}</td>
+                                <td>R$ {{ suite.valor|number_format(2, ',', '.') }}</td>
+                                <td class="sorting_1"><span class="badge bg-{{ suite.status == 'Rascunho' ? 'warning' : 'success' }}">{{ suite.status }}</span></td>
+                                <td>{{ suite.date_create|date("d-m-Y \\a\\s H:i", "America/Sao_Paulo") }}</td>
+                                <td>
+                                    <div class="d-flex justify-content-end">
+                                        <a href="{{ DOMAIN }}/suites/edit/{{ suite.id }}" class="btn btn-success shadow btn-xs sharp me-1"><i class="fa fa-pencil"></i></a>
+                                        <a href="javascript:void(0);" onclick="deleteSuite('{{ suite.id }}')" class="btn btn-danger shadow btn-xs sharp"><i class="fa fa-trash"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- Datatable -->
+
+<script src="{{ DOMAIN }}/view/assets/vendor/datatables/js/jquery.dataTables.min.js"></script>
+<script src="{{ DOMAIN }}/view/assets/js/plugins-init/datatables.init.js"></script>
+<script src="{{ DOMAIN }}/view/assets/js/pages/suites.js"></script>
+
+{% endblock %}
