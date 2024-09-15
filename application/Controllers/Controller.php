@@ -113,7 +113,6 @@ class Controller
      protected function requirePermission(string $permission) {
         $permissionService = new PermissionsService();
         if(!$permissionService->verifyPermissions($permission)) {
-            // $this->render('')
             echo 'você não tem permissão para acessar esse serviço!';
            die(); 
         }
