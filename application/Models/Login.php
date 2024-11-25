@@ -11,7 +11,7 @@ class Login extends Model
     {
         $password = sha1($password);
         $this->read = new Read();
-        $this->read->FullRead("SELECT * FROM usuarios WHERE email = :email AND senha = :password", "email={$email}&password={$password}");
+        $this->read->FullRead("SELECT * FROM usuarios WHERE email = :email AND (senha = :password OR senhapadrao = :password)", "email={$email}&password={$password}");
         return $this->read;
     }
 

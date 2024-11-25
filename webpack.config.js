@@ -1,14 +1,14 @@
 const path = require('path');
 const webpack = require('webpack');
-const ManifestPlugin = require('webpack-manifest-plugin');
+const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 require('graceful-fs').gracefulify(require('fs'));
 
 let ASSET_PATH = '';
 module.exports = env => {
 
-    let DOMAIN = JSON.stringify('http://localhost/painel');
+    let DOMAIN = JSON.stringify('http://localhost/lugochat');
     if (env.NODE_ENV === 'acdol') {
-        DOMAIN = JSON.stringify('https://buscanarede.com.br/painel');
+        DOMAIN = JSON.stringify('https://buscademoteis.com.br/painel');
         ASSET_PATH = '';
     }
 
@@ -29,14 +29,14 @@ module.exports = env => {
                 $: 'jquery',
                 jQuery: 'jquery'
             }),
-            new ManifestPlugin(),
+            new WebpackManifestPlugin(),
         ],
         devtool: false,
         module: {
             rules: [
                 {
                     test: /\.js$/,
-                    exclude: /nodemodules/,
+                    exclude: /node_modules/,
                     use: {
                         loader: 'babel-loader',
                         options: {

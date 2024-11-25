@@ -7,7 +7,7 @@
 		$sql_item->execute();
 		$item = $sql_item->fetch(PDO::FETCH_ASSOC);
 
-		$sql_usuario = $db->prepare("SELECT * FROM usuarios WHERE id = '".$_SESSION['lugo_perfil_empresa']."' LIMIT 1");
+		$sql_usuario = $db->prepare("SELECT * FROM usuarios WHERE id = '".$_SESSION['busca_perfil_empresa']."' LIMIT 1");
 		$sql_usuario->execute();
 		$usuario = $sql_usuario->fetch(PDO::FETCH_ASSOC);
 

@@ -1,0 +1,70 @@
+{% extends "layout/layoutMaster.twig" %}
+
+{% block title %}Restaurantes{% endblock %}
+
+{% block body %}
+
+<div class="content-body">
+    <div class="container-fluid">
+    
+	    <div class="d-flex justify-content-between align-items-center mb-4">
+	        <div>
+	            <h3 class="content-title card-title mb-0">Lista de Moteis</h3>
+	        </div>
+	        <div>
+	            <a href="{{ DOMAIN }}/moteis/add" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> Add Novo</a>
+	        </div>
+	    </div>
+    
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="datatable-no-sortable" class="table dataTable">
+                        <thead>
+                            <tr role="row">
+                                <th width="40"></th>
+                                <th>Nome</th>
+                                <th>Telefone</th>
+                                <th>Qtd. Reservas</th>
+                                <th>Contrato</th>
+                                <th width="80">Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for motel in moteis %}
+                            <tr class="motel-{{ motel.id }}">
+                                <td class="align-middle" width="40">
+                                    <img src="{{ motel.logo }}" class="img-fluid" width="40">
+                                </td>
+                                <td class="align-middle">
+                                    <div class="fw-bold text-uppercase">{{ motel.nome }}</div>
+                                    <div><small>{{ motel.email }}</small></div>
+                                </td>
+                                <td class="align-middle">
+                                    {{ motel.telefone }}
+                                    <div>{{ motel.zap }}</div>
+                                </td>
+                                <td class="align-middle"><span class="px-3 badge bg-warning">0</span></td>
+                                <td class="align-middle"><span class="px-3 badge bg-warning">%{{ motel.contrato }} / <span title="Quantidade de Saques">{{ motel.saques }}</span></span></td>
+                                <td class="align-middle">
+                                    <div class="d-flex justify-content-end align-items-center">
+                                        <span class="badge bg-{{ motel.status == 'Ativo' ? 'success' : 'danger' }}">{{ motel.status }}</span>
+                                        <a href="{{ DOMAIN }}/moteis/edit/{{ motel.id }}" class="px-3 badge bg-warning ms-1"><i class="fa-solid fa-pen-to-square"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="{{ DOMAIN }}/view/assets/vendor/datatables/js/jquery.dataTables.min.js"></script>
+<script src="{{ DOMAIN }}/view/assets/js/plugins-init/datatables.init.js"></script>
+<script src="{{ DOMAIN }}/view/assets/js/pages/moteis.js"></script>
+
+{% endblock %}

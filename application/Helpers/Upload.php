@@ -1,9 +1,12 @@
 <?php
 
+
 namespace Agencia\Close\Helpers;
 
-class Upload {
+ini_set('display_errors', '0');
 
+class Upload {
+    
     private $File;
     private $Name;
     private $Send;
@@ -16,7 +19,7 @@ class Upload {
     private $Result;
     private $Error;
 
-    /** DIRETÓTIOS */
+    /** DIRETÓRIOS */
     private $Folder;
     private static $BaseDir;
 
@@ -77,14 +80,14 @@ class Upload {
         if ($this->File['size'] > ($MaxFileSize * (1024 * 1024))):
             $this->Result = false;
             if(function_exists('_e')):
-                $this->Error = _e('Arquivo muito grande, tamanho máximo permitido de').' '.$MaxFileSize.'mb';
+                $this->Error = 'Arquivo muito grande, tamanho máximo permitido de'.' '.$MaxFileSize.'mb';
             else:
                 $this->Error = "Arquivo muito grande, tamanho máximo permitido de {$MaxFileSize}mb";
             endif;
         elseif (!in_array($this->File['type'], $FileAccept)):
             $this->Result = false;
             if(function_exists('_e')):
-                $this->Error = _e('Tipo de arquivo não suportado. Envie .PDF, .DOC ou .DOCX!');
+                $this->Error = 'Tipo de arquivo não suportado. Envie .PDF, .DOC ou .DOCX!';
             else:
                 $this->Error = 'Tipo de arquivo não suportado. Envie .PDF ou .DOCX!';
             endif;
@@ -117,16 +120,16 @@ class Upload {
         if ($this->File['size'] > ($MaxFileSize * (1024 * 1024))):
             $this->Result = false;
             if(function_exists('_e')):
-                $this->Error = _e('Arquivo muito grande, tamanho máximo permitido de').' '.$MaxFileSize.'mb';
+                $this->Error = 'Arquivo muito grande, tamanho máximo permitido de'.' '.$MaxFileSize.'mb';
             else:
-            $this->Error = "Arquivo muito grande, tamanho máximo permitido de {$MaxFileSize}mb";
+                $this->Error = "Arquivo muito grande, tamanho máximo permitido de {$MaxFileSize}mb";
             endif;
         elseif (!in_array($this->File['type'], $FileAccept)):
             $this->Result = false;
             if(function_exists('_e')):
-                $this->Error = _e('Tipo de arquivo não suportado. Envie áudio MP3 ou vídeo MP4!');
+                $this->Error = 'Tipo de arquivo não suportado. Envie áudio MP3 ou vídeo MP4!';
             else:
-            $this->Error = 'Tipo de arquivo não suportado. Envie áudio MP3 ou vídeo MP4!';
+                $this->Error = 'Tipo de arquivo não suportado. Envie áudio MP3 ou vídeo MP4!';
             endif;
         else:
             $this->CheckFolder($this->Folder);
@@ -190,18 +193,26 @@ class Upload {
             case 'image/jpg':
             case 'image/jpeg':
             case 'image/pjpeg':
+                // Suprime avisos temporariamente para JPEG
+                $errorLevel = error_reporting();
+                error_reporting($errorLevel & ~E_WARNING);
                 $this->Image = imagecreatefromjpeg($this->File['tmp_name']);
+                error_reporting($errorLevel);
                 break;
             case 'image/png':
             case 'image/x-png':
+                // Suprime avisos temporariamente para PNG
+                $errorLevel = error_reporting();
+                error_reporting($errorLevel & ~E_WARNING);
                 $this->Image = imagecreatefrompng($this->File['tmp_name']);
+                error_reporting($errorLevel);
                 break;
         endswitch;
 
         if (!$this->Image):
             $this->Result = false;
             if(function_exists('_e')):
-                $this->Error = _e('Tipo de arquivo inválido, envie imagens JPG ou PNG!');
+                $this->Error = 'Tipo de arquivo inválido, envie imagens JPG ou PNG!';
             else:
                 $this->Error = "Tipo de arquivo inválido, envie imagens JPG ou PNG!";
             endif;
@@ -210,7 +221,6 @@ class Upload {
             $y = imagesy($this->Image);
             $ImageX = ($this->Width < $x ? $this->Width : $x);
             $ImageH = round(($ImageX * $y) / $x);
-
 
             $NewImage = imagecreatetruecolor($ImageX, $ImageH);
             imagealphablending($NewImage, false);
@@ -232,7 +242,7 @@ class Upload {
             if (!$NewImage):
                 $this->Result = false;
                 if(function_exists('_e')):
-                    $this->Error = _e('Tipo de arquivo inválido, envie imagens JPG ou PNG!');
+                    $this->Error = 'Tipo de arquivo inválido, envie imagens JPG ou PNG!';
                 else:
                     $this->Error = "Tipo de arquivo inválido, envie imagens JPG ou PNG!";
                 endif;
@@ -254,7 +264,7 @@ class Upload {
         else:
             $this->Result = false;
             if(function_exists('_e')):
-                $this->Error = _e('Erro ao mover o arquivo. Favor tente mais tarde!');
+                $this->Error = 'Erro ao mover o arquivo. Favor tente mais tarde!';
             else:
                 $this->Error = "Erro ao mover o arquivo. Favor tente mais tarde!";
             endif;

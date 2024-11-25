@@ -19,7 +19,7 @@ class Home extends Model
     public function checkAgendamentos($company): Read
     {
         $this->read = new Read();
-        $this->read->FullRead("SELECT * FROM agendamentos WHERE id_empresa = :id_empresa AND status_agendamento = 'Pendente' ORDER BY id DESC", "id_empresa={$company}");
+        $this->read->FullRead("SELECT * FROM agendamentos WHERE id_motel = :id_motel AND status_agendamento = 'Pendente' ORDER BY id DESC", "id_motel={$company}");
         return $this->read;
     }
 

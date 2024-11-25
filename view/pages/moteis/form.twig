@@ -1,0 +1,204 @@
+{% extends "layout/layoutMaster.twig" %}
+
+{% block title %} {{ (motel.id == '') ? 'Criar Motel' : 'Editar Motel' }} {% endblock %}
+
+{% block body %}
+
+	<link rel="stylesheet" href="{{ DOMAIN }}/view/assets/vendor/froala/css/froala_editor.min.css">
+	<link rel="stylesheet" href="{{ DOMAIN }}/view/assets/vendor/bootstrap-tagsinput/css/bootstrap-tagsinput.css">
+
+	<div class="content-body">
+		<div class="container-fluid">
+			
+			<section class="content-main mb-5">
+
+				<div class="content-header">
+					<div>
+						<h3 class="content-title card-title">{{ (motel.id == '') ? 'Criar Motel' : 'Editar Motel' }}
+						</h3>
+					</div>
+				</div>
+
+				<form action="javascript:void(0)" id="{{ (motel.id == '') ? 'cadastrar_motel' : 'editar_motel' }}" method="POST" autocomplete="off">
+					<div
+						class="row">
+
+						{# COLUNA PRINCIPAL #}
+						<div class="col-sm-12 col-md-6 col-lg-6 col-xl-8 col-xxl-8">
+
+							<div class="card">
+								<div class="card-body">
+									<input value="{{ motel.nome }}" type="text" id="nome" class="form-control text-uppercase {{ (motel.id == '') ? 'novo_motel' : 'editar_motel' }}" name="nome" placeholder="NOME DO MOTEL" required="required" onfocusout="format_slug($(this).val(), 'slug_link')">
+									<input type="hidden" name="slug" id="slug" value="{{ motel.slug }}">
+								</div>
+							</div>
+
+							<div class="card">
+								<div class="card-body">
+									<textarea name="texto" id="texto">{{ motel.texto }}</textarea>
+								</div>
+							</div>
+
+							<div class="card">
+								<div class="card-header py-2">ENDEREÇO DO MOTEL</div>
+								<div class="card-body">
+									<div class="row">
+										<div class="col-md-3">
+											<div class="mb-3">
+												<label class="form-label">CEP</label>
+												<input type="text" class="form-control" id="cep" required name="cep" value="{{ motel.cep }}">
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="mb-3">
+												<label class="form-label">Endereço</label>
+												<input type="text" class="form-control" id="endereco" required name="endereco" value="{{ motel.endereco }}">
+											</div>
+										</div>
+										<div class="col-md-3">
+											<div class="mb-3">
+												<label class="form-label">Número</label>
+												<input type="text" class="form-control" name="numero" required value="{{ motel.numero }}">
+											</div>
+										</div>
+
+										<div class="col-md-4">
+											<div class="mb-3">
+												<label class="form-label">Bairro</label>
+												<input type="text" class="form-control" id="bairro" required name="bairro" value="{{ motel.bairro }}">
+											</div>
+										</div>
+										<div class="col-md-4">
+											<div class="mb-3">
+												<label class="form-label">Cidade</label>
+												<input type="text" class="form-control" id="cidade" required name="cidade" value="{{ motel.cidade }}">
+											</div>
+										</div>
+										<div class="col-md-4">
+											<div class="mb-3">
+												<label class="form-label">Estado</label>
+												<input type="text" class="form-control" id="estado" required name="estado" value="{{ motel.estado }}">
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="card">
+								<div class="card-header py-2">INFORMAÇÕES DO MOTEL</div>
+								<div class="card-body px-3">
+									<div class="row mb-3">
+										<div class="col-md-4">
+											<label for="telefone" class="form-label">Telefone</label>
+											<input type="text" class="form-control" id="telefone" value="{{ motel.telefone }}" name="telefone" required>
+										</div>
+										<div class="col-md-4">
+											<label for="zap" class="form-label">WhatsApp</label>
+											<input type="text" class="form-control" id="zap" value="{{ motel.zap }}" name="zap" required>
+										</div>
+										<div class="col-md-4">
+											<label for="ramal" class="form-label">Ramal</label>
+											<input type="text" class="form-control" id="ramal" value="{{ motel.ramal }}" name="ramal">
+										</div>
+									</div>
+									<div class="mb-3">
+										<label for="google" class="form-label">Google Maps Link</label>
+										<textarea class="form-control" id="google" name="google" rows="3" required>{{ motel.google }}</textarea>
+									</div>
+									<div class="mb-3">
+										<label for="waze" class="form-label">Waze Link</label>
+										<textarea class="form-control" id="waze"  name="waze" rows="3" required>{{ motel.waze }}</textarea>
+									</div>
+								</div>
+							</div>
+
+						</div>
+
+						{# COLUNA LATERAL #}
+						<div class="col-sm-12 col-md-6 col-lg-6 col-xl-4 col-xxl-4">
+
+							<div class="card">
+								<div class="card-header py-2">
+									<div class="d-flex justify-content-between align-items-center w-100">
+										<div>DADOS DE LOGIN</div>
+										<div>
+											{% if motel.id != '' %}<input type="hidden" name="id" value="{{ motel.id }}">{% endif %}
+											<button type="submit" id="salvar" class="btn btn-primary btn-sm px-4">{{ motel.id == '' ? 'PUBLICAR' : 'SALVAR' }}</button>
+										</div>
+									</div>
+								</div>
+								<div class="card-body">
+								
+									<div class="mb-3">
+										<label class="form-label">Email de Login</label>
+										<input type="email" class="form-control" name="email" value="{{ motel.email }}" placeholder="Email de Login" role="presentation" autocomplete="new-email">
+									</div>
+
+									<div class="mb-3">
+										<label class="form-label">Senha de Login</label>
+										<input type="password" class="form-control" name="senha" value="" placeholder="{{ motel.senha != '' ? 'Preencha se deseja alterar' : 'Senha de Login' }}" role="presentation" autocomplete="new-password">
+									</div>
+
+								</div>
+							</div>
+
+							<div class="card">
+								<div class="card-header py-2">REGRA DE CONTRATO</div>
+								<div class="card-body pb-4">
+									<div class="row">
+										<div class="col-md-6">
+											<div class="mb-3">
+												<label class="form-label">% de Contrato</label>
+												<input type="number" class="form-control" name="contrato" value="{{ motel.contrato }}">
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="mb-3">
+												<label class="form-label">Qtd. de Saques</label>
+												<input type="number" class="form-control" name="saques" value="{{ motel.saques }}">
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="card">
+								<div class="card-header py-2">LOGO DO MOTEL</div>
+								<div class="card-body">
+									<div class="form-group mb-4">
+										<div class="row">
+											<div class="col-md-6 text-center">
+												<img id="image_preview" src="{{ motel.logo != '' ? motel.logo : 'https://placehold.co/500x500' }}" class="img-thumb img-fluid" width="500" height="500" />
+											</div>
+											<div class="col-md-6">
+												<input class="form-control" type="file" id="logo" name="logo" onchange="document.getElementById('image_preview').src = window.URL.createObjectURL(this.files[0])">
+												<div class="mt-3">O tamanho padrão da imagem do logo é de 500x500.</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+
+							<div class="card">
+								<div class="card-header py-2">CARACTERÍSTICAS QUE POSSUEM</div>
+								<div class="card-body form-category-list">
+									<input name="caracteristicas" id="tags" class="tags form-control" value="{{ motel.caracteristicas }}">
+								</div>
+							</div>
+
+						</div>
+
+					</div>
+				</form>
+			</section>
+
+		</div>
+	</div>
+
+	<script src="{{ DOMAIN }}/view/assets/vendor/bootstrap-tagsinput/js/bootstrap-tagsinput.min.js"></script>
+	<script src="{{ DOMAIN }}/view/assets/vendor/froala/js/froala_editor.pkgd.min.js"></script>
+	<script src='{{ DOMAIN }}/view/assets/vendor/froala/js/languages/pt_br.js'></script>
+	<script src="{{ DOMAIN }}/view/assets/js/pages/moteis.js"></script>
+
+{% endblock %}

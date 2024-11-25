@@ -14,7 +14,7 @@ class Bot extends Model
     public function getQuestions($company): Read
     {
     	$this->read = new Read();
-        $this->read->FullRead("SELECT * FROM chat_bot WHERE id_empresa = :id_empresa AND `Status` = 'S' ORDER BY id ASC", "id_empresa={$company}");
+        $this->read->FullRead("SELECT * FROM chat_bot WHERE id_motel = :id_motel AND `Status` = 'S' ORDER BY id ASC", "id_motel={$company}");
         return $this->read;
     }
 
@@ -28,7 +28,7 @@ class Bot extends Model
             $filter = "AND (primeira = 'S')";
         }
 
-        $this->read->FullRead("SELECT * FROM chat_bot WHERE id_empresa = :id_empresa AND `Status` = 'S' $filter ORDER BY id ASC", "id_empresa={$company}");
+        $this->read->FullRead("SELECT * FROM chat_bot WHERE id_motel = :id_motel AND `Status` = 'S' $filter ORDER BY id ASC", "id_motel={$company}");
         return $this->read;
     }
 
@@ -42,14 +42,14 @@ class Bot extends Model
             $filter = "";
         }
 
-        $this->read->FullRead("SELECT * FROM chat_bot WHERE id_empresa = :id_empresa AND `Status` = 'S' AND tipo = 'opcao' $filter ORDER BY parent ASC", "id_empresa={$company}");
+        $this->read->FullRead("SELECT * FROM chat_bot WHERE id_motel = :id_motel AND `Status` = 'S' AND tipo = 'opcao' $filter ORDER BY parent ASC", "id_motel={$company}");
         return $this->read;
     }
 
     public function saveBemVindo($params, $company): Create
     {
         $data = [
-            'id_empresa' => $company,
+            'id_motel' => $company,
             'texto' => $params['question'],
             'tipo' => 'questao',
             'parent' => '0',
@@ -65,7 +65,7 @@ class Bot extends Model
     {
         //$data = ['cookie_key' => $params];
         $update = new Update();
-        $update->ExeUpdate('chat_bot', $params, 'WHERE `id_empresa` = :company AND `id` = :id', "company={$company}&id={$params['id']}");
+        $update->ExeUpdate('chat_bot', $params, 'WHERE `id_motel` = :company AND `id` = :id', "company={$company}&id={$params['id']}");
         return $update;
     }
 

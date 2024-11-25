@@ -18,7 +18,7 @@ class Company extends Model
         $this->read = new Read();
         $this->read->FullRead("SELECT itens.*, slide.* FROM empresa_slide_itens as itens
                                         INNER JOIN empresa_slide as slide ON itens.id_slider = slide.id
-                                        INNER JOIN usuarios as empresa ON empresa.id = slide.id_empresa
+                                        INNER JOIN usuarios as empresa ON empresa.id = slide.id_motel
                                     WHERE empresa.slug = :slug AND slide.status = 'S'
                                     ORDER BY slide.id DESC, itens.id DESC", "slug={$slug}");
         return $this->read;

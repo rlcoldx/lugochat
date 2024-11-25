@@ -11,34 +11,34 @@ use Agencia\Close\Models\Model;
 class SuitesWidget extends Model 
 {
 
-	public function getSuites($id_empresa): Read
+	public function getSuites($id_motel): Read
     {
     	$read = new Read();
         $read->FullRead("SELECT suites.*, sp.valor, img.imagem FROM suites
                         LEFT JOIN ( SELECT id_suite, MIN(valor) AS valor FROM suites_precos WHERE `status` = 'S' GROUP BY id_suite) AS sp ON suites.id = sp.id_suite
                         LEFT JOIN ( SELECT id_suite,imagem,imagem_original,`order` FROM suites_imagens WHERE `order` = 0 GROUP BY id_suite ORDER BY `order` ASC) img ON suites.id = img.id_suite
-                        WHERE suites.id_empresa = :id_empresa AND suites.`status` <> 'Deletado' ORDER BY suites.id DESC", "id_empresa={$id_empresa}");
+                        WHERE suites.id_motel = :id_motel AND suites.`status` <> 'Deletado' ORDER BY suites.id DESC", "id_motel={$id_motel}");
         return $read;
     }
 
-    public function getSuite($id, $id_empresa): Read
+    public function getSuite($id, $id_motel): Read
     {
     	$read = new Read();
-        $read->FullRead("SELECT * FROM suites WHERE id = :id AND id_empresa = :id_empresa ORDER BY id DESC LIMIT 1", "id={$id}&id_empresa={$id_empresa}");
+        $read->FullRead("SELECT * FROM suites WHERE id = :id AND id_motel = :id_motel ORDER BY id DESC LIMIT 1", "id={$id}&id_motel={$id_motel}");
         return $read;
     }
 
-    public function getSuitePrecosAll($id_suite, $id_empresa): Read
+    public function getSuitePrecosAll($id_suite, $id_motel): Read
     {
     	$read = new Read();
-        $read->FullRead("SELECT * FROM suites_precos WHERE id_suite = :id_suite AND id_empresa = :id_empresa AND `status` = 'S' ORDER BY `ordem`, `id` ASC", "id_suite={$id_suite}&id_empresa={$id_empresa}");
+        $read->FullRead("SELECT * FROM suites_precos WHERE id_suite = :id_suite AND id_motel = :id_motel AND `status` = 'S' ORDER BY `ordem`, `id` ASC", "id_suite={$id_suite}&id_motel={$id_motel}");
         return $read;
     }
 
-    public function getSuitePrecos($id_suite, $id_empresa, $diaDaSemana): Read
+    public function getSuitePrecos($id_suite, $id_motel, $diaDaSemana): Read
     {
     	$read = new Read();
-        $read->FullRead("SELECT * FROM suites_precos WHERE id_suite = :id_suite AND id_empresa = :id_empresa AND dias LIKE '%".$diaDaSemana."%' AND `status` = 'S' ORDER BY `ordem`, `id` ASC", "id_suite={$id_suite}&id_empresa={$id_empresa}");
+        $read->FullRead("SELECT * FROM suites_precos WHERE id_suite = :id_suite AND id_motel = :id_motel AND dias LIKE '%".$diaDaSemana."%' AND `status` = 'S' ORDER BY `ordem`, `id` ASC", "id_suite={$id_suite}&id_motel={$id_motel}");
         return $read;
     }
 
@@ -50,10 +50,10 @@ class SuitesWidget extends Model
         return $valorFormatado;
     }
 
-    public function getSuiteImages($id_suite, $id_empresa): Read
+    public function getSuiteImages($id_suite, $id_motel): Read
     {
         $read = new Read();
-        $read->FullRead("SELECT * FROM suites_imagens WHERE id_suite = :id_suite AND id_empresa = :id_empresa ORDER BY `order`,`id` DESC", "id_suite={$id_suite}&id_empresa={$id_empresa}");
+        $read->FullRead("SELECT * FROM suites_imagens WHERE id_suite = :id_suite AND id_motel = :id_motel ORDER BY `order`,`id` DESC", "id_suite={$id_suite}&id_motel={$id_motel}");
         return $read;
     }
 
@@ -62,7 +62,7 @@ class SuitesWidget extends Model
         $codigo = $this->gerarCodigoAgendamento();
 
         $data = [
-            'id_empresa' =>$params['id_empresa'],
+            'id_motel' =>$params['id_motel'],
             'user_email' => $params['email'],
             'id_suite' => $params['id_suite'],
             'codigo' => $codigo,

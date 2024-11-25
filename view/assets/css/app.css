@@ -4193,15 +4193,6 @@ button.bg-info:hover,
 button.bg-info:focus {
   background-color: #1d1aae !important;
 }
-.bg-warning {
-  background-color: #ff6d4d !important;
-}
-a.bg-warning:hover,
-a.bg-warning:focus,
-button.bg-warning:hover,
-button.bg-warning:focus {
-  background-color: #ff431a !important;
-}
 .bg-danger {
   background-color: #ff4847 !important;
 }
@@ -29481,9 +29472,6 @@ html[dir="rtl"]
 [data-theme-version="dark"] a.link:hover {
   color: #2421da;
 }
-[data-theme-version="dark"] a:hover {
-  color: #fff;
-}
 [data-theme-version="dark"] .border-right {
   border-right: 1px solid #4c4c4f !important;
 }
@@ -29880,7 +29868,7 @@ html[dir="rtl"]
 }
 .fc-button {
   border: 1px solid #f0f1f5;
-  text-transform: capitalize;
+
 }
 .fc-button.active {
   box-shadow: none !important;
@@ -31934,9 +31922,11 @@ input[type="checkbox"]:checked:after {
   border: 1px solid #f4f5f9;
   height: 40px;
   background: #fff;
+  border-radius: 5px;
+  padding-right: 10px;
 }
 .select2-results__option {
-  font-weight: bold;
+  color: #fff;
 }
 [data-theme-version="dark"]
   .select2-container--default
@@ -31976,8 +31966,8 @@ input[type="checkbox"]:checked:after {
 .select2-container--default
   .select2-selection--single
   .select2-selection__arrow {
-  top: 6px;
-  right: 15px;
+  top: 0;
+  right: 5px;
 }
 .select2-container .select2-selection--multiple {
   min-height: 40px;
@@ -31992,6 +31982,7 @@ input[type="checkbox"]:checked:after {
 [data-theme-version="dark"] .select2-search--dropdown .select2-search__field {
   background: #202124;
   border-color: #4c4c4f;
+  color: #FFFFFF;
 }
 .select2-dropdown {
   border-color: #f4f5f9;
@@ -34619,7 +34610,7 @@ button:focus {
   font-size: 20px;
   font-weight: 500;
   color: #000;
-  text-transform: capitalize;
+
 }
 .card-title--large {
   font-size: 1.5rem;
@@ -41398,9 +41389,6 @@ html[dir="rtl"]
 [data-theme-version="dark"] a.link:hover {
   color: #2421da;
 }
-[data-theme-version="dark"] a:hover {
-  color: #fff;
-}
 [data-theme-version="dark"] .border-right {
   border-right: 1px solid #4c4c4f !important;
 }
@@ -41819,4 +41807,24 @@ html[dir="rtl"]
   width: 20px;
   height: 20px;
   display: inline-block;
+}
+.bootstrap-tagsinput {
+  background-color: #1b1b1b;
+  border: 1px solid #4c4c4f;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  display: flex;
+  padding: 4px 6px;
+  color: #555;
+  vertical-align: middle;
+  border-radius: 4px;
+  max-width: 100%;
+  line-height: 22px;
+  cursor: text;
+  width: 1100%;
+  flex-wrap: wrap;
+}
+span.tag.label.label-info {
+  background: #ef6350;
+  color: #fff;
+  margin-bottom: 5px;
 }

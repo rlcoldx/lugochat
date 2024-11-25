@@ -67,12 +67,12 @@ class Check {
         self::$Format['a'] = 'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜüÝÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûýýþÿRr"!@#$%&*()_-+={[}]/?;:.,\\\'<>°ºª';
         self::$Format['b'] = 'aaaaaaaceeeeiiiidnoooooouuuuuybsaaaaaaaceeeeiiiidnoooooouuuyybyRr                                 ';
 
-        self::$Data = strtr(utf8_decode($Name), utf8_decode(self::$Format['a']), self::$Format['b']);
+        self::$Data = strtr($Name, self::$Format['a'], self::$Format['b']);
         self::$Data = strip_tags(trim(self::$Data));
         self::$Data = str_replace(' ', '-', self::$Data);
         self::$Data = str_replace(array('-----', '----', '---', '--'), '-', self::$Data);
 
-        return strtolower(utf8_encode(self::$Data));
+        return strtolower(self::$Data);
     }
 
     /**
@@ -85,11 +85,11 @@ class Check {
         self::$Format['a'] = '"!@#$%&*()_-+={[}]/?;:.,\\\'<>°ºª¨';
         self::$Format['b'] = '                                  ';
 
-        self::$Data = strtr(utf8_decode($String), utf8_decode(self::$Format['a']), self::$Format['b']);
+        self::$Data = strtr($String, self::$Format['a'], self::$Format['b']);
         self::$Data = str_replace(' ', '', self::$Data);
         self::$Data = strip_tags(trim(self::$Data));
 
-        return utf8_encode(self::$Data);
+        return self::$Data;
     }
 
 

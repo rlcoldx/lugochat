@@ -13,5 +13,5 @@
 
     define('DOMAIN', 'http://localhost/lugochat');
     define('PATH', 'http://localhost/lugochat');
-    define('NAME', 'Lugo Chat');
+    define('NAME', 'Busca de Motéis');
     define('PRODUCTION', false);

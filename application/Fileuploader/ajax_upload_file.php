@@ -3,7 +3,7 @@
 	include('class.fileuploader.php');
 	require 'vendor/autoload.php';
 
-	$sql_usuario = $db->prepare("SELECT * FROM usuarios WHERE empresa = '".$_SESSION['lugo_perfil_empresa']."' LIMIT 1");
+	$sql_usuario = $db->prepare("SELECT * FROM usuarios WHERE empresa = '".$_SESSION['busca_perfil_empresa']."' LIMIT 1");
 	$sql_usuario->execute();
 	$usuario = $sql_usuario->fetch(PDO::FETCH_ASSOC);
 
@@ -59,7 +59,7 @@
 
 		$foto_completa	= DOMAIN.'/uploads/suites/'.$usuario['slug'].'/'.$ano.'/'.$mes.'/'.strtolower($nome);
 		$dados = array($usuario['id'], $_GET['id_suite'], $foto_completa, $nome, $_POST['_namee']);
-		$sql = $db->prepare("INSERT INTO suites_imagens (id_empresa, id_suite, imagem, nome, original) VALUES (?,?,?,?,?)");
+		$sql = $db->prepare("INSERT INTO suites_imagens (id_motel, id_suite, imagem, nome, original) VALUES (?,?,?,?,?)");
 		$sql->execute($dados);
 
 	}

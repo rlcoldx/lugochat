@@ -16,7 +16,7 @@ class Agendamento extends Model
         $codigo = $this->gerarCodigoAgendamento();
 
         $data = [
-            'id_empresa' =>$params['id_empresa'],
+            'id_motel' =>$params['id_motel'],
             'user_email' => $params['email'],
             'id_suite' => $params['id_suite'],
             'codigo' => $codigo,

@@ -67,7 +67,7 @@ $('#agendamento').jsRapCalendar({
 		//ATUALIZA OS HORARIOS DE CHEGADA
 		$.ajax({
 			type: "POST",
-			data: {'id': SUITE, 'id_empresa' : EMPRESA, 'dataselect': selectedDate},
+			data: {'id': SUITE, 'id_motel' : EMPRESA, 'dataselect': selectedDate},
 			url: DOMAIN + '/chat/suites/detalhes/horas',
 			success: function(data) {
 
@@ -87,7 +87,7 @@ $('#agendamento').jsRapCalendar({
 		//ATUALIZADA OS PERIODOS E OS VALORES
 		$.ajax({
 			type: "POST",
-			data: {'id': SUITE, 'id_empresa' : EMPRESA, 'dataselect': selectedDate},
+			data: {'id': SUITE, 'id_motel' : EMPRESA, 'dataselect': selectedDate},
 			url: DOMAIN + '/chat/suites/detalhes/periodos',
 			success: function(data) {
 				data = JSON.parse(data);
@@ -164,7 +164,7 @@ $('#agendamento_save').submit(function (c) {
 	let form = $(this).serialize();
 	
 	$.ajax({
-		type: "POST", async: true, data: form + '&id_empresa='+EMPRESA,
+		type: "POST", async: true, data: form + '&id_motel='+EMPRESA,
 		url: DOMAIN + '/chatbot/save/agendamento',
 		success: function (data) {
 			$('.pre-load').hide();

@@ -13,7 +13,7 @@ class SuitesWidgetController extends Controller
 		$this->setParams($params);
 		
 		$suites = $suites = new SuitesWidget();
-		$suites = $suites->getSuites($this->params['id_empresa']);
+		$suites = $suites->getSuites($this->params['id_motel']);
 
 		if ($suites->getResult()) {
 			$this->render('pages/widget/suites_lista.twig', ['suites' => $suites->getResult()]);
@@ -116,7 +116,7 @@ class SuitesWidgetController extends Controller
 	{
 		$diaDaSemana = $this->diaSemana($_POST['dataselect']);
 		$precos = new SuitesWidget();
-		$precos = $precos->getSuitePrecos($_POST['id'], $_POST['id_empresa'], $diaDaSemana)->getResult();
+		$precos = $precos->getSuitePrecos($_POST['id'], $_POST['id_motel'], $diaDaSemana)->getResult();
 		$return = json_encode($precos);
 		echo $return;
 	}

@@ -9,14 +9,17 @@ use Agencia\Close\Services\Login\PermissionsService;
 use Agencia\Close\Models\Company;
 use Agencia\Close\Helpers\Result;
 use Agencia\Close\Conn\Read;
+use Agencia\Close\Models\Moteis\Moteis;
 use CoffeeCode\Router\Router;
 
 class Controller
 {
     protected TemplateAdapter $template;
     private Company $company;
+    private Moteis $moteis;
     public array $dataCompany;
     private array $dataDefault = [];
+    public array $moteis_list = [];
     protected Router $router;
     protected array $params;
     protected Result $result;
@@ -25,6 +28,7 @@ class Controller
     {
         $this->router = $router;
         $this->company = new Company();
+        $this->moteis = new Moteis();
         $this->template = new TemplateAdapter();
         $this->middleware();
     }
@@ -62,7 +66,7 @@ class Controller
     protected function setParams(array $params)
     {
         $this->params = $params;
-        if (isset($_SESSION['lugo_perfil_empresa'])) {
+        if (isset($_SESSION['busca_perfil_empresa'])) {
             $this->baseDataCompany();
         }
         $this->setDefault();
@@ -84,6 +88,7 @@ class Controller
 
     protected function getDefault(): array
     {
+
         return $this->dataDefault;
     }
 
@@ -95,18 +100,28 @@ class Controller
     private function baseDataCompany()
     {
         $company = $this->findDataCompany();
+        $moteis = $this->findMoteis();
+
+        if ($moteis->getResult()) {
+            $this->dataDefault['moteis'] = $moteis->getResult();
+        }
 
         if ($company->getResult()) {
             $this->dataDefault['dataCompany'] = $company->getResult()[0];
             $this->dataCompany = $company->getResult()[0];
         
-        } else {
         }
+        
+    }
+
+    private function findMoteis(): Read
+    {
+        return $this->moteis->getMoteisList();
     }
 
     private function findDataCompany(): Read
     {
-        return $this->company->findDataCompany($_SESSION['lugo_perfil_empresa']);
+        return $this->company->findDataCompany($_SESSION['busca_perfil_empresa']);
     }
 
      protected function requirePermission(string $permission) {

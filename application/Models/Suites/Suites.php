@@ -11,43 +11,43 @@ use Agencia\Close\Models\Model;
 class Suites extends Model 
 {
 
-	public function getSuites($id_empresa): Read
+	public function getSuites($id_motel): Read
     {
     	$read = new Read();
         $read->FullRead("SELECT suites.*, sp.valor FROM suites
                         LEFT JOIN ( SELECT id_suite, MIN(valor) AS valor FROM suites_precos GROUP BY id_suite) AS sp ON suites.id = sp.id_suite
-                        WHERE suites.id_empresa = :id_empresa AND suites.`status` <> 'Deletado' ORDER BY suites.id DESC;", "id_empresa={$id_empresa}");
+                        WHERE suites.id_motel = :id_motel AND suites.`status` <> 'Deletado' ORDER BY suites.id DESC;", "id_motel={$id_motel}");
         return $read;
     }
 
-    public function getSuite($id, $id_empresa): Read
+    public function getSuite($id, $id_motel): Read
     {
     	$read = new Read();
-        $read->FullRead("SELECT * FROM suites WHERE id = :id AND id_empresa = :id_empresa ORDER BY id DESC LIMIT 1", "id={$id}&id_empresa={$id_empresa}");
+        $read->FullRead("SELECT * FROM suites WHERE id = :id AND id_motel = :id_motel ORDER BY id DESC LIMIT 1", "id={$id}&id_motel={$id_motel}");
         return $read;
     }
 
-    public function getSuitePrecos($id_suite, $id_empresa): Read
+    public function getSuitePrecos($id_suite, $id_motel): Read
     {
     	$read = new Read();
-        $read->FullRead("SELECT * FROM suites_precos WHERE id_suite = :id_suite AND id_empresa = :id_empresa AND `status` = 'S' ORDER BY `ordem`, `id` ASC", "id_suite={$id_suite}&id_empresa={$id_empresa}");
+        $read->FullRead("SELECT * FROM suites_precos WHERE id_suite = :id_suite AND id_motel = :id_motel AND `status` = 'S' ORDER BY `ordem`, `id` ASC", "id_suite={$id_suite}&id_motel={$id_motel}");
         return $read;
     }
 
-    public function createDraft(array $params, $id_empresa): Read
+    public function createDraft(array $params, $id_motel): Read
     {
         //SALVA O RASCUNHO
         $create = new Create();
-        $params['id_empresa'] = $id_empresa;
+        $params['id_motel'] = $id_motel;
         $params['status'] = 'Rascunho';
         $create->ExeCreate('suites', $params);
         //RETORNA O ITEM SALVO
         $read = new Read();
-        $read->FullRead("SELECT * FROM suites WHERE id_empresa = :id_empresa ORDER BY id DESC LIMIT 1", "id_empresa={$id_empresa}");
+        $read->FullRead("SELECT * FROM suites WHERE id_motel = :id_motel ORDER BY id DESC LIMIT 1", "id_motel={$id_motel}");
         return $read;
     }
 
-    public function saveEdit(array $params, $id_empresa): Update
+    public function saveEdit(array $params, $id_motel): Update
     {
         //SALVA EDIÇÃO DA SUITE
         $update = new Update();
@@ -67,20 +67,20 @@ class Suites extends Model
             $params['promocao'] = '';
         }
 
-        $update->ExeUpdate('suites', $params, 'WHERE `id_empresa` = :id_empresa AND `id` = :id', "id_empresa={$id_empresa}&id={$id}");
+        $update->ExeUpdate('suites', $params, 'WHERE `id_motel` = :id_motel AND `id` = :id', "id_motel={$id_motel}&id={$id}");
         return $update;
     }
 
 
-    public function saveEditPrecos(array $precos, $id_suite, $id_empresa)
+    public function saveEditPrecos(array $precos, $id_suite, $id_motel)
     {
         $read = new Read();
-        $read->FullRead("UPDATE `suites_precos` SET `status` = 'N' WHERE  `id_empresa` = :id_empresa AND `id_suite` = :id_suite", "id_suite={$id_suite}&id_empresa={$id_empresa}");
+        $read->FullRead("UPDATE `suites_precos` SET `status` = 'N' WHERE  `id_motel` = :id_motel AND `id_suite` = :id_suite", "id_suite={$id_suite}&id_motel={$id_motel}");
 
         foreach ($precos as $preco)
         {
             $dias = implode(',', $preco['dias']);
-            $preco['id_empresa'] = $id_empresa;
+            $preco['id_motel'] = $id_motel;
             $preco['id_suite'] = $id_suite;
             $preco['dias'] = $dias;
             $preco['valor'] = $this->converterValoes($preco['valor']);
@@ -98,17 +98,17 @@ class Suites extends Model
         return $valorFormatado;
     }
 
-    public function getSuiteImages($id_suite, $id_empresa): Read
+    public function getSuiteImages($id_suite, $id_motel): Read
     {
         $read = new Read();
-        $read->FullRead("SELECT * FROM suites_imagens WHERE id_suite = :id_suite AND id_empresa = :id_empresa ORDER BY `order`,`id` DESC", "id_suite={$id_suite}&id_empresa={$id_empresa}");
+        $read->FullRead("SELECT * FROM suites_imagens WHERE id_suite = :id_suite AND id_motel = :id_motel ORDER BY `order`,`id` DESC", "id_suite={$id_suite}&id_motel={$id_motel}");
         return $read;
     }
 
-    public function excluirSuite($id_suite, $id_empresa)
+    public function excluirSuite($id_suite, $id_motel)
     {
         $read = new Read();
-        $read->FullRead("UPDATE `suites` SET `status` = 'Deletado' WHERE  `id_empresa` = :id_empresa AND `id` = :id_suite", "id_suite={$id_suite}&id_empresa={$id_empresa}");
+        $read->FullRead("UPDATE `suites` SET `status` = 'Deletado' WHERE  `id_motel` = :id_motel AND `id` = :id_suite", "id_suite={$id_suite}&id_motel={$id_motel}");
     }
     
 }

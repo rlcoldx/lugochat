@@ -64,6 +64,19 @@ class Read extends Conn {
     }
 
     /**
+     * <b>Obter resultado:</b> Retorna um array com todos os resultados obtidos. Envelope primário númérico. Para obter
+     * um resultado chame o índice getResult()[0]!
+     * @return ARRAY $this = Array ResultSet
+     */
+    public function getResultSingle() {
+        if($this->Result){
+            return $this->Result[0];
+        }else{
+            return [];
+        }
+    }
+
+    /**
      * <b>Contar Registros: </b> Retorna o número de registros encontrados pelo select!
      * @return INT $Var = Quantidade de registros encontrados
      */

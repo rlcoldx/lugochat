@@ -123,7 +123,7 @@ var openSuites = function() {
 
 		$.ajax({
 			type: "POST",
-			data: {'id_empresa' : EMPRESA},
+			data: {'id_motel' : EMPRESA},
 			url: DOMAIN + '/chat/suites/lista',
 			success: function(data) {
 

@@ -18,45 +18,45 @@ class Widget extends Model
         return $this->read;
     }
 
-    public function checkHistorico($id_empresa, $userID): Read
+    public function checkHistorico($id_motel, $userID): Read
     {
     	$this->read = new Read();
-        $this->read->FullRead("SELECT * FROM `chat_historico` WHERE id_empresa = :id_empresa AND id_user = :userID ORDER BY `data` ASC", "id_empresa={$id_empresa}&userID={$userID}");
+        $this->read->FullRead("SELECT * FROM `chat_historico` WHERE id_motel = :id_motel AND id_user = :userID ORDER BY `data` ASC", "id_motel={$id_motel}&userID={$userID}");
         return $this->read;
     }
 
-    public function loadPrimeira($id_empresa): Read
+    public function loadPrimeira($id_motel): Read
     {
     	$this->read = new Read();
-        $this->read->FullRead("SELECT * FROM `chat_bot` WHERE id_empresa = :id_empresa AND `primeira` = 'S' AND `status` = 'S' ORDER BY `id` ASC", "id_empresa={$id_empresa}");
+        $this->read->FullRead("SELECT * FROM `chat_bot` WHERE id_motel = :id_motel AND `primeira` = 'S' AND `status` = 'S' ORDER BY `id` ASC", "id_motel={$id_motel}");
         return $this->read;
     }
 
-    public function getPergunta($id_empresa, $id_pergunta): Read
+    public function getPergunta($id_motel, $id_pergunta): Read
     {
     	$this->read = new Read();
-        $this->read->FullRead("SELECT * FROM `chat_bot` WHERE id_empresa = :id_empresa AND (id = :id_pergunta OR parent = :id_pergunta) AND `status` = 'S' ORDER BY `parent` ASC", "id_empresa={$id_empresa}&id_pergunta={$id_pergunta}");
+        $this->read->FullRead("SELECT * FROM `chat_bot` WHERE id_motel = :id_motel AND (id = :id_pergunta OR parent = :id_pergunta) AND `status` = 'S' ORDER BY `parent` ASC", "id_motel={$id_motel}&id_pergunta={$id_pergunta}");
         return $this->read;
     }
 
-    public function getResposta($id_empresa, $id_pergunta): Read
+    public function getResposta($id_motel, $id_pergunta): Read
     {
     	$this->read = new Read();
-        $this->read->FullRead("SELECT * FROM `chat_bot` WHERE id_empresa = :id_empresa AND id = :id_pergunta  AND `status` = 'S' ORDER BY `parent` ASC", "id_empresa={$id_empresa}&id_pergunta={$id_pergunta}");
+        $this->read->FullRead("SELECT * FROM `chat_bot` WHERE id_motel = :id_motel AND id = :id_pergunta  AND `status` = 'S' ORDER BY `parent` ASC", "id_motel={$id_motel}&id_pergunta={$id_pergunta}");
         return $this->read;
     }
 
-    public function getProximaPergunta($id_empresa, $id_pergunta): Read
+    public function getProximaPergunta($id_motel, $id_pergunta): Read
     {
     	$this->read = new Read();
-        $this->read->FullRead("SELECT * FROM `chat_bot` WHERE id_empresa = :id_empresa AND parent = :id_pergunta AND `status` = 'S' ORDER BY `parent` ASC LIMIT 1", "id_empresa={$id_empresa}&id_pergunta={$id_pergunta}");
+        $this->read->FullRead("SELECT * FROM `chat_bot` WHERE id_motel = :id_motel AND parent = :id_pergunta AND `status` = 'S' ORDER BY `parent` ASC LIMIT 1", "id_motel={$id_motel}&id_pergunta={$id_pergunta}");
         return $this->read;
     }
 
-    public function getProximaResposta($id_empresa, $id_pergunta): Read
+    public function getProximaResposta($id_motel, $id_pergunta): Read
     {
     	$this->read = new Read();
-        $this->read->FullRead("SELECT * FROM `chat_bot` WHERE id_empresa = :id_empresa AND parent = :id_pergunta AND `status` = 'S' ORDER BY `parent` ASC", "id_empresa={$id_empresa}&id_pergunta={$id_pergunta}");
+        $this->read->FullRead("SELECT * FROM `chat_bot` WHERE id_motel = :id_motel AND parent = :id_pergunta AND `status` = 'S' ORDER BY `parent` ASC", "id_motel={$id_motel}&id_pergunta={$id_pergunta}");
         return $this->read;
     }
 

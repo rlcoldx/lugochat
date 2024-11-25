@@ -14,7 +14,7 @@ class Logon
     {
         $login = new Login();
         $result = $login->getUserByEmailAndPassword($email, $password);
-        if (($result->getResult()) AND ($result->getResult()[0]['tipo'] != '4') ) {
+        if (($result->getResult()) AND ($result->getResultSingle()['tipo'] != '4') ) {
             $this->actionsAfterFoundUser($result);
             return true;
         } else {

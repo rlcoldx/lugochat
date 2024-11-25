@@ -32,7 +32,13 @@ class HomeController extends Controller
     $check = new Home();
     $result = $check->checkAgendamentos($this->dataCompany['id']);
     $this->responseJson($result->getResult());
+  }
 
+  public function changeMotel($params)
+  {
+    $this->setParams($params);
+    $_SESSION['busca_perfil_empresa'] = $_POST['motel'];
+    $_SESSION['busca_perfil_tipo'] = 2;
   }
 
 }

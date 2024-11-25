@@ -1,12 +1,18 @@
-<!--**********************************
-    Header start
-***********************************-->
 <div class="header">
     <div class="header-content">
         <nav class="navbar navbar-expand">
             <div class="collapse navbar-collapse justify-content-between">
                 <div class="header-left">
-                    <div class="dashboard_bar"></div>
+
+					<div class="select-motel">
+                        <select class="form-control select2 text-uppercase" name="motel" id="select_motel" onchange="changeMotel(this.value)">
+                            <option value="1">SELECIONE O MOTEL</option>
+                            {% for motel in moteis %}
+                            <option value="{{ motel.id }}" {{ _session.busca_perfil_empresa == motel.id ? 'selected' }}>{{ motel.nome }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
                 </div>
                 <ul class="navbar-nav header-right">
 					<li class="nav-item dropdown notification_dropdown">
@@ -30,61 +36,6 @@
 											</div>
 										</div>
 									</li>
-									<li>
-										<div class="timeline-panel">
-											<div class="media mr-2 media-info">
-												KG
-											</div>
-											<div class="media-body">
-												<h6 class="mb-1">Resport created successfully</h6>
-												<small class="d-block">29 July 2020 - 02:26 PM</small>
-											</div>
-										</div>
-									</li>
-									<li>
-										<div class="timeline-panel">
-											<div class="media mr-2 media-success">
-												<i class="fa fa-home"></i>
-											</div>
-											<div class="media-body">
-												<h6 class="mb-1">Reminder : Treatment Time!</h6>
-												<small class="d-block">29 July 2020 - 02:26 PM</small>
-											</div>
-										</div>
-									</li>
-									 <li>
-										<div class="timeline-panel">
-											<div class="media mr-2">
-												<img alt="image" width="50" src="{{ PATH }}/view/assets/images/avatar/1.jpg">
-											</div>
-											<div class="media-body">
-												<h6 class="mb-1">Dr sultads Send you Photo</h6>
-												<small class="d-block">29 July 2020 - 02:26 PM</small>
-											</div>
-										</div>
-									</li>
-									<li>
-										<div class="timeline-panel">
-											<div class="media mr-2 media-danger">
-												KG
-											</div>
-											<div class="media-body">
-												<h6 class="mb-1">Resport created successfully</h6>
-												<small class="d-block">29 July 2020 - 02:26 PM</small>
-											</div>
-										</div>
-									</li>
-									<li>
-										<div class="timeline-panel">
-											<div class="media mr-2 media-primary">
-												<i class="fa fa-home"></i>
-											</div>
-											<div class="media-body">
-												<h6 class="mb-1">Reminder : Treatment Time!</h6>
-												<small class="d-block">29 July 2020 - 02:26 PM</small>
-											</div>
-										</div>
-									</li>
 								</ul>
 							</div>
                             <a class="all-notification" href="javascript:void(0)">Ver todas as Notificações <i class="ti-arrow-right"></i></a>
@@ -101,8 +52,8 @@
                     <li class="nav-item dropdown header-profile">
                         <a class="nav-link" href="javascript:void(0)" role="button" data-toggle="dropdown">
 							<div class="header-info">
-								<span class="text-black"><strong>{{ _session.lugo_perfil_nome }}</strong></span>
-								<p class="fs-12 mb-0 text-primary">{{ _session.lugo_perfil_cargo }}</p>
+								<span class="text-black"><strong>{{ _session.busca_perfil_nome }}</strong></span>
+								<p class="fs-12 mb-0 text-primary">{{ _session.busca_perfil_cargo }}</p>
 							</div>
                             <img src="{{ PATH }}/view/assets/images/profile/17.jpg" width="20" alt=""/>
                         </a>
@@ -126,6 +77,3 @@
         </nav>
     </div>
 </div>
-<!--**********************************
-    Header end ti-comment-alt
-***********************************-->

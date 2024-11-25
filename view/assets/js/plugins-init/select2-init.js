@@ -111,9 +111,6 @@
       return repo.full_name || repo.text;
   }
 
-
-
-
   // loading array data
   var data = [
       {
