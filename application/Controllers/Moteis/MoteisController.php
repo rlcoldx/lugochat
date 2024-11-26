@@ -36,7 +36,7 @@ class MoteisController extends Controller
   {
     $this->setParams($params);
 
-    if ($_SESSION['busca_perfil_tipo'] != 1 && $_SESSION['busca_perfil_tipo'] != 5) {
+    if ($_SESSION['busca_perfil_tipo'] != 1 && $_SESSION['busca_perfil_tipo'] != 2) {
       header("Location: ".DOMAIN);
       exit();
     }
