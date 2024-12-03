@@ -12,6 +12,8 @@ require  __DIR__ . '/pages/suites.php';
 require  __DIR__ . '/pages/equipe.php';
 require  __DIR__ . '/pages/cargos.php';
 require  __DIR__ . '/pages/chatbot.php';
+require  __DIR__ . '/pages/cupons.php';
+require  __DIR__ . '/pages/saques.php';
 
 //WIDGET
 require  __DIR__ . '/chatbot/inicio.php';

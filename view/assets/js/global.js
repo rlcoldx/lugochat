@@ -16,6 +16,20 @@ $(document).ready(function() {
 });
 
 // MODAL REMOTO
+$('body').on('click', '[data-bs-toggle="modal-remote"]', function(){
+	$(".modal-body").empty();
+	var link = $(this).data("remote");
+	var target = $(this).attr('data-bs-target');
+	$(target+' .modal-body').load(link);
+	$(target).modal('show');
+});
+
+$(document).on("hidden.bs.modal", ".modal:not(.local-modal)", function (e) {
+	$(e.target).removeData("bs.modal").find(".modal-body").empty();
+});
+
+
+// MODAL REMOTO
 $(document).on('click', '[data-bs-remote="modal"]', function(e) {
 	e.preventDefault();
 	let modalTarget = $(this).data('bs-target');

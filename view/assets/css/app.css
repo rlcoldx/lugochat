@@ -41828,3 +41828,8 @@ span.tag.label.label-info {
   color: #fff;
   margin-bottom: 5px;
 }
+.congratulation-medal {
+  position: absolute;
+  top: 0;
+  right: 25px;
+}

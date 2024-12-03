@@ -1,0 +1,74 @@
+{% extends "layout/layoutMaster.twig" %}
+
+{% block title %}Cupons{% endblock %}
+
+{% block body %}
+
+<div class="content-body">
+    <div class="container-fluid">
+    
+	    <div class="d-flex justify-content-between align-items-center mb-4">
+	        <div>
+	            <h3 class="content-title card-title mb-0">Cupons </h3>
+	        </div>
+	        <div>
+	            <a href="javascript:void(0)" data-bs-toggle="modal-remote" data-remote="{{ DOMAIN }}/cupons/add" data-bs-target="#cuponmodal" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> Add Novo</a>
+	        </div>
+	    </div>
+    
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="datatable" class="table dataTable">
+                        <thead>
+                            <tr role="row">
+                                <th class="sorting">Cupom</th>
+                                <th class="sorting">Valor</th>
+                                <th class="sorting_asc">Qtd. Usos</th>
+                                <th class="sorting_asc">Data de Expiração</th>
+                                <th class="sorting" width="80">Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for cupom in cupons %}
+                            <tr class="restaurante-{{ cupom.id }}">
+                                <td class="fw-bold text-uppercase">{{ cupom.codigo }}</td>
+                                <td>
+                                    {% if cupom.tipo_desconto == 'porcentagem' %}
+                                        {{ cupom.valor_desconto|round(0, 'floor') }}%
+                                    {% else %}
+                                        R$ {{ cupom.valor_desconto|number_format(2, ',', '.') }}
+                                    {% endif %}
+                                    <div class="text-capitalize"><small>{{ cupom.tipo_desconto|replace({'_': ' '}) }}</small></div>
+                                </td>
+                                <td><span title="Limite de Uso">{{ cupom.limite_uso }}</span> / <span title="Qtd. Usado">{{ cupom.quantidade_usos }}</span></td>
+                                <td>{{ cupom.data_expiracao|date("d/m/Y") }}</td>
+                                <td>
+                                    <div class="d-flex justify-content-end align-items-center">
+                                        {% if cupom.status_cupom == 'yes' %}<span class="px-3 py-2 badge me-1 bg-success px-2">Ativo</span>{% else %}<span class="px-3 py-2 badge me-1 bg-danger px-2">Inativo</span>{% endif %}
+                                        <a href="javascript:void(0)" data-bs-toggle="modal-remote" data-remote="{{ DOMAIN }}/cupons/edit/{{ cupom.id }}" data-bs-target="#cuponmodal" class="px-3 py-2 badge bg-primary me-1"><i class="fa fa-pencil"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="modal fade" id="cuponmodal" tabindex="-1" role="dialog" aria-labelledby="cuponmodalLabel">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-body"></div>
+        </div>
+    </div>
+</div>
+
+<script src="{{ DOMAIN }}/view/assets/vendor/datatables/js/jquery.dataTables.min.js"></script>
+<script src="{{ DOMAIN }}/view/assets/vendor/datatables/js/datatables.init.js"></script>
+<script src="{{ DOMAIN }}/view/assets/js/pages/cupons.js"></script>
+
+{% endblock %}

@@ -1,0 +1,46 @@
+<div class="border-bottom px-3 py-3 mb-2">
+    <h4 class="mb-0">SOLICITAR SAQUE</h4>
+</div>
+<div class="px-3 py-2 pt-0">
+    <form action="javascript:void(0);" method="POST" id="add_save_saque">
+       
+        <div class="mb-3">
+			<div class="input-group">
+				<span class="input-group-text">R$</span>
+				<input type="text" class="form-control money" placeholder="0,00"  name="valor" id="valor" onkeyup="checkV(this.value)" required="required">
+				<span class="input-group-text" title="O valor do saque não pode ser maior do que o saldo atual da sua carteira."><i class="fa-solid fa-square-question"></i></span>
+			</div>
+			<div class="valor-error text-danger"></div>
+        </div>
+
+        <div class="mb-3">
+			<label>Selecione sua Conta Bancaria</label>
+			<select class="form-select mb-1" name="id_conta_bancaria" id="conta_bancaria" required="required">
+				<option value="" selected>Selecione</option>
+				{% for conta in contas %}
+				<option 
+					value="{{ conta.id }}"
+					data-conta_banco="{{ conta.conta_banco }}"
+					data-banco_pix="{{ conta.banco_pix }}"
+					data-conta_ag="{{ conta.conta_ag }}"
+					data-conta_numero="{{ conta.conta_numero }}"
+					data-conta_tipo="{{ conta.conta_tipo }}"
+					data-conta_responsavel="{{ conta.conta_responsavel }}"
+					data-conta_cpf_cnpj="{{ conta.conta_cpf_cnpj }}">
+					{{ conta.conta_banco }} - {{ (conta.banco_pix == 'Banco') ? conta.conta_tipo : 'Pix' }}
+				</option>
+				{% endfor %}
+			</select>
+
+			<div class="conta-result text-success"></div>
+        </div>
+
+        <div class="col-md-12 col-sm-12 mt-3 pt-3 border-top mb-2">
+            <div class="d-flex justify-content-start w-100">
+                <button type="submit" id="salvar" class="btn btn-primary disabled">SALVAR SAQUE</button>
+            </div>
+        </div>
+
+    </form>
+</div>
+<script src="{{ PATH }}/view/assets/js/pages/saques.js"></script>
