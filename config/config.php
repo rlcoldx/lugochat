@@ -11,6 +11,18 @@ define('USER_MAIN', 'rafael_lugochat');
 define('PASS_MAIN', 'wU$S2Fam]N~{V4Ffia');
 define('DBSA_MAIN', 'rafael_lugochat');
 
-/// Payment Config
-define('MP_PUBLIC_KEY', 'TEST-0fd4102d-9527-4276-aa89-08b749830e42');
-define('MP_PRIVATE_KEY', 'TEST-7344792450155289-042218-5e5f4ef71382577709e50c9b4273c034-270137611');
+define('TOKEN', 'qgvCMRoHCTujhHswhiTyRALSY8QzRQyvlB0PWPqmuUpELHDf5vjirY04JQsaj3xx');
+define('ACCESSTOKEN', 'APP_USR-6619019503196756-111110-960e8da08d80ad993e73d4b3d423bd9f-263421911');
+
+@session_start();
+try {
+	$db = new PDO('mysql:host='.HOST_MAIN.';dbname='.USER_MAIN, USER_MAIN, PASS_MAIN);
+	$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+	if($e->getCode() == 1049){
+		echo "Banco de dados errado.";
+	}else{
+		echo $e->getMessage();
+	}
+}
+include('functions_app.php');

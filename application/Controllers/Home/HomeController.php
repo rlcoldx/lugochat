@@ -2,43 +2,43 @@
 
 namespace Agencia\Close\Controllers\Home;
 
-use Agencia\Close\Controllers\Controller;
 use Agencia\Close\Models\Home\Home;
+use Agencia\Close\Controllers\Controller;
+use Agencia\Close\Models\Reserva\Reserva;
 use Agencia\Close\Enums\Permissions\ProductsPermissions;
 
 class HomeController extends Controller
 {	
-  public function index($params)
+  public function index()
   {
-    $this->setParams($params);
-    $this->render('pages/home/home.twig', ['page' => 'home', 'titulo' => 'Página Inicial']);
-  }
 
-  public function tempermissao() {
-    echo 'tem permissao';
-    $this->requirePermission(ProductsPermissions::$listProduct);
-    die();
-  }
+    $model = new Home();
+    $totalReservas = $model->getTotalReservas();
+    if ($totalReservas->getResult()){
+      $totalReservas = $totalReservas->getResult()[0];
+    }
 
-  public function sempermissao() {
-    $this->requirePermission(ProductsPermissions::$createProduct);
-    echo 'você não pode ver isso';
-    die();
-  }
+    $totalValorMes = $model->getTotalValorMes()->getResult()[0];
+    $totalValor = $model->getTotalValor()->getResult()[0];
 
-  public function check_agendamentos($params) 
-  {
-    $this->setParams($params);
-    $check = new Home();
-    $result = $check->checkAgendamentos($this->dataCompany['id']);
-    $this->responseJson($result->getResult());
-  }
+    $reservasDias = $model->getRegistrosPorDiaDaSemana();
 
-  public function changeMotel($params)
-  {
-    $this->setParams($params);
-    $_SESSION['busca_perfil_empresa'] = $_POST['motel'];
-    $_SESSION['busca_perfil_tipo'] = 2;
+    $suidesReservadas = $model->getSuidesReservadas()->getResult();
+
+    $reservas = new Reserva();
+    $limit = 5;
+		$reservas = $reservas->getReservas($limit)->getResult();
+
+    $this->render('pages/home/home.twig', [
+      'page' => 'home', 
+      'titulo' => 'Página Inicial', 
+      'totalReservas' => $totalReservas, 
+      'totalValorMes' => $totalValorMes, 
+      'totalValor' => $totalValor, 
+      'reservasDias' => $reservasDias,
+      'suidesReservadas' => $suidesReservadas,
+      'reservas' => $reservas,
+    ]);
   }
 
 }

@@ -1,0 +1,162 @@
+{% extends "layout/layoutMaster.twig" %}
+
+{% block title %}Categorias{% endblock %}
+
+{% block body %}
+
+<div class="content-body">
+    <div class="container-fluid">
+
+        <section class="content-main">
+            
+            <div class="content-header">
+                <div>
+                    <h3 class="content-title card-title">Categorias </h3>
+                </div>
+                <div>
+                    {# <a href="{{ DOMAIN }}/painel/moteis/new" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add Novo</a> #}
+                </div>
+            </div>
+
+            <section>
+
+                <div class="product_archive">
+
+                    <div class="row">
+
+                        <!-- NOVA CATEGORIA -->
+                        <div class="col-md-4">
+
+                            <div class="card">
+                                <div class="card-body">
+
+                                    <form method="POST" action="javascript:void(0)" id="save_category">
+
+                                        <div class="form-group mb-4">
+                                            <label class="form-label">Nome</label>
+                                            <input name="nome" id="nome" type="text" value="{{ editar.nome }}" size="40" aria-required="true" class="form-control" placeholder="Nome da Categoria" onkeyup="gerarSlug($(this).val())">
+                                        </div>
+
+                                        <div class="form-group mb-4">
+                                            <label class="form-label">Slug</label>
+                                            <input name="slug" id="slug" type="text" value="{{ editar.slug }}" size="40" class="form-control cat_slug" onkeyup="gerarSlug($(this).val())">
+                                            <small class="opacity-50">O “slug” é uma versão amigável do URL. Normalmente, é todo em minúsculas e contém apenas letras, números e hífens.</small>
+                                        </div>
+
+                                        <div class="form-group mb-4">
+                                            <div class="row">
+                                                <div class="col-md-6 text-center">
+                                                    <img id="image_preview" src="{{ editar.cat_imagem != '' ? PATH ~ '/uploads/' ~ editar.cat_imagem : 'https://placehold.co/600x420' }}" class="img-thumb img-fluid" width="600" height="420" />
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label label for="category_icon" class="form-label">Selecione um icone para a categoria</label>
+                                                    <input class="form-control" type="file" id="category_icon" name="category_icon" onchange="document.getElementById('image_preview').src = window.URL.createObjectURL(this.files[0])">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <p class="submit mt-4">
+                                            {% if editar.id %}<input type="hidden" id="id" name="id" value="{{ editar.id }}">{% endif %}
+                                            <input type="hidden" id="action" name="action" value="{{ editar.id ? 'editar' : 'cadastrar' }}">
+                                            <input type="submit" id="add-categoria" class="btn btn-primary" value="{{ editar.id == '' ? 'ADICIONAR NOVA CATEGORIA' : 'SALVAR ALTERAÇÕES' }}">
+                                        </p>
+
+                                    </form>
+
+                                </div>
+                            </div>
+                            
+                        </div>
+
+
+                        <!-- LISTA DE CATEGORIAS -->
+                        <div class="col-md-8">
+                            <div class="card">
+                                <div class="card-body">
+
+                                    <div class="lista">
+                                        <div class="p-0">
+                                            <div class="product_archive filter-bar">
+
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="">Nome</th>
+                                                            <th class="">Slug</th>
+                                                            <th class="">Nível</th>
+                                                        </tr>
+                                                    </thead>
+
+                                                    <tbody>
+
+                                                        <tr>
+                                                            <td class="">
+                                                                <span class="title link">SEM CATEGORIA</span>
+                                                                <div class="clearfix"></div>
+                                                            </td>
+                                                            <td>—</td>
+                                                            <td>—</td>
+                                                        </tr>
+
+                                                        {% macro tableListCat(categorias) %}
+                                                            {% for categoria in categorias %}
+                                                                <tr id="cat_item_{{ categoria.id }}">
+                                                                    <td>
+                                                                        <a href="#" class="title">
+                                                                            {% if categoria.nivel > 0 %}
+                                                                                {% for space in 0..(categoria.nivel -1) %}— {% endfor %}
+                                                                            {% endif %}
+                                                                            {{ categoria.nome }}
+                                                                        </a>
+                                                                        <div class="row-actions opacity-50">
+                                                                            <span class="edit"><a href="{{ DOMAIN }}/moteis/categorias/editar/{{ categoria.id }}">Editar</a> | </span>
+                                                                            <span class="delete"><a href="javascript:void(0);" onclick="deletar_cat({{ categoria.id }});" class="delete-tag text-warning">Excluir <i class="fa-solid fa-circle-exclamation" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Precisa finalizar"></i></a></span>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>{{ categoria.slug }}</td>
+                                                                    <td>Nível {{ categoria.nivel }}</td>
+                                                                </tr>
+                                                                {% if categoria.children %}{{ _self.tableListCat(categoria.children) }}{% endif %}
+                                                                
+                                                            {% endfor %}
+                                                        {% endmacro %}
+
+                                                        {% if categorias %}
+                                                            {{ _self.tableListCat(categorias) }}
+                                                        {% endif %}
+
+                                                    </tbody>
+                                                </table>
+
+
+                                            </div>                                                  
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group edit-term-notes">
+                                        <p>
+                                            <strong>Nota:</strong><br>
+                                            Excluindo uma categoria não exclui os moteis naquela categoria. Ao invés disso, moteis que eram atribuídos apenas a categoria deletada serão atribuídos a categoria <strong>Sem categoria</strong>.
+                                        </p>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </section>
+
+    </div>
+</div>
+
+<script src="{{ DOMAIN }}/view/assets/vendor/datatables/js/jquery.dataTables.min.js"></script>
+<script src="{{ DOMAIN }}/view/assets/vendor/datatables/js/datatables.init.js"></script>
+<script src="{{ DOMAIN }}/view/assets/js/pages/moteis-categorias.js"></script>
+
+{% endblock %}

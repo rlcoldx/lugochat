@@ -1,0 +1,70 @@
+{% extends "layout/layoutMaster.twig" %}
+
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block body %}
+
+<div class="content-body">
+
+    <link rel="stylesheet" href="{{ DOMAIN }}/view/assets/vendor/froala/css/froala_editor.min.css">
+    
+    <div class="container-fluid">
+        <div class="page-titles">
+            <div class="d-flex flex-wrap align-items-center justify-content-between">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ DOMAIN }}">Home</a></li>
+                    <li class="breadcrumb-item active"><a href="javascript:void(0)">{{ titulo }}</a></li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+            	<form method="post" action="javascript:void(0)" id="save_config">
+                    <div class="row mb-3">
+                        <div class="col-md-8">
+                            <label for="endereco" class="form-label">Endereço</label>
+                            <input class="form-control" id="endereco" value="{{ config.endereco }}" name="endereco" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" value="{{ config.email }}" name="email" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="telefone" class="form-label">Telefone</label>
+                            <input type="text" class="form-control" id="telefone" value="{{ config.telefone }}" name="telefone" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="zap" class="form-label">WhatsApp</label>
+                            <input type="text" class="form-control" id="zap" value="{{ config.zap }}" name="zap" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="ramal" class="form-label">Ramal</label>
+                            <input type="text" class="form-control" id="ramal" value="{{ config.ramal }}" name="ramal">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="google" class="form-label">Google Maps Link</label>
+                        <textarea class="form-control" id="google" name="google" rows="3" required>{{ config.google }}</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="waze" class="form-label">Waze Link</label>
+                        <textarea class="form-control" id="waze"  name="waze" rows="3" required>{{ config.waze }}</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="possuem" class="form-label">Possuem</label>
+                        <textarea class="form-control" id="possuem" name="possuem" rows="3">{{ config.possuem }}</textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="salvar">Salvar Configurações</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+</div>
+<script src="{{ DOMAIN }}/view/assets/vendor/froala/js/froala_editor.pkgd.min.js"></script>
+<script src='{{ DOMAIN }}/view/assets/vendor/froala/js/languages/pt_br.js'></script>
+<script src="{{ DOMAIN }}/view/assets/js/pages/config.js"></script>
+{% endblock %}

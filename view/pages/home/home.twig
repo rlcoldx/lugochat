@@ -4,79 +4,40 @@
 
 {% block body %}
 
-<div class="content-body">    
+<div class="content-body">
     <!-- row -->
     <div class="container-fluid">
-
-        <!-- Add Order -->
-        <div class="modal fade" id="addOrderModalside">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Add Event</h5>
-                        <button type="button" class="close" data-dismiss="modal"><span>&times;</span>
-                        </button>
-                    </div>
-
-                    <div class="modal-body">
-                        <form>
-                            <div class="form-group">
-                                <label class="text-black font-w500">Event Name</label>
-                                <input type="text" class="form-control">
-                            </div>
-                            <div class="form-group">
-                                <label class="text-black font-w500">Event Date</label>
-                                <input type="date" class="form-control">
-                            </div>
-                            <div class="form-group">
-                                <label class="text-black font-w500">Description</label>
-                                <input type="text" class="form-control">
-                            </div>
-                            <div class="form-group">
-                                <button type="button" class="btn btn-primary">Create</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
         <div class="row">
             <div class="col-xl-3 col-xxl-4">
                 <div class="row">
                     <div class="col-xl-12 col-md-6">
                         <div class="card">
                             <div class="card-header border-0 pb-0">
-                                <h4 class="fs-20">Reservas</h4>
-                                <select class="form-control style-1 default-select ">
-                                    <option>Essa Semana</option>
-                                    <option>Next Week</option>
-                                    <option>This Month</option>
-                                    <option>Next Month</option>
-                                </select>
+                                <h4 class="fs-20">Status de Reservas</h4>
                             </div>
                             <div class="card-body">
-                                <div id="donutChart"></div>
+                                <div id="donutChart" data-aprovadas="{{ totalReservas.total_reservas_aprovadas }}" data-nao-concluidas="{{ totalReservas.total_reservas_nao_concluidas }}" data-recusadas="{{ totalReservas.total_reservas_recusadas }}"></div>
                                 <div class="d-flex justify-content-between mt-4">
                                     <div class="pr-2">
                                         <svg width="20" height="8" viewBox="0 0 20 8" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <rect width="20" height="8" rx="4" fill="#214BB8"/>
                                         </svg>
-                                        <h4 class="fs-18 text-black mb-1 font-w600">1500</h4>
-                                        <span class="fs-14">Solicitações</span>
-                                    </div>
-                                    <div class="pr-2">
-                                        <svg width="20" height="8" viewBox="0 0 20 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <rect width="20" height="8" rx="4" fill="#FE634E"/>
-                                        </svg>
-                                        <h4 class="fs-18 text-black mb-1 font-w600">1200</h4>
-                                        <span class="fs-14">Concluídas</span>
+                                        <h4 class="fs-18 mb-1 font-w600">{{ totalReservas.total_reservas_aprovadas }}</h4>
+                                        <span class="fs-14">Pagas</span>
                                     </div>
                                     <div class="">
                                         <svg width="20" height="8" viewBox="0 0 20 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <rect width="20" height="8" rx="4" fill="#45ADDA"/>
+                                            <rect width="20" height="8" rx="4" fill="#ffc107"/>
                                         </svg>
-                                        <h4 class="fs-18 text-black mb-1 font-w600">300</h4>
-                                        <span class="fs-14">Desistências</span>
+                                        <h4 class="fs-18 mb-1 font-w600">{{ totalReservas.total_reservas_nao_concluidas }}</h4>
+                                        <span class="fs-14">Não pagas</span>
+                                    </div>
+                                    <div class="pr-2">
+                                        <svg width="20" height="8" viewBox="0 0 20 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <rect width="20" height="8" rx="4" fill="#dc3545"/>
+                                        </svg>
+                                        <h4 class="fs-18 mb-1 font-w600">{{ totalReservas.total_reservas_recusadas }}</h4>
+                                        <span class="fs-14">Recusadas</span>
                                     </div>
                                 </div>
                             </div>
@@ -85,62 +46,25 @@
                     <div class="col-xl-12 col-md-6">
                         <div class="card">
                             <div class="card-header border-0 pb-0">
-                                <h4 class="fs-20">Atendimentos</h4>
-                                <select class="form-control style-1 default-select ">
-                                    <option>Essa Semana</option>
-                                    <option>Next Week</option>
-                                    <option>This Month</option>
-                                    <option>Next Month</option>
-                                </select>
+                                <h4 class="fs-20">Suítes mais Reservadas</h4>
                             </div>
                             <div class="card-body pb-0 dz-scroll height630 loadmore-content" id="latestSalesContent">
+                                {% for item in suidesReservadas %}
                                 <div class="pb-3 mb-3 border-bottom">
-                                    <p class="font-w600"><a href="event.html" class="text-black">The Story’s of Danau Toba (Drama Theater)</a></p>
                                     <div class="d-flex align-items-end">
+                                        {% if item.imagem %}
+                                        <img src="{{ item.imagem }}" alt="" width="42" class="rounded-circle mr-2">
+                                        {% else %}
                                         <img src="{{ PATH }}/view/assets/images/profile/20.jpg" alt="" width="42" class="rounded-circle mr-2">
+                                        {% endif %}
                                         <div class="mr-auto">
-                                            <h4 class="fs-14 mb-0"><a href="app-profile.html" class="text-black">Steffany Humble</a></h4>
-                                            <span class="fs-12">2m atrás</span>
+                                            <h4 class="fs-14 mb-0">{{ item.nome_suite }}</h4>
+                                            <span class="fs-12">R$ {{ item.menor_valor|number_format(2, ',', '.') }}</span>
                                         </div>
-                                        <span class="badge badge-sm light badge-primary">4 Ticket</span>
+                                        <span class="badge badge-sm light badge-primary">{{ item.total_reservas }} Reservas</span>
                                     </div>
                                 </div>
-                                <div class="pb-3 mb-3 border-bottom">
-                                    <p class="font-w600"><a href="event.html" class="text-black">Envato Author SF Meetup</a></p>
-                                    <div class="d-flex align-items-end">
-                                        <img src="{{ PATH }}/view/assets/images/profile/21.jpg" alt="" width="42" class="rounded-circle mr-2">
-                                        <div class="mr-auto">
-                                            <h4 class="fs-14 mb-0"><a href="app-profile.com" class="text-black">Jacob Swing Swing</a></h4>
-                                            <span class="fs-12">6h atrás</span>
-                                        </div>
-                                        <span class="badge badge-sm light badge-primary">2 Ticket</span>
-                                    </div>
-                                </div>
-                                <div class="pb-3 mb-3 border-bottom">
-                                    <p class="font-w600"><a href="event.html" class="text-black">Envato Atuhor Community Fun Hiking at Sibayak Mountaint</a></p>
-                                    <div class="d-flex align-items-end">
-                                        <img src="{{ PATH }}/view/assets/images/profile/22.jpg" alt="" width="42" class="rounded-circle mr-2">
-                                        <div class="mr-auto">
-                                            <h4 class="fs-14 mb-0"><a href="app-profile.com" class="text-black">Robert Carloz</a></h4>
-                                            <span class="fs-12">10h atrás</span>
-                                        </div>
-                                        <span class="badge badge-sm light badge-primary">1 Ticket</span>
-                                    </div>
-                                </div>
-                                <div class="pb-3 mb-3 border-bottom">
-                                    <p class="font-w600"><a href="event.html" class="text-black">Indonesia Envato Authors National Meetup</a></p>
-                                    <div class="d-flex align-items-end">
-                                        <img src="{{ PATH }}/view/assets/images/profile/23.jpg" alt="" width="42" class="rounded-circle mr-2">
-                                        <div class="mr-auto">
-                                            <h4 class="fs-14 mb-0"><a href="app-profile.com" class="text-black">Kevin Stefanus</a></h4>
-                                            <span class="fs-12">2m atrás</span>
-                                        </div>
-                                        <span class="badge badge-sm light badge-primary">1 Ticket</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-footer text-center border-0">
-                                <a class="btn btn-primary btn-sm dz-load-more" id="latestSales" href="javascript:void(0)" rel="ajax/latest-sales.html">View More</a>
+                                {% endfor %}                                
                             </div>
                         </div>
                     </div>
@@ -153,14 +77,13 @@
                             <div class="card-body">
                                 <div class="d-flex align-items-end">
                                     <div>
-                                        <p class="fs-14 mb-1">Novas Reservas</p>
-                                        <span class="fs-35 text-black font-w600">93
+                                        <p class="fs-14 mb-1">Total de Vendas desse Mês</p>
+                                        <span class="fs-35  font-w600">R$ {{ totalValorMes.total_vendas|number_format(2, ',', '.') }}
                                             <svg class="ml-1" width="19" height="12" viewBox="0 0 19 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <path d="M2.00401 11.1924C0.222201 11.1924 -0.670134 9.0381 0.589795 7.77817L7.78218 0.585786C8.56323 -0.195262 9.82956 -0.195262 10.6106 0.585786L17.803 7.77817C19.0629 9.0381 18.1706 11.1924 16.3888 11.1924H2.00401Z" fill="#33C25B"/>
                                             </svg>
                                         </span>
                                     </div>
-                                    <canvas class="lineChart" id="chart_widget_2" height="85"></canvas>
                                 </div>
                             </div>
                         </div>
@@ -170,173 +93,129 @@
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
-                                        <p class="fs-14 mb-1">Estimativa Mensal</p>
-                                        <span class="fs-35 text-black font-w600">150
+                                        <p class="fs-14 mb-1">Total de Vendas Geral</p>
+                                        <span class="fs-35  font-w600">R$ {{ totalValor.total_vendas|number_format(2, ',', '.') }}
                                             <svg class="ml-1" width="19" height="12" viewBox="0 0 19 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <path d="M2.00401 11.1924C0.222201 11.1924 -0.670134 9.0381 0.589795 7.77817L7.78218 0.585786C8.56323 -0.195262 9.82956 -0.195262 10.6106 0.585786L17.803 7.77817C19.0629 9.0381 18.1706 11.1924 16.3888 11.1924H2.00401Z" fill="#33C25B"/>
                                             </svg>
                                         </span>
                                     </div>
-                                    <div class="d-inline-block ml-auto position-relative donut-chart-sale">
-                                        <span class="donut" data-peity='{ "fill": ["rgb(254, 99, 78)", "rgba(244, 244, 244, 1)"],   "innerRadius": 31, "radius": 10}'>6/8</span>
-                                        <small class="text-secondary">80%</small>
-                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-4 col-xxl-12 col-lg-4">
-                        <div class="card">
-                            <div class="card-header align-items-start pb-0 border-0">   
-                                <div>
-                                    <h4 class="fs-16 mb-0 text-black font-w600">Base Mensal</h4>
-                                    <span class="fs-12">Comparisson</span>
-                                </div>
-                                <select class="form-control style-1 default-select ">
-                                    <option>Dia</option>
-                                    <option>Mês</option>
-                                    <option>Semana</option>
-                                </select>
-                            </div>
-                            <div class="card-body pt-0">
-                                <canvas id="widgetChart1" height="50"></canvas>
                             </div>
                         </div>
                     </div>
                     <div class="col-xl-12">
                         <div class="card" id="sales-revenue">
                             <div class="card-header pb-0 d-block d-sm-flex border-0">
-                                <h3 class="fs-20 text-black mb-0">Gráficos de Reservas</h3>
-                                <div class="card-action revenue-tabs mt-3 mt-sm-0">
-                                    <ul class="nav nav-tabs" role="tablist">
-                                        <li class="nav-item">
-                                            <a class="nav-link active" data-toggle="tab" href="#monthly" role="tab" aria-selected="false">
-                                                Mês
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" data-toggle="tab" href="#weekly" role="tab" aria-selected="false">
-                                                Semana
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" data-toggle="tab" href="#today" role="tab" aria-selected="true">
-                                                Dia
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
+                                <h3 class="fs-20 mb-0">Quantidade de Reservas por dia da semana</h3>
                             </div>
                             <div class="card-body">
-                                <div class="tab-content" id="myTabContent">
-                                    <div class="tab-pane fade show active" id="user" role="tabpanel">
-                                        <canvas id="revenue" class="chartjs"></canvas>
-                                    </div>
-                                </div>
+                                <div id="reservas_dias"></div>
+                                <script>
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        var dataQuantidades = [];
+                                        var dataCategorias = [];
+
+                                        {% for item in reservasDias %}
+                                            dataQuantidades.push({{ item.quantidade|round(0, 'floor') }});
+                                            dataCategorias.push('{{ item.dia_da_semana }}');
+                                        {% endfor %}
+
+                                        var options = {
+                                            series: [{
+                                                name: 'Registros',
+                                                data: dataQuantidades
+                                            }],
+                                            chart: {
+                                                type: 'bar',
+                                                height: 350
+                                            },
+                                            plotOptions: {
+                                                bar: {
+                                                    distributed: true,
+                                                    horizontal: false,
+                                                    columnWidth: '55%',
+                                                    endingShape: 'rounded'
+                                                }
+                                            },
+                                            dataLabels: {
+                                                enabled: false
+                                            },
+                                            xaxis: {
+                                                categories: dataCategorias
+                                            },
+                                            legend: {
+                                                position: 'top'
+                                            },
+                                            colors: ['#00E396', '#FEB019', '#FF4560', '#775DD0', '#008FFB', '#00D9E9', '#FF7F00'],
+                                            theme: {
+                                                mode: 'dark'
+                                            }
+                                        };
+
+                                        var chart = new ApexCharts(document.querySelector("#reservas_dias"), options);
+                                        chart.render();
+                                    });
+                                </script>
+
                             </div>
                         </div>
                     </div>
                     <div class="col-xl-12">
                         <div class="card">
                             <div class="card-header border-0 pb-sm-0 pb-5">
-                                <h4 class="fs-20">Lista de últimas reservas</h4>
-                                <div class="dropdown custom-dropdown mb-0">
-                                    <div data-toggle="dropdown">
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M12 12.9999C12.5523 12.9999 13 12.5522 13 11.9999C13 11.4477 12.5523 10.9999 12 10.9999C11.4477 10.9999 11 11.4477 11 11.9999C11 12.5522 11.4477 12.9999 12 12.9999Z" stroke="#7E7E7E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M12 5.99994C12.5523 5.99994 13 5.55222 13 4.99994C13 4.44765 12.5523 3.99994 12 3.99994C11.4477 3.99994 11 4.44765 11 4.99994C11 5.55222 11.4477 5.99994 12 5.99994Z" stroke="#7E7E7E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M12 19.9999C12.5523 19.9999 13 19.5522 13 18.9999C13 18.4477 12.5523 17.9999 12 17.9999C11.4477 17.9999 11 18.4477 11 18.9999C11 19.5522 11.4477 19.9999 12 19.9999Z" stroke="#7E7E7E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                        </svg>
-                                    </div>
-                                    <div class="dropdown-menu dropdown-menu-right">
-                                        <a class="dropdown-item" href="javascript:void(0);">Details</a>
-                                        <a class="dropdown-item text-danger" href="javascript:void(0);">Cancel</a>
-                                    </div>
-                                </div>
+                                <h4 class="fs-20">Lista de últimas Reservas</h4>
                             </div>
                             <div class="card-body">
-                                <div class="event-bx owl-carousel">
-                                    <div class="items">
-                                        <div class="image-bx">
-                                            <img src="{{ PATH }}/view/assets/events/1.png" alt="">
-                                            <div class="info">
-                                                <p class="fs-18 font-w600"><a href="event-detail.html" class="text-black">International Live Choice Festivals (2020)</a></p>
-                                                <span class="fs-14 text-black d-block mb-3">Manchester, London</span>
-                                                <p class="fs-12">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad mini</p>
-                                                <ul>
-                                                    <li><i class="las la-dollar-sign"></i>$124,00</li>
-                                                    <li><i class="las la-calendar"></i>June 20, 2020</li>
-                                                    <li><i class="fa fa-ticket"></i>561 pcs</li>
-                                                    <li><i class="las la-clock"></i>08:35 AM</li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="items">
-                                        <div class="image-bx">
-                                            <img src="{{ PATH }}/view/assets/events/3.png" alt="">
-                                            <div class="info">
-                                                <p class="fs-18 font-w600"><a href="event-detail.html" class="text-black">Envato Atuhor Community Fun Hiking at Sibayak Mt.</a></p>
-                                                <span class="fs-14 text-black d-block mb-3">London, United Kingdom</span>
-                                                <p class="fs-12">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad mini</p>
-                                                <ul>
-                                                    <li><i class="las la-dollar-sign"></i>$124,00</li>
-                                                    <li><i class="las la-calendar"></i>June 20, 2020</li>
-                                                    <li><i class="fa fa-ticket"></i>561 pcs</li>
-                                                    <li><i class="las la-clock"></i>08:35 AM</li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="items">
-                                        <div class="image-bx">
-                                            <img src="{{ PATH }}/view/assets/events/1.png" alt="">
-                                            <div class="info">
-                                                <p class="fs-18 font-w600"><a href="event-detail.html" class="text-black">International Live Choice Festivals (2020)</a></p>
-                                                <span class="fs-14 text-black d-block mb-3">Manchester, London</span>
-                                                <p class="fs-12">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad mini</p>
-                                                <ul>
-                                                    <li><i class="las la-dollar-sign"></i>$124,00</li>
-                                                    <li><i class="las la-calendar"></i>June 20, 2020</li>
-                                                    <li><i class="fa fa-ticket"></i>561 pcs</li>
-                                                    <li><i class="las la-clock"></i>08:35 AM</li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="items">
-                                        <div class="image-bx">
-                                            <img src="{{ PATH }}/view/assets/events/2.png" alt="">
-                                            <div class="info">
-                                                <p class="fs-18 font-w600"><a href="event-detail.html" class="text-black">Envato Indonesian Authors Meetup 2020</a></p>
-                                                <span class="fs-14 text-black d-block mb-3">Medan, Indonesia</span>
-                                                <p class="fs-12">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad mini</p>
-                                                <ul>
-                                                    <li><i class="las la-dollar-sign"></i>$124,00</li>
-                                                    <li><i class="las la-calendar"></i>June 20, 2020</li>
-                                                    <li><i class="fa fa-ticket"></i>561 pcs</li>
-                                                    <li><i class="las la-clock"></i>08:35 AM</li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="items">
-                                        <div class="image-bx">
-                                            <img src="{{ PATH }}/view/assets/events/3.png" alt="">
-                                            <div class="info">
-                                                <p class="fs-18 font-w600"><a href="event-detail.html" class="text-black">Envato Atuhor Community Fun Hiking at Sibayak Mt.</a></p>
-                                                <span class="fs-14 text-black d-block mb-3">London, United Kingdom</span>
-                                                <p class="fs-12">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad mini</p>
-                                                <ul>
-                                                    <li><i class="las la-dollar-sign"></i>$124,00</li>
-                                                    <li><i class="las la-calendar"></i>June 20, 2020</li>
-                                                    <li><i class="fa fa-ticket"></i>561 pcs</li>
-                                                    <li><i class="las la-clock"></i>08:35 AM</li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                <table id="datatable" class="table dataTable">
+                                    <thead>
+                                        <tr>
+                                            <th class="d-none" width="50"></th>
+                                            <th>Cliente</th>
+                                            <th>Reserva</th>
+                                            <th>Período</th>
+                                            <th width="200">Pagamento</th>
+                                            <th width="140">Status</th>
+                                            <th class="text-end" width="50">Ação</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for reserva in reservas %}
+                                        <tr class="produto-{{ reserva.id }}">
+                                            <td class="d-none" width="50">#{{ loop.index }}</td>
+                                            <td>
+                                                <div class="fw-bold fs-6">{{ reserva.nome }}</div>
+                                                <div>{{ reserva.telefone }}</div>                                
+                                            </td>
+                                            <td>
+                                                <div class="fw-bold fs-6">{{ reserva.suite_nome }}</div>
+                                                <div>R$ {{ reserva.valor_reserva|number_format(2, ',', '.') }}</div>
+                                            </td>
+                                            <td>
+                                                <div class="fw-bold fs-6">{{ reserva.data_reserva|date("m/d/Y") }}</div>
+                                                <div class="d-flex justify-content-start flex-wrap">
+                                                    <div data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Horário de Chegada"><i class="fa-solid fa-right-to-bracket"></i> {{ reserva.chegada_reserva }}</div>
+                                                    <span class="mx-2">---</span>
+                                                    <div data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Período de Permanência"><i class="fa-solid fa-clock"></i> {{ reserva.periodo_reserva }}</div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-{{ reserva.pagamento_status|payStatusColor }} py-1 ms-0 ms-md-1">{{ reserva.pagamento_status|payStatus }}</span>                                  
+                                            </td>
+                                            <td>
+                                                <a class="badge bg-{{ reserva.status_reserva }} py-1" href="javascript:void(0)" data-bs-remote="{{ DOMAIN }}/reservas/status/{{ reserva.id }}" data-bs-toggle="offcanvas" data-bs-target="#statusReserva">
+                                                    <i class="fa-solid fa-pen-to-square"></i> {{ reserva.status_reserva }}
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex justify-content-end">
+                                                    <a href="{{ DOMAIN }}/reserva/{{ reserva.id }}" class="btn btn-primary btn-sm"><i class="fa fa-eye"></i></a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>

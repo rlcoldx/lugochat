@@ -1,0 +1,46 @@
+<div class="offcanvas-header px-0 border-bottom">
+    <h5 class="offcanvas-title" id="offcanvasRightLabel">Status da Reserva</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+</div>
+<div class="mt-2">
+    
+    <form action="javascript:void(0)" method="POST" id="edit_reserva"  enctype="multipart/form-data">
+        <div class="form-load"><i class="fa-solid fa-spinner fa-spin-pulse"></i></div>
+        <div class="text-center w-100 my-3"><label class="form-label text-warning">Verifique com cuidado a Reserva</label></div>
+
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item py-2 px-0 d-flex justify-content-between align-items-center">
+                Suíte Escolhida <span class="badge text-bg-primary rounded-pill">{{ reserva.suite_nome }}</span>
+            </li>
+            <li class="list-group-item py-2 px-0 d-flex justify-content-between align-items-center">
+                Valor da Reserva
+                <span class="badge text-bg-primary rounded-pill">R$ {{ reserva.valor_reserva|number_format(2, ',', '.') }}</span>
+            </li>
+            <li class="list-group-item py-2 px-0 d-flex justify-content-between align-items-center">
+                Data da Reserva
+                <span class="badge text-bg-primary rounded-pill">{{ reserva.data_reserva|date("m/d/Y") }}</span>
+            </li>
+            <li class="list-group-item py-2 px-0 d-flex justify-content-between align-items-center">
+                <div data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Horário de Chegada"><i class="fa-solid fa-right-to-bracket"></i> {{ reserva.chegada_reserva }}</div>
+                <span class="mx-2">---</span>
+                <div data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Período de Permanência"><i class="fa-solid fa-clock"></i> {{ reserva.periodo_reserva }}</div>
+            </li>
+        </ul>
+       
+        <hr>
+        <div class="mb-3">
+            <label class="form-label">Selecione o Status</label>
+            <select name="status_reserva" class="form-control py-3">
+                <option class="bg-warning text-black" {{ reserva.status_reserva == 'Pendente' ? 'selected' }} value="Pendente">Pendente</option>
+                <option class="bg-success text-black" {{ reserva.status_reserva == 'Aceito' ? 'selected' }} value="Aceito">Aceito</option>
+                <option class="bg-danger text-black"  {{ reserva.status_reserva == 'Recusado' ? 'selected' }} value="Recusado">Recusado</option>
+            </select>
+        </div>
+     
+        <div class="mb-3">
+            <input type="hidden" name="id" value="{{ reserva.id }}">
+            <button class="btn btn-primary w-100 text-center" type="submit">SALVAR ALTERAÇÕES</button>
+        </div>
+    </form>
+</div>
+<script src="{{ PATH }}/view/assets/js/pages/reservas.js"></script>

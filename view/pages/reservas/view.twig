@@ -1,0 +1,136 @@
+{% extends "layout/layoutMaster.twig" %}
+
+{% block title %}Reservas{% endblock %}
+
+{% block body %}
+
+<div class="content-body">
+    
+    <!-- row -->
+    <div class="container-fluid">
+        <div class="page-titles">
+            <div class="d-flex flex-wrap align-items-center justify-content-between">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ DOMAIN }}">Home</a></li>
+                    <li class="breadcrumb-item active"><a href="javascript:void(0)">Reserva</a></li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="row">
+
+            <div class="col-md-4 col-12">
+                <div class="card">
+                    <div class="card-body">
+
+                        <div class="w-100 border-bottom d-flex justify-content-between">
+                            <h4 class="card-title">Reserva</h4>
+                            <h4 class="badge bg-{{ reserva.pagamento_status|payStatusColor }} text-black">{{ reserva.codigo_reserva }}</h4>
+                        </div>
+
+                        <ul class="list-group list-group-flush mt-3">
+                            <li class="list-group-item py-2 px-0 d-flex justify-content-between align-items-center">
+                                Suíte Escolhida <span class="text-primary fw-bolder">{{ reserva.suite_nome }}</span>
+                            </li>
+                            <li class="list-group-item py-2 px-0 d-flex justify-content-between align-items-center">
+                                Valor da Reserva
+                                <span class="text-primary fw-bolder">R$ {{ reserva.valor_reserva|number_format(2, ',', '.') }}</span>
+                            </li>
+                            <li class="list-group-item py-2 px-0 d-flex justify-content-between align-items-center">
+                                Data da Reserva
+                                <span class="text-primary fw-bolder">{{ reserva.data_reserva|date("m/d/Y") }}</span>
+                            </li>
+                            <li class="list-group-item py-2 px-0 d-flex justify-content-between align-items-center">
+                                Horário de Chegada
+                                <div class="text-primary fw-bolder">{{ reserva.chegada_reserva }}</div>
+                            </li>
+                            <li class="list-group-item py-2 px-0 d-flex justify-content-between align-items-center">
+                                Período de Permanência
+                                <div class="text-primary fw-bolder">{{ reserva.periodo_reserva }}</div>
+                            </li>
+                        </ul>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 col-12">
+                <div class="card">
+                    <div class="card-body">
+
+                        <div class="w-100 border-bottom"><h4 class="card-title">Cliente</h4></div>
+
+                        <ul class="list-group list-group-flush mt-3">
+                            <li class="list-group-item py-2 px-0 d-flex justify-content-between align-items-center">
+                                Nome <span class="text-primary fw-bolder">{{ reserva.nome }}</span>
+                            </li>
+                            <li class="list-group-item py-2 px-0 d-flex justify-content-between align-items-center">
+                                CPF
+                                <span class="text-primary fw-bolder">{{ reserva.cpf }}</span>
+                            </li>
+                            <li class="list-group-item py-2 px-0 d-flex justify-content-between align-items-center">
+                                Email
+                                <span class="text-primary fw-bolder">{{ reserva.email }}</span>
+                            </li>
+                            <li class="list-group-item py-2 px-0 d-flex justify-content-between align-items-center">
+                                Telefone
+                                <div class="text-primary fw-bolder">{{ reserva.telefone }}</div>
+                            </li>
+                        </ul>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 col-12">
+                <div class="card">
+                    <div class="card-body">
+
+                        <div class="w-100 border-bottom d-flex justify-content-between">
+                            <h4 class="card-title">Pagamento</h4>
+                            <h4 class="badge bg-{{ reserva.pagamento_status|payStatusColor }} text-black">{{ reserva.pagamento_status|payStatus }}</h4>
+                        </div>
+
+                        <ul class="list-group list-group-flush mt-3">
+                            <li class="list-group-item py-2 px-0 d-flex justify-content-between align-items-center">
+                                Valor da Reserva <span class="text-primary fw-bolder">R$ {{ reserva.valor_reserva|number_format(2, ',', '.') }}</span>
+                            </li>
+                            <li class="list-group-item py-2 px-0 d-flex justify-content-between align-items-center">
+                                Valor da Pago
+                                <span class="text-primary fw-bolder">R$ {{ reserva.pagamento_valor|number_format(2, ',', '.') }}</span>
+                            </li>
+                            <li class="list-group-item py-2 px-0 d-flex justify-content-between align-items-center">
+                                Metodo de Pagamento
+                                <span class="text-primary fw-bolder text-capitalize">{{ reserva.pagamento_metodo }}</span>
+                            </li>
+                            <li class="list-group-item py-2 px-0 d-flex justify-content-between align-items-center">
+                                Data do Pagamento
+                                <span class="text-primary fw-bolder">{{ reserva.date_update|date("m/d/Y") }}</span>
+                            </li>
+                            <li class="list-group-item py-2 px-0 d-flex justify-content-between align-items-center">
+                                Codigo do Pagamento
+                                <div class="text-primary fw-bolder">{{ reserva.external_reference }}</div>
+                            </li>
+                        </ul>
+
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+
+    </div>
+</div>
+<!-- Datatable -->
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="statusReserva" aria-labelledby="statusReservaLabel">
+    <div class="offcanvas-body">
+        Carregando...
+    </div>
+</div>
+
+<script src="{{ DOMAIN }}/view/assets/vendor/datatables/js/jquery.dataTables.min.js"></script>
+<script src="{{ DOMAIN }}/view/assets/js/plugins-init/datatables.init.js"></script>
+<script src="{{ PATH }}/view/assets/js/pages/reservas.js"></script>
+
+{% endblock %}

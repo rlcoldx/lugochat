@@ -4,10 +4,12 @@ namespace Agencia\Close\Controllers\Moteis;
 use Agencia\Close\Helpers\Upload;
 use Agencia\Close\Models\Moteis\Moteis;
 use Agencia\Close\Controllers\Controller;
+use Agencia\Close\Models\Moteis\Categorias;
 
 class MoteisController extends Controller
 {
 
+  private Categorias $categories;
   public int $id = 0;
 
   public function index($params)
@@ -29,7 +31,9 @@ class MoteisController extends Controller
   {
     $this->setParams($params);
 
-    $this->render('pages/moteis/form.twig', ['menu' => 'moteis']);
+    $categorias_lista = $this->getCategoryList();
+
+    $this->render('pages/moteis/form.twig', ['menu' => 'moteis', 'categorias' => $categorias_lista]);
   }
 
   public function editar($params)
@@ -45,11 +49,13 @@ class MoteisController extends Controller
     $motel = $motel->getMotel($params['id']);
     $motel = $motel->getResult()[0];
 
-    $this->render('pages/moteis/form.twig', ['menu' => 'moteis', 'motel' => $motel]);
+    $categorias_lista = $this->getCategoryList();
+
+    $this->render('pages/moteis/form.twig', ['menu' => 'moteis', 'motel' => $motel, 'categorias' => $categorias_lista]);
 
   }
 
-  //CRIAR O PRODUTO EM RASCUNHO
+  //CRIAR O MOTEL EM RASCUNHO
   public function criarSalvar($params)
   {
     $this->setParams($params);
@@ -70,7 +76,7 @@ class MoteisController extends Controller
     echo $save_motel;
   }
 
-  //SALVA O EDITAR DO PRODUTO
+  //SALVA O EDITAR DO MOTEL
   public function editarSalvar($params)
   {
     $this->setParams($params);
@@ -98,6 +104,32 @@ class MoteisController extends Controller
     $this->setParams($params);
     $excluir = new Moteis();
     $excluir->excluirMotel($params['id_motel'], $params['status']);
+  }
+
+  public function getCategoryList(): array
+  {
+    $this->categories = new Categorias();
+    $result = $this->categories->getCategory();
+    if ($result->getResult()) {
+      return $this->buildTree($result->getResult());
+    } else {
+      return [];
+    }
+  }
+
+  public function buildTree($categories, $parentId = 0): array
+  {
+    $branch = array();
+    foreach ($categories as $item) {
+      if ($item['parent'] == $parentId) {
+        $children = $this->buildTree($categories, $item['id']);
+        if ($children) {
+            $item['children'] = $children;
+        }
+        $branch[] = $item;
+      }
+    }
+    return $branch;
   }
 
 }

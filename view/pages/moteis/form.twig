@@ -40,7 +40,7 @@
 							</div>
 
 							<div class="card">
-								<div class="card-header py-2">ENDEREÇO DO MOTEL</div>
+								<div class="card-header py-2">INFORMAÇÕES DO MOTEL</div>
 								<div class="card-body">
 									<div class="row">
 										<div class="col-md-3">
@@ -81,12 +81,7 @@
 											</div>
 										</div>
 									</div>
-								</div>
-							</div>
-
-							<div class="card">
-								<div class="card-header py-2">INFORMAÇÕES DO MOTEL</div>
-								<div class="card-body px-3">
+			
 									<div class="row mb-3">
 										<div class="col-md-4">
 											<label for="telefone" class="form-label">Telefone</label>
@@ -139,12 +134,7 @@
 										<input type="password" class="form-control" name="senha" value="" placeholder="{{ motel.senha != '' ? 'Preencha se deseja alterar' : 'Senha de Login' }}" role="presentation" autocomplete="new-password">
 									</div>
 
-								</div>
-							</div>
-
-							<div class="card">
-								<div class="card-header py-2">REGRA DE CONTRATO</div>
-								<div class="card-body pb-4">
+									<div class="border-bottom"><h5>REGRA DE CONTRATO</h5></div>
 									<div class="row">
 										<div class="col-md-6">
 											<div class="mb-3">
@@ -165,12 +155,12 @@
 							<div class="card">
 								<div class="card-header py-2">LOGO DO MOTEL</div>
 								<div class="card-body">
-									<div class="form-group mb-4">
+									<div class="form-group mb-0">
 										<div class="row">
-											<div class="col-md-6 text-center">
+											<div class="col-md-4 text-center">
 												<img id="image_preview" src="{{ motel.logo != '' ? motel.logo : 'https://placehold.co/500x500' }}" class="img-thumb img-fluid" width="500" height="500" />
 											</div>
-											<div class="col-md-6">
+											<div class="col-md-8">
 												<input class="form-control" type="file" id="logo" name="logo" onchange="document.getElementById('image_preview').src = window.URL.createObjectURL(this.files[0])">
 												<div class="mt-3">O tamanho padrão da imagem do logo é de 415x350.</div>
 											</div>
@@ -181,9 +171,55 @@
 							
 
 							<div class="card">
-								<div class="card-header py-2">CARACTERÍSTICAS QUE POSSUEM</div>
-								<div class="card-body form-category-list">
-									<input name="caracteristicas" id="tags" class="tags form-control" value="{{ motel.caracteristicas }}">
+								<div>
+									<div class="card-header py-2">AS SUÍTES POSSUEM</div>
+									<div class="card-body py-2">
+										{% set possuem = motel.possuem|split(',') %}
+										<div class="form-check form-check-inline">
+											<input class="form-check-input" type="checkbox" name="possuem[]" id="pussuem1" value="cafe" {{ 'cafe' in possuem ? 'checked' : '' }}>
+											<label class="form-check-label" for="pussuem1">Inclui Café da Manhã</label>
+										</div>
+										<div class="form-check form-check-inline">
+											<input class="form-check-input" type="checkbox" name="possuem[]" id="possuem2" value="jantar" {{ 'jantar' in possuem ? 'checked' : '' }}>
+											<label class="form-check-label" for="possuem2">Inclui Jantar</label>
+										</div>
+										<div class="form-check form-check-inline">
+											<input class="form-check-input" type="checkbox" name="possuem[]" id="possuem3" value="romantica" {{ 'romantica' in possuem ? 'checked' : '' }}>
+											<label class="form-check-label" for="possuem3">Decoração Romântica</label>
+										</div>
+									</div>
+								</div>
+
+								<div>
+									<div class="card-header py-2">CARACTERÍSTICAS</div>
+									<div class="card-body py-2">
+										<input name="caracteristicas" id="tags" class="tags form-control" value="{{ motel.caracteristicas }}">
+									</div>
+								</div>
+
+								<div class="card-header py-2">CATEGORIAS</div>
+								<div class="card-body form-category-list py-2">
+
+									{% set cat_motel = motel.categoria_id|split(',') %}
+									{% macro list(categorias, cat_motel) %}
+										{% for categoria in categorias %}
+											<div class="form-check mb-1">
+												<input class="form-check-input" name="categories_id[]" type="checkbox" id="categoria{{ categoria.id }}" value="{{ categoria.id }}" {{ (categoria.id in cat_motel) ? 'checked' : '' }}>
+												<label class="form-check-label" for="categoria{{ categoria.id }}">
+													{% if categoria.nivel > 0 %}
+														{% for space in 0..(categoria.nivel -1) %}— {% endfor %}
+													{% endif %}
+													{{ categoria.nome }}
+												</label>
+											</div>
+											{% if categoria.children %}{{ _self.list(categoria.children, cat_motel) }}{% endif %}
+										{% endfor %}
+									{% endmacro %}
+
+									{% if categorias %}
+										{{ _self.list(categorias, cat_motel) }}
+									{% endif %}
+
 								</div>
 							</div>
 

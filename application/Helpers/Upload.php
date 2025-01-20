@@ -204,7 +204,7 @@ class Upload {
                 // Suprime avisos temporariamente para PNG
                 $errorLevel = error_reporting();
                 error_reporting($errorLevel & ~E_WARNING);
-                $this->Image = imagecreatefrompng($this->File['tmp_name']);
+                @$this->Image = imagecreatefrompng($this->File['tmp_name']);
                 error_reporting($errorLevel);
                 break;
         endswitch;

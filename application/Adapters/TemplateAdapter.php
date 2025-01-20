@@ -3,6 +3,7 @@
 namespace Agencia\Close\Adapters;
 
 use Agencia\Close\Adapters\Twig\PayStatus;
+use Agencia\Close\Adapters\Twig\PayStatusColor;
 use Agencia\Close\Adapters\Twig\DayTranslate;
 use Agencia\Close\Adapters\Twig\MonthTranslate;
 use Agencia\Close\Adapters\Twig\FilterHash;
@@ -30,6 +31,7 @@ class TemplateAdapter
         $this->twig->addExtension(new MonthTranslate());
         $this->twig->addExtension(new DayTranslate());
         $this->twig->addExtension(new PayStatus());
+        $this->twig->addExtension(new PayStatusColor());
         $this->twig->addExtension(new VerifyPermission());
         $this->globals();
 
