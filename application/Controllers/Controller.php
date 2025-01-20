@@ -16,7 +16,7 @@ class Controller
 {
     protected TemplateAdapter $template;
     private Company $company;
-    private Moteis $moteis;
+    private Moteis $moteislista;
     public array $dataCompany;
     private array $dataDefault = [];
     public array $moteis_list = [];
@@ -28,7 +28,7 @@ class Controller
     {
         $this->router = $router;
         $this->company = new Company();
-        $this->moteis = new Moteis();
+        $this->moteislista = new Moteis();
         $this->template = new TemplateAdapter();
         $this->middleware();
     }
@@ -100,10 +100,10 @@ class Controller
     private function baseDataCompany()
     {
         $company = $this->findDataCompany();
-        $moteis = $this->findMoteis();
+        $moteislista = $this->findMoteis();
 
-        if ($moteis->getResult()) {
-            $this->dataDefault['moteis'] = $moteis->getResult();
+        if ($moteislista->getResult()) {
+            $this->dataDefault['moteislista'] = $moteislista->getResult();
         }
 
         if ($company->getResult()) {
@@ -116,7 +116,7 @@ class Controller
 
     private function findMoteis(): Read
     {
-        return $this->moteis->getMoteisList();
+        return $this->moteislista->getMoteisList();
     }
 
     private function findDataCompany(): Read

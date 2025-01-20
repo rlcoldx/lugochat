@@ -41836,3 +41836,6 @@ span.tag.label.label-info {
 #reservas_dias > div > svg {
     background: transparent !important;
 }
+.select2-results__option {
+  text-transform: uppercase;
+}
