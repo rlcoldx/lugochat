@@ -194,3 +194,31 @@ function deleteSuiteAction(id_suite){
 		}
 	});
 }
+
+function duplicateSuiteAction(id_suite){
+    let DOMAIN = $('body').data('domain');
+    Swal.fire({
+		title: "Duplicar essa Suíte?",
+		text: "Tem certeza que deseja duplicar essa Suíte.",
+		showCancelButton: true,
+		cancelButtonText: 'Não',
+		confirmButtonText: 'Sim',
+		dangerMode: true,
+	}).then((result) => {
+		if (result.value === true) {
+			$.ajax({
+                url: DOMAIN + '/suites/duplicate',
+                data: {'id': id_suite},
+                type: 'get',
+                success: function(data){
+                    setTimeout(function(){
+                        location.reload();
+                    }, 1500);
+                }
+            });
+			Swal.fire('', 'Suíte duplicada com sucesso!', 'success');
+		}
+	});
+	
+	
+}

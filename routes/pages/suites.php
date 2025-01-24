@@ -7,3 +7,4 @@ $router->get("/suites/edit/{id}", "SuitesController:editar");
 $router->post("/suites/save_draft", "SuitesController:save_draft");
 $router->post("/suites/editar/save", "SuitesController:save_edit");
 $router->post("/suites/excluir", "SuitesController:excluir_suite");
+$router->get("/suites/duplicate", "SuitesController:duplicar");
