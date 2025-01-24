@@ -42,8 +42,9 @@
                                 <td>{{ suite.date_create|date("d-m-Y \\a\\s H:i", "America/Sao_Paulo") }}</td>
                                 <td>
                                     <div class="d-flex justify-content-end">
-                                        <a href="{{ DOMAIN }}/suites/edit/{{ suite.id }}" class="btn btn-success shadow btn-xs sharp me-1"><i class="fa fa-pencil"></i></a>
-                                        <a href="javascript:void(0);" onclick="deleteSuite('{{ suite.id }}')" class="btn btn-danger shadow btn-xs sharp"><i class="fa fa-trash"></i></a>
+                                        <a href="javascript:void(0);" onclick="duplicateSuiteAction('{{ suite.id }}')" class="btn btn-success shadow btn-xs sharp me-2" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Duplicar"><i class="fa-regular fa-copy"></i></a>
+                                        <a href="{{ DOMAIN }}/suites/edit/{{ suite.id }}" class="btn btn-warning shadow btn-xs sharp me-2" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Editar"><i class="fa fa-pencil"></i></a>
+                                        <a href="javascript:void(0);" onclick="deleteSuite('{{ suite.id }}')" class="btn btn-danger shadow btn-xs sharp" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Excluir"><i class="fa fa-trash"></i></a>
                                     </div>
                                 </td>
                             </tr>

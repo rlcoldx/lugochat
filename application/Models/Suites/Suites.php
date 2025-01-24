@@ -110,5 +110,46 @@ class Suites extends Model
         $read = new Read();
         $read->FullRead("UPDATE `suites` SET `status` = 'Deletado' WHERE  `id_motel` = :id_motel AND `id` = :id_suite", "id_suite={$id_suite}&id_motel={$id_motel}");
     }
+
+    public function duplicarSuite($id)
+    {
+        $suite = new Read();
+        $suite->FullRead("SELECT * FROM suites WHERE id = :id ORDER BY id DESC LIMIT 1", "id={$id}");
+        // CLONA E SALVA
+        $id_clone = $this->duplicarSuiteBase($suite->getResult()[0])->getResult();
+
+        $suite_precos = new Read();
+        $suite_precos->FullRead("SELECT * FROM suites_precos WHERE id_suite = :id_suite AND `status` = 'S' ORDER BY `periodo` ASC", "id_suite={$id}");
+
+        $this->duplicarSuitePrecosBase($suite_precos->getResult(), $id_clone);
+
+        echo '1';
+    }
+
+    public function duplicarSuiteBase($params): Create
+    {
+        $create = new Create();
+        unset($params['id']);
+        $params['status'] = 'Rascunho';
+        $create->ExeCreate('suites', $params);
+        return $create;
+    }
+
+    public function duplicarSuitePrecosBase($params, $id_clone)
+    {
+        foreach ($params as $suite) {
+            unset($suite['id']);
+            $suite['id_suite'] = $id_clone;
+            $create = new Create();
+            $create->ExeCreate('suites_precos', $suite);
+        }        
+    }
+
+    public function getCardadio(): Read
+    {
+        $read = new Read();
+        $read->FullRead("SELECT * FROM cardapios ORDER BY `order`,`id` DESC");
+        return $read;
+    }
     
 }

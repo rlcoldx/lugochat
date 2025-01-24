@@ -4,22 +4,9 @@ namespace Agencia\Close\Controllers\Suites;
 
 use Agencia\Close\Controllers\Controller;
 use Agencia\Close\Models\Suites\Suites;
-use Agencia\Close\Enums\Permissions\ProductsPermissions;
 
 class SuitesController extends Controller
 {
-  public function tempermissao() {
-    echo 'Tem permissao';
-    $this->requirePermission(ProductsPermissions::$listProduct);
-    die();
-  }
-
-  public function sempermissao() {
-    $this->requirePermission(ProductsPermissions::$createProduct);
-    echo 'Você não pode ver isso';
-    die();
-  }
-
   public function index($params)
   {
     $this->setParams($params);
@@ -86,10 +73,18 @@ class SuitesController extends Controller
   }
 
   //EXCLUI A SUITE
-  public function excluir_suite($params){
+  public function excluir_suite($params)
+  {
     $this->setParams($params);
     $excluir = new Suites();
     $excluir->excluirSuite($this->params['id_suite'], $this->dataCompany['id']);
+  }
+
+  public function duplicar($params)
+  {
+    $this->setParams($params);
+    $duplicar = new Suites();
+    $duplicar->duplicarSuite($_GET['id'], $this->dataCompany['id']);
   }
 
 }
