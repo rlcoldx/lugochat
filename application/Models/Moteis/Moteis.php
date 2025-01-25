@@ -40,6 +40,10 @@ class Moteis extends Model
         $params['tipo'] = '2';
         $params['cargo'] = 'Motel';
         $params['senha'] = sha1($params['senha']);
+
+        unset($params['possuem']);
+        unset($params['categories_id']);
+
         $create->ExeCreate('usuarios', $params);
         return $create;
     }

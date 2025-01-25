@@ -85,8 +85,9 @@ $(document).ready(function () {
             success: function(data){
                 if(data != ''){
                     Swal.fire({icon: 'success', title: 'SALVO COM SUCESSO!', showConfirmButton: false, timer: 1500});
+                    let id = data.match(/([a-zA-Z]+)(\d+)/);
                     setTimeout(function(){
-                        window.location.href = DOMAIN+'/moteis/edit/'+data;
+                        window.location.href = DOMAIN+'/moteis/edit/'+id[2];
                     }, 1500);
                 }else{
                     $('#salvar').html('SALVAR');
