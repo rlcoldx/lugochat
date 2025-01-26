@@ -29,6 +29,22 @@ $(document).on("hidden.bs.modal", ".modal:not(.local-modal)", function (e) {
 });
 
 
+// MODAL OFFCANVAS
+$(document).on('click', '[data-bs-toggle="offcanvas"]', function(e) {
+	e.preventDefault();
+	$('.offcanvas-body').html('');
+	var url = $(this).attr('data-bs-remote');
+	var offcanvas = $(this).attr('data-bs-target');
+	$.ajax({
+		url: url,
+		method: 'GET',
+		success: function(response) {
+			$('.offcanvas-body').html(response);
+		}
+	});
+});
+
+
 // MODAL REMOTO
 $(document).on('click', '[data-bs-remote="modal"]', function(e) {
 	e.preventDefault();
@@ -61,22 +77,66 @@ function changeMotel(motel) {
     });
 }
 
-// Função para verificar novos agendamentos
+//Função para verificar novos agendamentos
 function verificarNovosAgendamentos() {
 
     let DOMAIN = $('body').data('domain');
 
     $.ajax({
-        url: DOMAIN + '/agendamentos/check',
+        url: DOMAIN + '/reservas/check',
         type: 'GET',
 		async: true,
         success: function(data) {
-			if(data != null) {
-				$('.content-body').prepend('<div class="reserva_notificacao">dfsddashboard</div>');
-				//alert('Novos agendamentos foram encontrados!');
+			if(data != 0) {
+				let plural = '';
+				if(parseInt(data) > 1){
+					plural = 's';
+				}
+				$('#pedido_alerta').remove();
+				$('.content-body').prepend('');
+				$('.content-body').prepend(`
+					<div id="pedido_alerta" class="alert alert-warning bg-warning text-dark rounded-0">
+						<div class="d-flex flex-wrap align-items-center align-self-center">
+							<div class="alert-box">
+								<span></span><div>`+data+`</div>
+							</div>
+							<div class="ms-md-4">
+								<div class="fs-5 fw-bold text-dark m-0">Você possui `+data+` nova`+plural+` reserva`+plural+` pendente`+plural+`.</div>
+								<div>Você precisará aceitar as reservas para que os clientes possam concluir suas reservas.</div>
+							</div>
+							<div class="ms-md-4">
+								<a href="`+DOMAIN+`/reservas?status=Pedente" class="btn bg-black">VER RESERVAS</a>
+							</div>
+						</div>
+					</div>
+					<audio id="audio" src="`+DOMAIN+`/view/assets/sound/alert.mp3" preload="auto"></audio>
+					`);
+				var audio = $('#audio')[0];
+				audio.play();
+				audio.loop = true;
+				startBlinking();
 			}
         }
     });
 
 }
-// setInterval(verificarNovosAgendamentos, 60000);
+verificarNovosAgendamentos();
+setInterval(verificarNovosAgendamentos, 60000);
+
+var originalTitle = document.title;
+var blinkInterval;
+
+function startBlinking() {
+    blinkInterval = setInterval(function() {
+        if (document.title === "Novo Cliente!") {
+            document.title = originalTitle;
+        } else {
+            document.title = "Novo Cliente!";
+        }
+    }, 1000); // Pisca a cada 1 segundo
+}
+
+function stopBlinking() {
+    clearInterval(blinkInterval);
+    document.title = originalTitle;
+}

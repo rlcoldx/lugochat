@@ -10,6 +10,7 @@ class LoginSession
             'busca_perfil_id' => $login['id'],
             'busca_perfil_empresa' => $login['empresa'],
             'busca_perfil_tipo' => $login['tipo'],
+            'busca_perfil_master' => $login['master'],
             'busca_perfil_cargo' => $login['cargo'],
             'busca_perfil_slug' => $login['slug'],
             'busca_perfil_nome' => $login['nome'],

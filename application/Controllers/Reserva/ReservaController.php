@@ -11,9 +11,14 @@ class ReservaController extends Controller
 	public function check_reservas($params)
 	{
 	  $this->setParams($params);
-	  $check = new Reserva();
-	  $result = $check->checkReservas();
-	  echo count($result->getResult());
+	  if($_SESSION['busca_perfil_tipo'] != '0'){
+		$check = new Reserva();
+		$result = $check->checkReservas();
+		echo count($result->getResult());
+	  }else{
+		echo 0;
+	  }
+
 	}
 
 	public function get_reservas($params)

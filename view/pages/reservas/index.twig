@@ -19,22 +19,22 @@
 
         <div class="card">
             <div class="card-body">
-                <div>
-                    <table id="datatable" class="table dataTable">
+                <div class="table-responsive">
+                    <table id="datatable-no-sortable" class="table dataTable">
                         <thead>
                             <tr>
                                 <th class="d-none" width="50"></th>
                                 <th>Cliente</th>
                                 <th>Reserva</th>
-                                <th>Período</th>
-                                <th width="200">Pagamento</th>
+                                <th width="200">Período</th>
+                                <th width="140">Pagamento</th>
                                 <th width="140">Status</th>
                                 <th width="140">Ação</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for reserva in reservas %}
-                            <tr class="produto-{{ reserva.id }}">
+                            <tr class="produto-{{ reserva.id }} align-middle">
                                 <td class="d-none" width="50">#{{ loop.index }}</td>
                                 <td>
                                     <div class="fw-bold fs-6">{{ reserva.nome }}</div>
@@ -45,25 +45,23 @@
                                     <div>R$ {{ reserva.valor_reserva|number_format(2, ',', '.') }}</div>
                                 </td>
                                 <td>
-                                    <div class="fw-bold fs-6">{{ reserva.data_reserva|date("m/d/Y") }}</div>
+                                    <div class="fw-bold fs-6">{{ reserva.data_reserva|date("d/m/Y") }}</div>
                                     <div class="d-flex justify-content-start flex-wrap">
                                         <div data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Horário de Chegada"><i class="fa-solid fa-right-to-bracket"></i> {{ reserva.chegada_reserva }}</div>
                                         <span class="mx-2">---</span>
                                         <div data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Período de Permanência"><i class="fa-solid fa-clock"></i> {{ reserva.periodo_reserva }}</div>
                                     </div>
                                 </td>
-                                <td>
-                                    <span class="badge bg-{{ reserva.pagamento_status|payStatusColor }} py-1 ms-0 ms-md-1">{{ reserva.pagamento_status|payStatus }}</span>                                  
+                                <td class="bg-{{ reserva.pagamento_status|payStatusColor }} border-right text-center text-uppercase fw-bold">
+                                    <span class="py-1 ms-0 ms-md-1 text-dark">{{ reserva.pagamento_status|payStatus }}</span>                                  
                                 </td>
-                                <td>
-                                    <a class="badge bg-{{ reserva.status_reserva }} py-1" href="javascript:void(0)" data-bs-remote="{{ DOMAIN }}/reservas/status/{{ reserva.id }}" data-bs-toggle="offcanvas" data-bs-target="#statusReserva">
+                                <td class="bg-{{ reserva.status_reserva }} text-center text-uppercase">
+                                    <a class="py-1 text-dark fw-bold" href="javascript:void(0)" data-bs-remote="{{ DOMAIN }}/reservas/status/{{ reserva.id }}" data-bs-toggle="offcanvas" data-bs-target="#statusReserva">
                                         <i class="fa-solid fa-pen-to-square"></i> {{ reserva.status_reserva }}
                                     </a>
                                 </td>
-                                <td>
-                                    <div class="d-flex justify-content-end">
-                                        <a href="{{ DOMAIN }}/reserva/{{ reserva.id }}" class="btn btn-primary btn-sm"><i class="fa fa-eye"></i> Ver Reserva</a>
-                                    </div>
+                                <td class="bg-primary text-center text-uppercase">
+                                    <a href="{{ DOMAIN }}/reserva/{{ reserva.id }}" class="text-uppercase text-dark fw-bold"><i class="fa fa-eye"></i> Ver Reserva</a>
                                 </td>
                             </tr>
                             {% endfor %}

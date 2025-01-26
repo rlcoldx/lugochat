@@ -2,8 +2,9 @@
     <div class="header-content">
         <nav class="navbar navbar-expand">
             <div class="collapse navbar-collapse justify-content-between">
+                
                 <div class="header-left">
-
+                    {% if _session.busca_perfil_master == '1' %}
 					<div class="select-motel">
                         <select class="form-control select2 text-uppercase" name="motel" id="select_motel" onchange="changeMotel(this.value)">
                             <option value="1">SELECIONE O MOTEL</option>
@@ -12,8 +13,9 @@
                             {% endfor %}
                         </select>
                     </div>
-
+                    {% endif %}
                 </div>
+
                 <ul class="navbar-nav header-right">
 					<li class="nav-item dropdown notification_dropdown">
                         <a class="nav-link bell bell-link p-3" href="javascript:void(0)" data-bs-toggle="modal-remote" data-remote="{{ DOMAIN }}/notificacao/criar" data-bs-target="#notificacao">
@@ -24,10 +26,14 @@
                     <li class="nav-item dropdown header-profile">
                         <a class="nav-link" href="javascript:void(0)" data-bs-toggle="dropdown" aria-expanded="false">
 							<div class="header-info">
-								<span class="text-black"><strong>{{ _session.busca_perfil_nome }}</strong></span>
+								<span class="text-black text-uppercase"><strong>{{ _session.busca_perfil_nome }}</strong></span>
 								<p class="fs-12 mb-0 text-primary">{{ _session.busca_perfil_cargo }}</p>
 							</div>
-                            <img src="{{ PATH }}/view/assets/images/profile/17.jpg" width="20" alt=""/>
+                            {% if _session.busca_perfil_logo %}
+                            <img src="{{ _session.busca_perfil_logo }}" width="20" alt=""/>
+                            {% else %}
+                            <img src="{{ PATH }}/view/assets/images/user.png" width="20" alt=""/>
+                            {% endif %}
                         </a>
                         <div class="dropdown-menu dropdown-menu-right">
                             <a href="{{ DOMAIN }}/login/logout" class="dropdown-item ai-icon">

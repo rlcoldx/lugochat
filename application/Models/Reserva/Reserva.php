@@ -11,7 +11,7 @@ class Reserva extends Model
 
     public function byCompany($coluna = '') {
         $empresa = '';
-        if($_SESSION['busca_perfil_tipo'] != '1'){
+        if($_SESSION['busca_perfil_tipo'] != '0'){
             $empresa = " AND $coluna = '".$_SESSION['busca_perfil_empresa']."' ";
         }
         return $empresa;
@@ -27,6 +27,7 @@ class Reserva extends Model
     public function getReservas($limit = 99999): Read
     {
         $read = new Read();
+
         $read->FullRead("SELECT r.*, s.nome AS suite_nome, p.pagamento_status, p.pagamento_metodo, p.pagamento_valor FROM reservas AS r
         INNER JOIN suites AS s ON s.id = r.id_suite
         LEFT JOIN pagamentos AS p ON p.id_reserva = r.id

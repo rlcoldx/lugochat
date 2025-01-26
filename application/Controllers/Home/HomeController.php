@@ -3,6 +3,7 @@
 namespace Agencia\Close\Controllers\Home;
 
 use Agencia\Close\Models\Home\Home;
+use Agencia\Close\Models\User\User;
 use Agencia\Close\Models\Moteis\Moteis;
 use Agencia\Close\Controllers\Controller;
 use Agencia\Close\Models\Reserva\Reserva;
@@ -48,8 +49,12 @@ class HomeController extends Controller
   public function changeMotel($params)
   {
     $this->setParams($params);
-    $_SESSION['busca_perfil_empresa'] = $_POST['motel'];
-    $_SESSION['busca_perfil_tipo'] = 2;
+    $model = new User;
+    $empresa = $model->getUserByID($_POST['motel'])->getResultSingle();
+    $_SESSION['busca_perfil_empresa'] = $empresa['id'];
+    $_SESSION['busca_perfil_nome'] = $empresa['nome'];
+    $_SESSION['busca_perfil_logo'] = $empresa['logo'];
+    $_SESSION['busca_perfil_tipo'] =  $empresa['tipo'];
   }
 
 }
