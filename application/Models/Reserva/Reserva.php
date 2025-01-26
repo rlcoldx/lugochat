@@ -2,19 +2,25 @@
 
 namespace Agencia\Close\Models\Reserva;
 
-use Agencia\Close\Conn\Conn;
 use Agencia\Close\Conn\Read;
-use Agencia\Close\Conn\Create;
 use Agencia\Close\Conn\Update;
 use Agencia\Close\Models\Model;
 
 class Reserva extends Model 
 {
 
+    public function byCompany($coluna = '') {
+        $empresa = '';
+        if($_SESSION['busca_perfil_tipo'] != '1'){
+            $empresa = " AND $coluna = '".$_SESSION['busca_perfil_empresa']."' ";
+        }
+        return $empresa;
+    }
+
     public function checkReservas(): Read
     {
         $this->read = new Read();
-        $this->read->FullRead("SELECT * FROM reservas WHERE status_reserva = 'Pendente' ORDER BY id DESC");
+        $this->read->FullRead("SELECT * FROM reservas WHERE status_reserva = 'Pendente' ".$this->byCompany('id_motel')." ORDER BY id DESC");
         return $this->read;
     }
 
@@ -24,6 +30,7 @@ class Reserva extends Model
         $read->FullRead("SELECT r.*, s.nome AS suite_nome, p.pagamento_status, p.pagamento_metodo, p.pagamento_valor FROM reservas AS r
         INNER JOIN suites AS s ON s.id = r.id_suite
         LEFT JOIN pagamentos AS p ON p.id_reserva = r.id
+        WHERE status_reserva <> '' ".$this->byCompany('r.id_motel')."
         ORDER BY r.id DESC LIMIT $limit");
         return $read;
     }

@@ -100,3 +100,43 @@ function corStatusPagamento($status) {
 
     return $classeBadge[$status] ?? 'dark';
 }
+
+function getNomeEstado($sigla) {
+    $estados = [
+        "AC" => "Acre",
+        "AL" => "Alagoas",
+        "AP" => "Amapá",
+        "AM" => "Amazonas",
+        "BA" => "Bahia",
+        "CE" => "Ceará",
+        "DF" => "Distrito Federal",
+        "ES" => "Espírito Santo",
+        "GO" => "Goiás",
+        "MA" => "Maranhão",
+        "MT" => "Mato Grosso",
+        "MS" => "Mato Grosso do Sul",
+        "MG" => "Minas Gerais",
+        "PA" => "Pará",
+        "PB" => "Paraíba",
+        "PR" => "Paraná",
+        "PE" => "Pernambuco",
+        "PI" => "Piauí",
+        "RJ" => "Rio de Janeiro",
+        "RN" => "Rio Grande do Norte",
+        "RS" => "Rio Grande do Sul",
+        "RO" => "Rondônia",
+        "RR" => "Roraima",
+        "SC" => "Santa Catarina",
+        "SP" => "São Paulo",
+        "SE" => "Sergipe",
+        "TO" => "Tocantins"
+    ];
+
+    $sigla = strtoupper($sigla); // Converter a sigla para maiúsculas, caso esteja em minúsculas
+
+    if(array_key_exists($sigla, $estados)) {
+        return $estados[$sigla];
+    } else {
+        return $sigla;
+    }
+}

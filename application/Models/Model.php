@@ -45,4 +45,5 @@ abstract class Model
     public function join(string $join) {
         $this->join .= $join;
     }
+
 }
