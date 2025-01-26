@@ -8,15 +8,6 @@ use Agencia\Close\Models\Model;
 
 class Reserva extends Model 
 {
-
-    public function byCompany($coluna = '') {
-        $empresa = '';
-        if($_SESSION['busca_perfil_tipo'] != '0'){
-            $empresa = " AND $coluna = '".$_SESSION['busca_perfil_empresa']."' ";
-        }
-        return $empresa;
-    }
-
     public function checkReservas(): Read
     {
         $this->read = new Read();

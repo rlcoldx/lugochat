@@ -10,8 +10,13 @@ class ClientesController extends Controller
 
   public function index($params)
   {
-    $clientes = new Clientes();
-    $clientes = $clientes->getClientes()->getResult();
+    if($_SESSION['busca_perfil_tipo'] != '0'){
+      $clientes = new Clientes();
+      $clientes = $clientes->getClientesByCompany()->getResult();
+    }else{
+      $clientes = new Clientes();
+      $clientes = $clientes->getClientes()->getResult();
+    }
 
     $this->setParams($params);
     $this->render('pages/clientes/index.twig', ['titulo' => 'Lista de Clientes', 'clientes' => $clientes]);
