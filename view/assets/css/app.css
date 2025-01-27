@@ -41744,11 +41744,11 @@ html[dir="rtl"]
   color: #ffffff;
 }
 [data-theme-version="dark"] .card-header {
-  color: var(--dark);
+  color: var(--light);
 }
 [data-theme-version="dark"] .card-body .sub-card {
   background: #1b1b1b;
-  color: var(--dark);
+  color: var(--light);
   display: block;
 }
 [data-theme-version="dark"] .card-body .sub-card:hover {
