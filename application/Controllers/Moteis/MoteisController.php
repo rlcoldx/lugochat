@@ -35,11 +35,6 @@ class MoteisController extends Controller
   {
     $this->setParams($params);
 
-    if ($_SESSION['busca_perfil_tipo'] != 1 && $_SESSION['busca_perfil_tipo'] != 2) {
-      header("Location: ".DOMAIN);
-      exit();
-    }
-
     $motel = new Moteis();
     $motel = $motel->getMotel($params['id']);
     $motel = $motel->getResult()[0];
