@@ -29500,9 +29500,11 @@ html[dir="rtl"]
   color: #7e7e7e;
 }
 [data-theme-version="dark"] .form-control {
-  background-color: #1b1b1b;
-  border-color: #4c4c4f;
-  color: #fff;
+  box-shadow: none !important;
+  background-color: #1b1b1b !important;
+  background: #1b1b1b !important;
+  border-color: #4c4c4f !important;
+  color: #fff !important;
 }
 [data-theme-version="dark"] .card {
   border: 1px solid #4c4c4f;

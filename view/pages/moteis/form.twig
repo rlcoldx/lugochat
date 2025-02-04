@@ -129,9 +129,18 @@
 										<input type="email" class="form-control" name="email" value="{{ motel.email }}" placeholder="Email de Login" role="presentation" autocomplete="new-email">
 									</div>
 
-									<div class="mb-3">
-										<label class="form-label">Senha de Login</label>
-										<input type="password" class="form-control" name="senha" value="" placeholder="{{ motel.senha != '' ? 'Preencha se deseja alterar' : 'Senha de Login' }}" role="presentation" autocomplete="new-password">
+									<div class="row mb-3">
+										<div class="col-md-8 col-sm-12">
+											<label class="form-label">Senha de Login</label>
+											<input type="password" class="form-control" name="senha" value="" placeholder="{{ motel.senha != '' ? 'Preencha se deseja alterar' : 'Senha de Login' }}" role="presentation" autocomplete="new-password">
+										</div>
+										<div class="col-md-4 col-sm-12">
+											<label class="form-label">Status do Motel</label>
+											<select name="status" class="form-control">
+												<option value="Ativo">Ativo</option>
+												<option value="Inativo" {{ motel.status == 'Inativo' ? 'selected' }}>Inativo</option>
+											</select>
+										</div>
 									</div>
 
 									<div class="border-bottom"><h5>REGRA DE CONTRATO</h5></div>
