@@ -19,13 +19,8 @@ class RubensController extends Controller
         $this->setParams($params);
 
         $model = new Rubens;
-        $result = $model->updateDisponibilidade($_GET)->getResult();
-        
-        if($result){
-            $dados = array("Atualizado");
-        }else{
-            $dados = array("Erro ao atualizar");
-        }
+        $model->updateDisponibilidade($_GET);
+        $dados = array("Atualizado");
 
         print_r($dados);
         

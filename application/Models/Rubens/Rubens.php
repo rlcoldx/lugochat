@@ -3,6 +3,7 @@
 namespace Agencia\Close\Models\Rubens;
 
 use Agencia\Close\Conn\Read;
+use Agencia\Close\Conn\Update;
 use Agencia\Close\Models\Model;
 
 class Rubens extends Model 
@@ -49,12 +50,15 @@ class Rubens extends Model
         return $this->read;
     }
 
-    public function updateDisponibilidade($params): Read
+    public function updateDisponibilidade($params)
     {
-        $this->read = new Read();
-        $this->read->FullRead("UPDATE `suites` SET `disponibilidade` = :qtd WHERE `id_motel` = :id_motel AND `id` = :id", 
-        "qtd={$params['qtde']}&id_motel={$params['motel']}id={$params['suite']}");
-        return $this->read;
+        $update = new Update();
+        $dados['disponibilidade'] = $params['qtde'];
+        $update->ExeUpdate('suites', $dados, 'WHERE `id` = :id AND `id_motel` = :id_motel', "id={$params['suite']}&id_motel={$params['motel']}");
+        return $update;
+
+        // $this->read = new Read();
+        // $this->read->FullRead("UPDATE `suites` SET `disponibilidade` = :qtd WHERE `id_motel` = :id_motel AND `id` = :id", "qtd={$params['qtde']}&id_motel={$params['motel']}");
     }
 
 }
