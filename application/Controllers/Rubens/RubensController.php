@@ -30,9 +30,11 @@ class RubensController extends Controller
         // Converte o JSON em objeto PHP
         //echo $json_result;
         // $obj = json_decode($json_result);
+
+        $dados = array("Aguardando informações...");
         
         echo '<pre>';
-        print_r($_REQUEST);
+        print_r($dados);
         echo '</pre>';
     }
 }
