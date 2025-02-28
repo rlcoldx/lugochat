@@ -11,30 +11,23 @@ class RubensController extends Controller
         $model = new Rubens;
         $suites = $model->getSuites()->getResult();
         $json_result = $suites[0]["json_result"];
-        
-        // Converte o JSON em objeto PHP
         echo $json_result;
-        // $obj = json_decode($json_result);
-        
-        // echo '<pre>';
-        // print_r($obj);
-        // echo '</pre>';
     }
 
-    public function disponibilidade()
+    public function disponibilidade($params)
     {
-        // $model = new Rubens;
-        // $suites = $model->getSuites()->getResult();
-        // $json_result = $suites[0]["json_result"];
-        
-        // Converte o JSON em objeto PHP
-        //echo $json_result;
-        // $obj = json_decode($json_result);
+        $this->setParams($params);
 
-        $dados = array("Aguardando informações...");
+        $model = new Rubens;
+        $result = $model->updateDisponibilidade($params)->getResult();
         
-        echo '<pre>';
+        if($result){
+            $dados = array("Atualizado");
+        }else{
+            $dados = array("Erro ao atualizar");
+        }
+
         print_r($dados);
-        echo '</pre>';
+        
     }
 }

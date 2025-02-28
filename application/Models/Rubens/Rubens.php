@@ -47,5 +47,14 @@ class Rubens extends Model
         FROM usuarios_cte u
         ) t");
         return $this->read;
-    }    
+    }
+
+    public function updateDisponibilidade($params): Read
+    {
+        $this->read = new Read();
+        $this->read->FullRead("UPDATE `suites` SET `disponibilidade` = :qtd WHERE `id_motel` = :id_motel AND `id` = :id", 
+        "qtd={$params['qtd']}&id_motel={$params['motel']}id={$params['suite']}");
+        return $this->read;
+    }
+
 }
