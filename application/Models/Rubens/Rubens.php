@@ -54,6 +54,10 @@ class Rubens extends Model
         $this->read = new Read();
         $this->read->FullRead("UPDATE `suites` SET `disponibilidade` = :qtd WHERE `id_motel` = :id_motel AND `id` = :id", 
         "qtd={$params['qtde']}&id_motel={$params['motel']}id={$params['suite']}");
+
+        var_dump("UPDATE `suites` SET `disponibilidade` = :qtd WHERE `id_motel` = :id_motel AND `id` = :id", 
+        "qtd={$params['qtde']}&id_motel={$params['motel']}id={$params['suite']}");
+        die();
         return $this->read;
     }
 
