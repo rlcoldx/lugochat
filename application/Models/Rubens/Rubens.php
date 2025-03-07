@@ -56,9 +56,20 @@ class Rubens extends Model
         $dados['disponibilidade'] = $params['qtde'];
         $update->ExeUpdate('suites', $dados, 'WHERE `id` = :id AND `id_motel` = :id_motel', "id={$params['suite']}&id_motel={$params['motel']}");
         return $update;
+    }
 
-        // $this->read = new Read();
-        // $this->read->FullRead("UPDATE `suites` SET `disponibilidade` = :qtd WHERE `id_motel` = :id_motel AND `id` = :id", "qtd={$params['qtde']}&id_motel={$params['motel']}");
+    public function getDisponibilidade($params): Read
+    {   
+        $bysuite = "";
+        if(!empty($params['suite'])){
+            $bysuite = " AND s.id = '".$params['suite']."' ";
+        }
+        $this->read = new Read();
+        $this->read->FullRead("SELECT JSON_OBJECTAGG(s_idx, suite_json) AS json_result
+        FROM (
+        SELECT ROW_NUMBER() OVER (ORDER BY s.id) - 1 AS s_idx, JSON_OBJECT('ID', s.id, 'disponibilidade', s.disponibilidade) AS suite_json
+        FROM suites s WHERE s.id_motel = :motel $bysuite ) t", "motel={$params['motel']}");
+        return $this->read;
     }
 
 }
