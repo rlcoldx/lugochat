@@ -11,6 +11,8 @@ define('USER_MAIN', 'rafael_lugochat');
 define('PASS_MAIN', 'wU$S2Fam]N~{V4Ffia');
 define('DBSA_MAIN', 'rafael_lugochat');
 
+define('SIS_API', 'http://177.156.7.7:55005');
+
 define('TOKEN', 'qgvCMRoHCTujhHswhiTyRALSY8QzRQyvlB0PWPqmuUpELHDf5vjirY04JQsaj3xx');
 define('ACCESSTOKEN', 'APP_USR-6619019503196756-111110-960e8da08d80ad993e73d4b3d423bd9f-263421911');
 

@@ -63,7 +63,7 @@ class NotificacaoController extends Controller
             CURLOPT_POSTFIELDS => $jsonData,
             CURLOPT_HTTPHEADER => array(
                 'Content-Type: application/json; charset=utf-8',
-                'Authorization: Bearer NGJhMjEyY2ItMzU5OS00OGI3LThhODUtMTI1M2ZiMmRhOWIw'
+                'Authorization: Key NGJhMjEyY2ItMzU5OS00OGI3LThhODUtMTI1M2ZiMmRhOWIw'
             ),
         ));
         

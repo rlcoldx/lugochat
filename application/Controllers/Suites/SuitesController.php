@@ -4,6 +4,7 @@ namespace Agencia\Close\Controllers\Suites;
 
 use Agencia\Close\Controllers\Controller;
 use Agencia\Close\Models\Suites\Suites;
+use Agencia\Close\Services\Sis\CategoriesSis;
 
 class SuitesController extends Controller
 {
@@ -27,6 +28,13 @@ class SuitesController extends Controller
   {
     $this->setParams($params);
 
+    $sis_categories = [];
+    if($this->dataCompany['token'] != null){
+      $sis_categories = new CategoriesSis();
+      $sis_categories = $sis_categories->listCategories($this->dataCompany['token']);
+      $sis_categories = $sis_categories["result"];
+    }
+
     $suite = new Suites();
     $result = $suite->getSuite($this->params['id'], $this->dataCompany['id']);
     $suite = $result->getResult()[0];
@@ -37,7 +45,7 @@ class SuitesController extends Controller
     $imagens = new Suites();
     $imagem = $imagens->getSuiteImages($this->params['id'], $this->dataCompany['id'])->getResult();
 
-    $this->render('pages/suites/form.twig', ['titulo' => 'Editar Suíte', 'suite' => $suite, 'precos' => $precos, 'imagens' => $imagem]);
+    $this->render('pages/suites/form.twig', ['titulo' => 'Editar Suíte', 'suite' => $suite, 'precos' => $precos, 'imagens' => $imagem, 'sis_categories' => $sis_categories]);
   }
 
   //CRIAR O PRODUTO EM RASCUNHO

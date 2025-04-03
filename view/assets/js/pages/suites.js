@@ -220,5 +220,16 @@ function duplicateSuiteAction(id_suite){
 		}
 	});
 	
-	
 }
+
+
+//SISTEMA SIS
+$(document).ready(function() {
+    $('select[name="sis_suite"]').on('change', function() {
+      var total = $(this).find(':selected').data('total');
+      var free = $(this).find(':selected').data('free');
+  
+      $('#sis_total').val(total || 0);
+      $('#sis_free').val(free || 0);
+    });
+});

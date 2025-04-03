@@ -23,7 +23,7 @@
 	        <div class="row">
 
 	        	{# COLUNA PRINCIPAL #}
-	            <div class="col-sm-12 col-md-12 col-lg-12 col-xl-6 col-xxl-6">
+	            <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6 col-xxl-8">
 
 					<div class="card">
 						<div class="card-body">
@@ -49,7 +49,7 @@
 
 
 	            {# COLUNA LATERAL #}
-	            <div class="col-sm-12 col-md-12 col-lg-12 col-xl-6 col-xxl-6">
+	            <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6 col-xxl-4">
 
 					<div class="card">
 					    <div class="card-header py-2">
@@ -85,6 +85,40 @@
 					        </div>
 					    </div>
 					</div>
+
+					{% if sis_categories %}
+					<div class="card">
+                       
+					    <div class="card-header py-2">
+                        	Sistema SISMOTEL
+                        </div>
+
+                        <div class="card-body pb-2">
+
+							<div class="mb-3">
+								<label>Selecione a Suíte</label>
+								<select class="form-control" name="sis_suite">
+									<option>Selecione</option>
+									{% for categorie in sis_categories %}
+										<option value="{{ categorie.id }}" {{ suite.sis_suite == categorie.id ? 'selected' }} data-total="{{ categorie.total }}" data-free="{{ categorie.free }}">{{ categorie.name }}</option>
+									{% endfor %}
+								</select>
+							</div>
+							<div class="row mb-3">
+								<div class="col-sm-12 col-md-6">
+									<label>Total Disponível</label>
+  									<input type="number" name="quantidade" class="form-control" id="sis_total" value="{{ suite.quantidade }}">
+								</div>
+								<div class="col-sm-12 col-md-6">
+									<label>Total Livres</label>
+  									<input type="number" name="disponibilidade" class="form-control" id="sis_free" value="{{ suite.disponibilidade }}">
+								</div>
+							</div>
+
+						</div>
+
+					</div>
+					{% endif %}
 
 	                <div class="card">
 	                    <div class="card-body">
