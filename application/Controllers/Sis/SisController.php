@@ -7,10 +7,12 @@ use Agencia\Close\Services\Sis\CategoriesSis;
 
 class SisController extends Controller
 {
-    public function disponibilidade($params)
+    public function disponibilidade()
     {
-        $this->setParams($params);
-
+        header("Access-Control-Allow-Origin: *");
+        header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
+        header("Access-Control-Allow-Headers: X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method");
+    
         $moteis = new Sis;
         $lista_moteis = $moteis->getMotelSis()->getResult();
         
