@@ -9,10 +9,6 @@ class SisController extends Controller
 {
     public function disponibilidade()
     {
-        header("Access-Control-Allow-Origin: *");
-        header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
-        header("Access-Control-Allow-Headers: X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method");
-    
         $moteis = new Sis;
         $lista_moteis = $moteis->getMotelSis()->getResult();
         
@@ -32,12 +28,16 @@ class SisController extends Controller
         }        
     }
 
-    public function disponibilidadeMotel($params)
+    public function disponibilidadeMotel()
     {
-        $this->setParams($params);
+        header("Access-Control-Allow-Origin: *");
+        header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
+        header("Access-Control-Allow-Headers: X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method");
+    
+        $_GET = json_decode(file_get_contents("php://input"), true);
 
         $moteis = new Sis;
-        $motel = $moteis->getMotelSisSingle($params['motel'])->getResultSingle();
+        $motel = $moteis->getMotelSisSingle($_GET['motel'])->getResultSingle();
         
         if($motel) {               
             $sis_categories = [];
