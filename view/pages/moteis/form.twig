@@ -162,6 +162,22 @@
 							</div>
 
 							<div class="card">
+								<div class="card-header py-2">SISTEMA DE INTEGRAÇÃO</div>
+								<div class="card-body">
+									<label>Selecione a Integração</label>
+									<select name="integracao" class="form-control mb-3 integracao">
+										<option value="N">Sem Integração</option>
+										<option value="sis" {{ motel.integracao == 'sis' ? 'selected' }}>Sistema Sis</option>
+										<option value="rubens" {{ motel.integracao == 'rubens' ? 'selected' }}>Sistema Rubens</option>
+									</select>
+									<div class="integracao-token" style="{{ motel.integracao != 'sis' ? 'display:none' }}">
+										<label>Token do Motel</label>
+										<input class="form-control" type="text" name="token" value="{{ motel.token }}">
+									</div>
+								</div>
+							</div>
+
+							<div class="card">
 								<div class="card-header py-2">LOGO DO MOTEL</div>
 								<div class="card-body">
 									<div class="form-group mb-0">

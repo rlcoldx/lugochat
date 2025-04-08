@@ -21,7 +21,7 @@ class CategoriesSis
         CURLOPT_CUSTOMREQUEST => 'GET',
         CURLOPT_HTTPHEADER => array(
             'token: '.$token,
-            'softhouse: e7ff638fe581513d36f9743936d83a90-8e6702fcc16d42059686a50ce429b52a'
+            'softhouse: '.SOFTHOUSE
         ),
         ));
 

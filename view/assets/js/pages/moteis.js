@@ -219,3 +219,22 @@ function limpa_formulário_cep() {
     $("#estado").val('');
     $("#numero").val('');
 }
+
+$(document).ready(function() {
+    // Verifica o valor inicial ao carregar a página
+    toggleTokenField();
+    
+    // Adiciona o evento de change ao select
+    $('select[name="integracao"]').change(function() {
+        toggleTokenField();
+    });
+    
+    function toggleTokenField() {
+        var selectedValue = $('select[name="integracao"]').val();
+        if (selectedValue === 'sis') {
+            $('.integracao-token').show();
+        } else {
+            $('.integracao-token').hide();
+        }
+    }
+});
