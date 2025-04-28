@@ -12,7 +12,7 @@ class Rubens extends Model
     public function checkMotelRubens($id): Read
     {   
         $this->read = new Read();
-        $this->read->FullRead("SELECT * FROM usuarios WHERE `status` = 'Ativo' AND integracao = 'rubens'", "id={$id}");
+        $this->read->FullRead("SELECT * FROM usuarios WHERE `status` = 'Ativo' AND integracao = 'rubens' AND id = :id", "id={$id}");
         return $this->read;
     }
 
@@ -61,28 +61,40 @@ class Rubens extends Model
     public function updateDisponibilidade($params)
     {
         if (empty($params['qtde']) || empty($params['suite']) || empty($params['motel'])) {
-            return 'Parâmetros insuficientes ou inválidos.';
+            return 'Erro: Parâmetros insuficientes ou inválidos.';
         }
 
-        $update = new Update();
-        $dados['disponibilidade'] = $params['qtde'];
-        
         try {
-            $update->ExeUpdate(
+            $this->read = new Read();
+            $this->read->ExeRead(
                 'suites',
-                $dados,
-                'WHERE `id` = :id AND `id_motel` = :id_motel',
+                'WHERE id = :id AND id_motel = :id_motel',
                 "id={$params['suite']}&id_motel={$params['motel']}"
             );
 
-            if ($update->getResult()) {
-                return true;
-            } else {
-                return 'Nenhum registro atualizado.';
+            $suíteEncontrada = $this->read->getResult();
+
+            if (empty($suíteEncontrada)) {
+                return 'Erro: Suíte não encontrada.';
             }
 
+            // Se encontrou, atualiza
+            $this->update = new Update();
+            $dados = [
+                'disponibilidade' => $params['qtde']
+            ];
+
+            $this->update->ExeUpdate(
+                'suites',
+                $dados,
+                'WHERE id = :id AND id_motel = :id_motel',
+                "id={$params['suite']}&id_motel={$params['motel']}"
+            );
+
+            return true;
+            
         } catch (\Exception $e) {
-            return 'Erro na atualização: ' . $e->getMessage();
+            return 'Erro: ' . $e->getMessage();
         }
     }
 

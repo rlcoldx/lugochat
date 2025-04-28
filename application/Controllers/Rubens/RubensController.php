@@ -26,7 +26,7 @@ class RubensController extends Controller
             if ($resultado === true) {
                 echo 'ok';
             } else {
-                echo 'Erro: ' . $resultado;
+                echo $resultado;
             }
         }else{
             echo 'Erro: Motel não encontrado';
