@@ -18,11 +18,18 @@ class RubensController extends Controller
     {
         $this->setParams($params);
         $model = new Rubens;
-        $resultado = $model->updateDisponibilidade($_GET);
-        if ($resultado === true) {
-            echo 'ok';
-        } else {
-            echo 'Erro: ' . $resultado;
+
+        $checkMotel = $model->checkMotelRubens($_GET['motel'])->getResult();
+
+        if (!empty($checkMotel)) {
+            $resultado = $model->updateDisponibilidade($_GET);
+            if ($resultado === true) {
+                echo 'ok';
+            } else {
+                echo 'Erro: ' . $resultado;
+            }
+        }else{
+            echo 'Erro: Motel não encontrado';
         }
     }
 

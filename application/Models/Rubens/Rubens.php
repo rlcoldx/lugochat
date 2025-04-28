@@ -8,6 +8,14 @@ use Agencia\Close\Models\Model;
 
 class Rubens extends Model 
 {
+
+    public function checkMotelRubens($id): Read
+    {   
+        $this->read = new Read();
+        $this->read->FullRead("SELECT * FROM usuarios WHERE `status` = 'Ativo' AND integracao = 'rubens'", "id={$id}");
+        return $this->read;
+    }
+
     public function getSuites(): Read
     {
         $this->read = new Read();
