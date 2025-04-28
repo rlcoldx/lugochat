@@ -52,10 +52,30 @@ class Rubens extends Model
 
     public function updateDisponibilidade($params)
     {
+        if (empty($params['qtde']) || empty($params['suite']) || empty($params['motel'])) {
+            return 'Parâmetros insuficientes ou inválidos.';
+        }
+
         $update = new Update();
         $dados['disponibilidade'] = $params['qtde'];
-        $update->ExeUpdate('suites', $dados, 'WHERE `id` = :id AND `id_motel` = :id_motel', "id={$params['suite']}&id_motel={$params['motel']}");
-        return $update;
+        
+        try {
+            $update->ExeUpdate(
+                'suites',
+                $dados,
+                'WHERE `id` = :id AND `id_motel` = :id_motel',
+                "id={$params['suite']}&id_motel={$params['motel']}"
+            );
+
+            if ($update->getResult()) {
+                return true;
+            } else {
+                return 'Nenhum registro atualizado.';
+            }
+
+        } catch (\Exception $e) {
+            return 'Erro na atualização: ' . $e->getMessage();
+        }
     }
 
     public function getDisponibilidade($params): Read

@@ -17,11 +17,13 @@ class RubensController extends Controller
     public function disponibilidade($params)
     {
         $this->setParams($params);
-
         $model = new Rubens;
-        $model->updateDisponibilidade($_GET);
-        $dados = array("Atualizado");
-        print_r($dados);
+        $resultado = $model->updateDisponibilidade($_GET);
+        if ($resultado === true) {
+            echo 'ok';
+        } else {
+            echo 'Erro: ' . $resultado;
+        }
     }
 
     public function qtde_disp()
@@ -29,6 +31,6 @@ class RubensController extends Controller
         $model = new Rubens;
         $disponibilidade = $model->getDisponibilidade($_GET)->getResult();
         $json_result = $disponibilidade[0]["json_result"];
-        echo $json_result;        
+        echo $json_result;
     }
 }
