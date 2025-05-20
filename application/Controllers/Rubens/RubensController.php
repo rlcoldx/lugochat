@@ -40,4 +40,91 @@ class RubensController extends Controller
         $json_result = $disponibilidade[0]["json_result"];
         echo $json_result;
     }
+
+    public function CriarReservaTeste()
+    {
+        $id_motel = isset($_GET['motel']) ? intval($_GET['motel']) : null;
+        $id_suite = isset($_GET['suite']) ? intval($_GET['suite']) : null;
+        if ($id_motel <= 0 || $id_suite <= 0) {
+            http_response_code(400);
+            echo json_encode(['erro' => 'Parâmetros motel e suite são obrigatórios.'], JSON_UNESCAPED_UNICODE);
+            return;
+        }
+
+        $model = new Rubens;
+        if (!$model->verificarDisponibilidadeSuite($id_motel, $id_suite)) {
+            http_response_code(400);
+            echo json_encode(['erro' => 'Suíte Indisponível.'], JSON_UNESCAPED_UNICODE);
+            return;
+        }
+
+        $reserva_id = $model->criarPreReservaTeste($id_motel, $id_suite);
+
+        if (!$reserva_id) {
+            http_response_code(500);
+            echo json_encode(['erro' => 'Erro ao criar reserva.'], JSON_UNESCAPED_UNICODE);
+            return;
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode(['reserva_id' => $reserva_id]);
+    }
+
+    public function verReserva()
+    {
+        $codigo = isset($_GET['codigo']) ? intval($_GET['codigo']) : null;
+        if (!$codigo) {
+            http_response_code(400);
+            echo json_encode(['erro' => 'Parâmetro codigo é obrigatório.'], JSON_UNESCAPED_UNICODE);
+            return;
+        }
+
+        $model = new Rubens;
+        $dados = $model->getReservaComPagamento($codigo);
+        if (!$dados) {
+            http_response_code(404);
+            echo json_encode(['erro' => 'Reserva não encontrada.'], JSON_UNESCAPED_UNICODE);
+            return;
+        }
+        header('Content-Type: application/json');
+        echo json_encode($dados, JSON_UNESCAPED_UNICODE);
+    }
+
+    public function reservaPaga()
+    {
+        $codigo = isset($_GET['codigo']) ? intval($_GET['codigo']) : null;
+        if (!$codigo) {
+            http_response_code(400);
+            echo json_encode(['erro' => 'Parâmetro codigo é obrigatório.'], JSON_UNESCAPED_UNICODE);
+            return;
+        }
+
+        $model = new Rubens;
+        $ok = $model->simularPagamentoReserva($codigo);
+        if ($ok) {
+            echo json_encode(['result' => 'atualizado'], JSON_UNESCAPED_UNICODE);
+        } else {
+            http_response_code(404);
+            echo json_encode(['erro' => 'Reserva não encontrada ou erro ao atualizar.'], JSON_UNESCAPED_UNICODE);
+        }
+    }
+
+    public function cancelarReserva()
+    {
+        $codigo = isset($_GET['codigo']) ? intval($_GET['codigo']) : null;
+        if (!$codigo) {
+            http_response_code(400);
+            echo json_encode(['erro' => 'Parâmetro codigo é obrigatório.'], JSON_UNESCAPED_UNICODE);
+            return;
+        }
+
+        $model = new Rubens;
+        $ok = $model->simularCancelamentoReserva($codigo);
+        if ($ok) {
+            echo json_encode(['result' => 'cancelada'], JSON_UNESCAPED_UNICODE);
+        } else {
+            http_response_code(404);
+            echo json_encode(['erro' => 'Reserva não encontrada ou erro ao atualizar.'], JSON_UNESCAPED_UNICODE);
+        }
+    }
 }
