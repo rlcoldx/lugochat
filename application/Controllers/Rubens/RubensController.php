@@ -138,7 +138,14 @@ class RubensController extends Controller
         }
         $model = new Rubens;
         $reservas = $model->getReservasNaoProcessadasPorMotel($id_motel);
+        $qtd_processadas = 0;
+        if (!empty($reservas)) {
+            $qtd_processadas = $model->marcarReservasComoProcessadasPorMotel($id_motel);
+        }
         header('Content-Type: application/json');
-        echo json_encode($reservas, JSON_UNESCAPED_UNICODE);
+        echo json_encode([
+            'reservas' => $reservas,
+            'qtd_processadas' => $qtd_processadas
+        ], JSON_UNESCAPED_UNICODE);
     }
 }

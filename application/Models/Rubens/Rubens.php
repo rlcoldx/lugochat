@@ -281,10 +281,27 @@ class Rubens extends Model
     {
         $read = new Read();
         $read->FullRead(
-            "SELECT r.*, p.pagamento_status, p.pagamento_metodo, p.pagamento_valor FROM reservas AS r LEFT JOIN pagamentos AS p ON p.id_reserva = r.id WHERE r.id_motel = :id_motel AND r.processado = 'N' ORDER BY r.id DESC",
+            "SELECT r.*, p.pagamento_status, p.pagamento_metodo, p.pagamento_valor FROM reservas AS r LEFT JOIN pagamentos AS p ON p.id_reserva = r.id WHERE r.id_motel = :id_motel AND r.processado_rubens = 'N' AND r.integracao = 'rubens' ORDER BY r.id DESC",
             "id_motel={$id_motel}"
         );
         return $read->getResult();
+    }
+
+    /**
+     * Marca todas as reservas não processadas de um motel como processadas
+     * @param int $id_motel
+     * @return int Número de reservas atualizadas
+     */
+    public function marcarReservasComoProcessadasPorMotel($id_motel)
+    {
+        $update = new Update();
+        $update->ExeUpdate(
+            'reservas',
+            ['processado_rubens' => 'S'],
+            'WHERE id_motel = :id_motel AND processado_rubens = "N" AND integracao = "rubens"',
+            "id_motel={$id_motel}"
+        );
+        return $update->getRowCount();
     }
 
 }
