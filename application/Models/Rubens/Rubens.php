@@ -272,4 +272,19 @@ class Rubens extends Model
         return $updatePagamento->getRowCount() > 0 || $updateReserva->getRowCount() > 0;
     }
 
+    /**
+     * Retorna todas as reservas não processadas para um motel, incluindo dados de pagamento
+     * @param int $id_motel
+     * @return array
+     */
+    public function getReservasNaoProcessadasPorMotel($id_motel)
+    {
+        $read = new Read();
+        $read->FullRead(
+            "SELECT r.*, p.pagamento_status, p.pagamento_metodo, p.pagamento_valor FROM reservas AS r LEFT JOIN pagamentos AS p ON p.id_reserva = r.id WHERE r.id_motel = :id_motel AND r.processado = 'N' ORDER BY r.id DESC",
+            "id_motel={$id_motel}"
+        );
+        return $read->getResult();
+    }
+
 }

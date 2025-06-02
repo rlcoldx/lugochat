@@ -127,4 +127,18 @@ class RubensController extends Controller
             echo json_encode(['erro' => 'Reserva não encontrada ou erro ao atualizar.'], JSON_UNESCAPED_UNICODE);
         }
     }
+
+    public function receberReservas()
+    {
+        $id_motel = isset($_GET['motel']) ? intval($_GET['motel']) : null;
+        if (!$id_motel) {
+            http_response_code(400);
+            echo json_encode(['erro' => 'Parâmetro motel é obrigatório.'], JSON_UNESCAPED_UNICODE);
+            return;
+        }
+        $model = new Rubens;
+        $reservas = $model->getReservasNaoProcessadasPorMotel($id_motel);
+        header('Content-Type: application/json');
+        echo json_encode($reservas, JSON_UNESCAPED_UNICODE);
+    }
 }
