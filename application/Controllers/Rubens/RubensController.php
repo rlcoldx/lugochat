@@ -146,14 +146,14 @@ class RubensController extends Controller
 
     public function reservaProcessado()
     {
-        $id_motel = isset($_GET['motel']) ? intval($_GET['motel']) : null;
-        if (!$id_motel) {
+        $id_reserva = isset($_GET['codigo']) ? intval($_GET['codigo']) : null;
+        if (!$id_reserva) {
             http_response_code(400);
-            echo json_encode(['erro' => 'Parâmetro motel é obrigatório.'], JSON_UNESCAPED_UNICODE);
+            echo json_encode(['erro' => 'Parâmetro código é obrigatório.'], JSON_UNESCAPED_UNICODE);
             return;
         }
         $model = new Rubens;
-        $model->marcarReservasComoProcessadasPorMotel($id_motel);
+        $model->marcarReservasComoProcessadasPorMotel($id_reserva);
         echo json_encode(['result' => 'atualizado'], JSON_UNESCAPED_UNICODE);
     }
 }

@@ -292,14 +292,14 @@ class Rubens extends Model
      * @param int $id_motel
      * @return int Número de reservas atualizadas
      */
-    public function marcarReservasComoProcessadasPorMotel($id_motel)
+    public function marcarReservasComoProcessadasPorMotel($id_reserva)
     {
         $update = new Update();
         $update->ExeUpdate(
             'reservas',
             ['processado_rubens' => 'S'],
-            'WHERE id_motel = :id_motel AND processado_rubens = "N" AND integracao = "rubens"',
-            "id_motel={$id_motel}"
+            'WHERE id = :id AND processado_rubens = "N" AND integracao = "rubens"',
+            "id={$id_reserva}"
         );
         return $update->getRowCount();
     }
