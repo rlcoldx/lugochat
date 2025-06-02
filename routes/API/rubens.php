@@ -8,5 +8,6 @@ $router->get("/api/rubens/suite/qtde_disp", "RubensController:qtde_disp");
 $router->get("/api/rubens/receber_reservas", "RubensController:receberReservas");
 $router->get("/api/rubens/reserva/criar/teste", "RubensController:CriarReservaTeste");
 $router->get("/api/rubens/reserva/ver", "RubensController:verReserva");
+$router->get("/api/rubens/reserva/processado", "RubensController:reservaProcessado");
 $router->get("/api/rubens/reserva/reserva_paga", "RubensController:reservaPaga");
 $router->get("/api/rubens/reserva/cancelar", "RubensController:cancelarReserva");

@@ -138,14 +138,22 @@ class RubensController extends Controller
         }
         $model = new Rubens;
         $reservas = $model->getReservasNaoProcessadasPorMotel($id_motel);
-        $qtd_processadas = 0;
-        if (!empty($reservas)) {
-            $qtd_processadas = $model->marcarReservasComoProcessadasPorMotel($id_motel);
-        }
         header('Content-Type: application/json');
         echo json_encode([
-            'reservas' => $reservas,
-            'qtd_processadas' => $qtd_processadas
+            'reservas' => $reservas
         ], JSON_UNESCAPED_UNICODE);
+    }
+
+    public function reservaProcessado()
+    {
+        $id_motel = isset($_GET['motel']) ? intval($_GET['motel']) : null;
+        if (!$id_motel) {
+            http_response_code(400);
+            echo json_encode(['erro' => 'Parâmetro motel é obrigatório.'], JSON_UNESCAPED_UNICODE);
+            return;
+        }
+        $model = new Rubens;
+        $model->marcarReservasComoProcessadasPorMotel($id_motel);
+        echo json_encode(['result' => 'atualizado'], JSON_UNESCAPED_UNICODE);
     }
 }
