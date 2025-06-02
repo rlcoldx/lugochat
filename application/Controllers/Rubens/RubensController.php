@@ -154,6 +154,6 @@ class RubensController extends Controller
         }
         $model = new Rubens;
         $model->marcarReservasComoProcessadasPorMotel($id_reserva);
-        echo json_encode(['result' => 'atualizado'], JSON_UNESCAPED_UNICODE);
+        echo 'ok';
     }
 }
