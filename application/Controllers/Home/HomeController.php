@@ -59,6 +59,9 @@ class HomeController extends Controller
       $model = new Home();
       $lucroMes = $model->getLucroMes();
       $lucroTotal = $model->getLucroTotal();
+    }else{
+      $lucroMes = 0;
+      $lucroTotal = 0;
     }
 
     $this->render('pages/home/home.twig', [
