@@ -1,0 +1,67 @@
+<div class="border-bottom px-3 py-3 mb-2">
+    <h4 class="mb-0">EDITAR CONTA BANCARIA</h4>
+</div>
+<div class="px-3 py-2 pt-0">
+    <form action="javascript:void(0);" method="POST" id="conta_save">
+
+        <div class="btn-group mb-2" role="group" aria-label="Basic radio toggle button group">
+            <input type="radio" class="btn-check" name="banco_pix" id="banco_pix1" value="Banco" autocomplete="off" {{ (conta.banco_pix == 'Banco') ? 'checked' }}>
+            <label class="btn btn-outline-primary" for="banco_pix1">Conta Bancaria</label>
+
+            <input type="radio" class="btn-check" name="banco_pix" id="banco_pix2" value="Pix" autocomplete="off" {{ (conta.banco_pix == 'Pix') ? 'checked' }}>
+            <label class="btn btn-outline-primary" for="banco_pix2">Chave Pix</label>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 col-sm-12 mb-1">
+                <div class="base-tipo">
+                    <label>Nome do Banco</label>
+                    <input type="text" name="conta_banco" value="{{ conta.conta_banco }}" class="form-control" placeholder="Nº do banco / Nome do Banco">
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-12 mb-1 banco_pix_banco" {{ (conta.banco_pix == 'Pix') ? 'style="display:none;"' }}>
+                <div>
+                    <label>Nº da Agência</label>
+                    <input type="text" name="conta_ag" value="{{ conta.conta_ag }}" class="form-control" placeholder="Nº da Agência">
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-12 mb-1 banco_pix_banco" {{ (conta.banco_pix == 'Pix') ? 'style="display:none;"' }}>
+                <div>
+                    <label>Nº da Conta</label>
+                    <input type="text" name="conta_numero" value="{{ conta.conta_numero }}" class="form-control" placeholder="Nº da Conta">
+                </div>
+            </div>
+
+            <div class="col-md-3 col-sm-12 mb-1 banco_pix_banco" {{ (conta.banco_pix == 'Pix') ? 'style="display:none;"' }}>
+                <div>
+                    <label>Tipo de Conta</label>
+                    <select name="conta_tipo" class="form-control">
+                        <option value="">Selecione</option>
+                        <option value="Corrente" {{ (conta.conta_tipo == 'Corrente') ? 'selected' }}>Corrente</option>
+                        <option value="Poupança" {{ (conta.conta_tipo == 'Poupança') ? 'selected' }}>Poupança</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-12 mb-1">
+                <div>
+                    <label>Nome do Responsável</label>
+                    <input type="text" name="conta_responsavel" value="{{ conta.conta_responsavel }}" class="form-control" placeholder="Nome do Responsável">
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-12 mb-1">
+                <div>
+                    <label>CPF / CNPJ</label>
+                    <input type="number" name="conta_cpf_cnpj" value="{{ conta.conta_cpf_cnpj }}" class="form-control" placeholder="CPF / CNPJ">
+                </div>
+            </div>
+            <div class="col-md-12 col-sm-12 mt-3 pt-3 border-top mb-2">
+                <div class="d-flex justify-content-end w-100">
+                    <input type="hidden" value="{{ conta.id }}" name="id">
+                    <button type="submit" id="salvar" class="btn btn-primary">SALVAR ALTERAÇÕES</button>
+                </div>
+            </div>
+        </div>
+
+    </form>
+</div>
+<script src="{{ PATH }}/view/assets/js/pages/saques.js"></script>

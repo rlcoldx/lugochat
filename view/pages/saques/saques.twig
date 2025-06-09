@@ -12,7 +12,7 @@
                 <div class="col-xl-4 col-md-6 col-12">
                     <div class="card card-congratulation-medal">
                         <div class="card-body pb-1">
-                            <h5>Parabéns 🎉 {{ _session.reservamesa_perfil_nome }}!</h5>
+                            <h5>Parabéns 🎉 {{ _session.busca_perfil_nome }}!</h5>
                             <p class="card-text font-small-3">Está é sua carteira até agora</p>
                             <h1 class="mb-75 mt-2 pt-50">
                                 <a href="{{ DOMAIN }}/saques">R$ {{ carteira|number_format(2, ',', '.') }}</a>
@@ -36,6 +36,8 @@
                             <div class="heading-elements">
                                 {% if contas|length < 2 %}
                                 <a class="btn btn-sm btn-primary" href="javascript:void(0)" data-bs-toggle="modal-remote" data-remote="{{ DOMAIN }}/saques/conta/criar" data-bs-target="#conta">CADASTRAR CONTA</a>
+                                {% else %}
+                                <span class="badge bg-danger">Você atingiu o limite de contas cadastradas.</span>
                                 {% endif %}
                             </div>
                         </div>
@@ -45,7 +47,7 @@
                                     <tbody>
                                         {% for conta in contas %}
                                         <tr>
-                                            <td>{{ conta.banco_pix == 'Pix' ? '<span class="badge bg-success me-2">PIX</span>' }}{{ conta.conta_banco }}</td>
+                                            <td>{{ conta.banco_pix == 'Pix' ? '<span class="badge bg-success me-2">Pix</span>' : '<span class="badge bg-warning me-2">Banco</span>' }}{{ conta.conta_banco }}</td>
                                             <td>{{ conta.conta_ag }}</td>
                                             <td>{{ conta.conta_numero }}</td>
                                             <td>{{ conta.conta_tipo }}</td>

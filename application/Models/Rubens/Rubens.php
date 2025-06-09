@@ -262,7 +262,9 @@ class Rubens extends Model
             'reservas',
             [
                 'cancelada_rubens' => 'S',
-                'fase_rubens' => 0
+                'fase_rubens' => 0,
+                'status_reserva' => 'Cancelado',
+                'processado_rubens' => 'S'
             ],
             'WHERE id = :id',
             "id={$id}"
@@ -297,7 +299,7 @@ class Rubens extends Model
         $update = new Update();
         $update->ExeUpdate(
             'reservas',
-            ['processado_rubens' => 'S'],
+            ['processado_rubens' => 'S', 'status_reserva' => 'Aceito'],
             'WHERE id = :id AND processado_rubens = "N" AND integracao = "rubens"',
             "id={$id_reserva}"
         );

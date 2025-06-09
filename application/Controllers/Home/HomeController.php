@@ -7,31 +7,59 @@ use Agencia\Close\Models\User\User;
 use Agencia\Close\Models\Moteis\Moteis;
 use Agencia\Close\Controllers\Controller;
 use Agencia\Close\Models\Reserva\Reserva;
+use Agencia\Close\Models\Saques\SaquesPainel;
 
 class HomeController extends Controller
 {	
   public function index()
   {
-
     $model = new Home();
-    $totalReservas = $model->getTotalReservas();
-    if ($totalReservas->getResult()){
-      $totalReservas = $totalReservas->getResult()[0];
+    $idMotel = null;
+    if ($_SESSION['busca_perfil_tipo'] == 2) {
+      $idMotel = $_SESSION['busca_perfil_empresa'] ?? null;
     }
 
-    $totalValorMes = $model->getTotalValorMes()->getResult()[0];
-    $totalValor = $model->getTotalValor()->getResult()[0];
+    $totalReservas = $model->getTotalReservas($idMotel);
+    if ($totalReservas->getResult()){
+      $totalReservas = $totalReservas->getResultSingle();
+    }
 
-    $reservasDias = $model->getRegistrosPorDiaDaSemana();
+    $totalValorMes = $model->getTotalValorMes($idMotel)->getResultSingle();
+    $totalValor = $model->getTotalValor($idMotel)->getResultSingle();
 
-    $suidesReservadas = $model->getSuidesReservadas()->getResult();
+    $reservasDias = $model->getRegistrosPorDiaDaSemana($idMotel);
+
+    $suidesReservadas = $model->getSuidesReservadas($idMotel)->getResult();
 
     $reservas = new Reserva();
     $limit = 5;
-		$reservas = $reservas->getReservas($limit)->getResult();
+    $reservas = $reservas->getReservas($limit)->getResult();
 
     $moteis = new Moteis();
     $moteislista = $moteis->getMoteisList()->getResult();
+
+    if($_SESSION['busca_perfil_tipo'] == 2){
+
+      $user = new User();
+      $maxSaques = $user->getUserByID($_SESSION['busca_perfil_empresa'])->getResultSingle()['saques'];
+      $carteira = $this->carteira();
+      $totalSaques = $this->saquesMes()['total_saques'];
+      $totalSaques = ($totalSaques - $maxSaques);
+
+      $contratoPercentual = $this->contratoPercentual();
+      $totalValorMes['total_vendas'] = $totalValorMes['total_vendas'] * ($contratoPercentual / 100);
+      $totalValor['total_vendas'] = $totalValor['total_vendas'] * ($contratoPercentual / 100);
+
+    }else{
+      $carteira = 0;
+      $totalSaques = 0;
+    }
+
+    if($_SESSION['busca_perfil_tipo'] == 0){
+      $model = new Home();
+      $lucroMes = $model->getLucroMes();
+      $lucroTotal = $model->getLucroTotal();
+    }
 
     $this->render('pages/home/home.twig', [
       'page' => 'home', 
@@ -43,6 +71,10 @@ class HomeController extends Controller
       'suidesReservadas' => $suidesReservadas,
       'reservas' => $reservas,
       'moteislista' => $moteislista,
+      'carteira' => $carteira,
+      'totalSaques' => $totalSaques,
+      'lucroMes' => $lucroMes,
+      'lucroTotal' => $lucroTotal
     ]);
   }
 
@@ -55,6 +87,57 @@ class HomeController extends Controller
     $_SESSION['busca_perfil_nome'] = $empresa['nome'];
     $_SESSION['busca_perfil_logo'] = $empresa['logo'];
     $_SESSION['busca_perfil_tipo'] =  $empresa['tipo'];
+  }
+
+
+  private function contratoPercentual()
+  {
+    $model = new User();
+    $contrato = $model->getUserByID($_SESSION['busca_perfil_empresa'])->getResultSingle()['contrato'];
+    $percentual_motel = 100 - $contrato;
+    return $percentual_motel;
+  }
+
+
+  //PEGAR O VALOR EM CAIXA
+  private function carteira()
+  {
+
+    $model = new User();
+    $contrato = $model->getUserByID($_SESSION['busca_perfil_empresa'])->getResultSingle()['contrato'];
+    $percentual_motel = 100 - $contrato;
+
+    $vendas_agendamentos = new SaquesPainel();
+    $vendas_agendamentos = $vendas_agendamentos->getTotalReservas($_SESSION['busca_perfil_empresa']);
+    if ($vendas_agendamentos->getResult()) {
+      $vendas_agendamentos_total = $vendas_agendamentos->getResultSingle()['total'];
+    } else {
+      $vendas_agendamentos_total = 0.00;
+    }
+
+    $saques_realizados = new SaquesPainel();
+    $saques_realizados = $saques_realizados->getTotalSaques($_SESSION['busca_perfil_empresa']);
+    if ($saques_realizados->getResult()) {
+      $saques_realizados_total = $saques_realizados->getResultSingle()['total'];
+    } else {
+      $saques_realizados_total = 0.00;
+    }
+
+    $carteira = ($vendas_agendamentos_total * ($percentual_motel / 100)) - $saques_realizados_total;
+
+    return $carteira;
+  }
+
+  private function saquesMes()
+  {
+    $result = new SaquesPainel();
+    return $result->getSaquesMes($_SESSION['busca_perfil_empresa'])->getResultSingle();
+  }
+
+  private function saques()
+  {
+    $result = new SaquesPainel();
+    return $result->getSaques($_SESSION['busca_perfil_empresa'])->getResultSingle();
   }
 
 }

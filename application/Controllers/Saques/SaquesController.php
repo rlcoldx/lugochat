@@ -13,10 +13,15 @@ class SaquesController extends Controller
     {
         $this->setParams($params);
 
+        $user = new User();
+        $maxSaques = $user->getUserByID($_SESSION['busca_perfil_empresa'])->getResultSingle()['saques'];
+
         $contas_bancarias = $this->contas_bancarias();
         $carteira = $this->carteira();
         $saques = $this->saques();
-        $totalSaques = $this->saquesMes()[0]['total_saques'];
+        $totalSaques = $this->saquesMes()['total_saques'];
+
+        $totalSaques = ($totalSaques - $maxSaques);
 
         $this->render('pages/saques/saques.twig', ['menu' => 'saques', 'contas' => $contas_bancarias, 'carteira' => $carteira, 'saques' => $saques, 'totalSaques' => $totalSaques]);
     }
@@ -78,13 +83,13 @@ class SaquesController extends Controller
     private function carteira(){
 
         $model = new User();
-        $contrato = $model->getUserByID($_SESSION['busca_perfil_empresa'])->getResult()[0]['contrato'];
-        $contrato = (100 - $contrato);
+        $contrato = $model->getUserByID($_SESSION['busca_perfil_empresa'])->getResultSingle()['contrato'];
+        $percentual_motel = 100 - $contrato;
 
         $vendas_agendamentos = new SaquesPainel();
         $vendas_agendamentos = $vendas_agendamentos->getTotalReservas($_SESSION['busca_perfil_empresa']);
         if ($vendas_agendamentos->getResult()) {
-            $vendas_agendamentos_total = $vendas_agendamentos->getResult()[0]['total'];
+            $vendas_agendamentos_total = $vendas_agendamentos->getResultSingle()['total'];
         }else{
             $vendas_agendamentos_total = 0.00;
         }
@@ -92,16 +97,12 @@ class SaquesController extends Controller
         $saques_realizados = new SaquesPainel();
         $saques_realizados = $saques_realizados->getTotalSaques($_SESSION['busca_perfil_empresa']);
         if ($saques_realizados->getResult()) {
-            $saques_realizados_total = $saques_realizados->getResult()[0]['total'];
+            $saques_realizados_total = $saques_realizados->getResultSingle()['total'];
         }else{
             $saques_realizados_total = 0.00;
         }
 
-        //$arrecadado = $total_valor_vendas * (VALOR_GANHO / 100);
-        $arrecadado = $vendas_agendamentos_total * ($contrato / 100);
-        $valor_base = $vendas_agendamentos_total - $arrecadado;
-
-        $carteira = ($valor_base - $saques_realizados_total);
+        $carteira = ($vendas_agendamentos_total * ($percentual_motel / 100)) - $saques_realizados_total;
 
         return $carteira;
 
@@ -185,13 +186,13 @@ class SaquesController extends Controller
     private function saquesMes()
     {
         $result = new SaquesPainel();
-        return $result->getSaquesMes($_SESSION['busca_perfil_empresa'])->getResult();
+        return $result->getSaquesMes($_SESSION['busca_perfil_empresa'])->getResultSingle();
     }
 
     private function saques()
     {
         $result = new SaquesPainel();
-        return $result->getSaques($_SESSION['busca_perfil_empresa'])->getResult();
+        return $result->getSaques($_SESSION['busca_perfil_empresa'])->getResultSingle();
     }
 
 
