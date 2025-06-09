@@ -11,6 +11,9 @@ class SaquesController extends Controller
 
     public function index($params)
     {
+        if($_SESSION['busca_perfil_tipo'] != 2){
+            $this->router->redirect("/");
+        }
         $this->setParams($params);
 
         $user = new User();
