@@ -5,7 +5,7 @@
    
 	foreach ($list as $key => $item){
 
-		$sql = $db->prepare("UPDATE `admin_banners` SET `order` = '".$item['index']."' WHERE `local` = '".$_GET['id']."' AND nome = '".$item['name']."'");
+		$sql = $db->prepare("UPDATE `banners` SET `order` = '".$item['index']."' WHERE `local` = '".$_GET['id']."' AND nome = '".$item['name']."'");
 		$sql->execute();
 		
 	}
