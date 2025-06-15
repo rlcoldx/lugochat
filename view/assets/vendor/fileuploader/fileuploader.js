@@ -2006,6 +2006,8 @@
 								if (chunks > 1 && !item.upload.chunk)
 									item.upload.chunk = {
 										name: item.name,
+										link: item.link,
+										image_id: item.image_id,
 										size: item.file.size,
 										type: item.file.type,
 										chunkSize: chunkSize,
@@ -2402,6 +2404,8 @@
                          */
 						add: function(file, prop) {
 							var name = file._name || file.name,
+								link = file.link,
+								image_id = file.image_id,
 								size = file.size,
 								size2 = f._assets.bytesToText(size),
 								type = file.type,
@@ -2416,6 +2420,8 @@
                             
 							f._itFl.push({
 								name: name,
+								link: link,
+								image_id: image_id,
 								title: title,
 								size: size,
 								size2: size2,
@@ -3395,20 +3401,22 @@
 			boxAppendTo: null,
 			item: 	'<li class="fileuploader-item">' +
                        '<div class="columns">' +
-                           '<div class="column-thumbnail">${image}<span class="fileuploader-action-popup" data-item="${size}">Editar</span></div>' +
+                           '<div class="column-thumbnail">${image} <span class="fileuploader-url-link" id="link_content_${image_id}">${link}</span> <span class="fileuploader-action-popup" data-item="${size}">Editar</span></div>' +
                            '<div class="column-actions">' +
-                           		'<a class="fileuploader-action fileuploader-action-sort" title="Ordenar"><i class="fal fa-arrows-alt"></i></a>' +
-                               	'<a class="fileuploader-action fileuploader-action-remove" title="Remover"><i class="fal fa-trash-alt"></i></a>' +
-                           '</div>' +
+                           		'<a class="fileuploader-action fileuploader-action-link" data-idimage="${image_id}" data-item="${name}" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-content="Carregando..."><i class="fa-solid fa-link"></i></a>' +
+                           		'<a class="fileuploader-action fileuploader-action-sort" title="Ordenar"><i class="fa-solid fa-arrows-alt"></i></a>' +
+                               	'<a class="fileuploader-action fileuploader-action-remove text-danger" title="Remover"><i class="fa-solid fa-trash-alt"></i></a>' +
+							'</div>' +
                        '</div>' +
                        '<div class="progress-holder">${progressBar}</div>' +
                    '</li>',
             item2: '<li class="fileuploader-item">' +
                         '<div class="columns">' +
-                            '<div class="column-thumbnail">${image}<span class="fileuploader-action-popup" data-item="${size}">Editar</span></div>' +
+                            '<div class="column-thumbnail">${image} <span class="fileuploader-url-link" id="link_content_${image_id}">${link}</span> <span class="fileuploader-action-popup" data-item="${size}">Editar</span></div>' +
                             '<div class="column-actions">' +
-                            	'<a class="fileuploader-action fileuploader-action-sort" title="Ordenar"><i class="fal fa-arrows-alt"></i></a>' +
-                                '<a class="fileuploader-action fileuploader-action-remove" title="Remover"><i class="fal fa-trash-alt"></i></a>' +
+                            	'<a class="fileuploader-action fileuploader-action-link" data-idimage="${image_id}" data-item="${name}" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-content="Carregando..."><i class="fa-solid fa-link"></i></a>' +
+                            	'<a class="fileuploader-action fileuploader-action-sort" title="Ordenar"><i class="fa-solid fa-arrows-alt"></i></a>' +
+                                '<a class="fileuploader-action fileuploader-action-remove text-danger" title="Remover"><i class="fa-solid fa-trash-alt"></i></a>' +
                             '</div>' +
                         '</div>' +
                     '</li>',
@@ -3577,6 +3585,7 @@
 			confirm: 'Confirm',
             cancel: 'Cancel',
 			name: 'Name',
+			link: 'link',
 			type: 'Type',
 			size: 'Size',
 			dimensions: 'Dimensions',
@@ -3599,4 +3608,5 @@
             }
         }
 	}
+
 })(jQuery);

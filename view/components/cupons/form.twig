@@ -13,7 +13,7 @@
                 <!-- Tipo de Desconto -->
                 <div class="col-md-6">
                     <label for="tipo_desconto" class="form-label">Tipo de Desconto</label>
-                    <select id="tipo_desconto" name="tipo_desconto" class="form-select" required>
+                    <select id="tipo_desconto" name="tipo_desconto" class="form-control" required>
                         <option value="porcentagem" {{ cupom.tipo_desconto == 'porcentagem' ? 'selected' }}>Porcentagem</option>
                         <option value="valor_fixo" {{ cupom.tipo_desconto == 'valor_fixo' ? 'selected' }}>Valor Fixo</option>
                     </select>
@@ -44,7 +44,7 @@
                 <!-- Status -->
                 <div class="col-md-6">
                     <label for="status_cupom" class="form-label">Status</label>
-                    <select id="status_cupom" name="status_cupom" class="form-select" required>
+                    <select id="status_cupom" name="status_cupom" class="form-control" required>
                         <option value="yes" {{ cupom.status_cupom == 'yes' ? 'selected' }}>Ativo</option>
                         <option value="no" {{ cupom.status_cupom == 'no' ? 'selected' }}>Inativo</option>
                     </select>

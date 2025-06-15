@@ -1201,8 +1201,8 @@
 	padding: 0 5px 0px;
 	vertical-align: top;
 	margin-bottom: 10px;
-	min-width: 165px;
-	max-width: 165px;
+	min-width: 155px;
+	max-width: 155px;
 	overflow: hidden;
 }
 
@@ -1215,13 +1215,9 @@
 	font-size: 20px;
 	color: #acb9c7;
 	cursor: pointer;
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
-	-webkit-transition: all 0.1s ease;
-	transition: all 0.1s ease;
-	padding: 15% 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .fileuploader-theme-thumbnails .fileuploader-thumbnails-input-inner:hover {
@@ -1310,7 +1306,7 @@
 	z-index: 2
 }
 
-.fileuploader-action.fileuploader-action-remove {
+.fileuploader-action.fileuploader-action-remove, .fileuploader-action.fileuploader-action-link {
 	cursor: pointer
 }
 

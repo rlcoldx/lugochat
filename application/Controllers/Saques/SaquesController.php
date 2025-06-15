@@ -41,7 +41,7 @@ class SaquesController extends Controller
         $this->setParams($params);
         $conta = new SaquesPainel();
 
-        $CarteiraCheck = $this->CarteiraCheckReturn($params['valor']);
+        $CarteiraCheck = $this->CarteiraCheck($params);
 
         if($CarteiraCheck == '0') {
             $conta->createSaque($params, $_SESSION['busca_perfil_empresa']);
@@ -111,77 +111,15 @@ class SaquesController extends Controller
 
     }
 
-    public function CarteiraCheck(){
+    public function CarteiraCheck($valor_solicitado){
 
-        $model = new User();
-        $contrato = $model->getUserByID($_SESSION['busca_perfil_empresa'])->getResult()[0]['contrato'];
-        $contrato = (100 - $contrato);
-
-        $vendas_agendamentos = new SaquesPainel();
-        $vendas_agendamentos = $vendas_agendamentos->getTotalReservas($_SESSION['busca_perfil_empresa']);
-        if ($vendas_agendamentos->getResult()) {
-            $vendas_agendamentos_total = $vendas_agendamentos->getResult()[0]['total'];
-        }else{
-            $vendas_agendamentos_total = 0.00;
-        }
-
-        $saques_realizados = new SaquesPainel();
-        $saques_realizados = $saques_realizados->getTotalSaques($_SESSION['busca_perfil_empresa']);
-        if ($saques_realizados->getResult()) {
-            $saques_realizados_total = $saques_realizados->getResult()[0]['total'];
-        }else{
-            $saques_realizados_total = 0.00;
-        }
-
-        //$arrecadado = $total_valor_vendas * (VALOR_GANHO / 100);
-        $arrecadado = $vendas_agendamentos_total * ($contrato / 100);
-        $valor_base = $vendas_agendamentos_total - $arrecadado;
-
-        $carteira = ($valor_base - $saques_realizados_total);
-        $carteira = round($carteira, 2);
-        $valor_solicitado = str_replace(['.', ','], ['', '.'], $_POST['valor']);
+        $carteira = $this->carteira();
+        $valor_solicitado = str_replace(['.', ','], ['', '.'], $valor_solicitado['valor']);
 
         if($valor_solicitado > $carteira){
             echo '1';
         }else{
             echo '0';
-        }
-        
-    }
-
-    public function CarteiraCheckReturn($valor_enviado){
-
-        $model = new User();
-        $contrato = $model->getUserByID($_SESSION['busca_perfil_empresa'])->getResult()[0]['contrato'];
-        $contrato = (100 - $contrato);
-
-        $vendas_agendamentos = new SaquesPainel();
-        $vendas_agendamentos = $vendas_agendamentos->getTotalReservas($_SESSION['busca_perfil_empresa']);
-        if ($vendas_agendamentos->getResult()) {
-            $vendas_agendamentos_total = $vendas_agendamentos->getResult()[0]['total'];
-        }else{
-            $vendas_agendamentos_total = 0.00;
-        }
-
-        $saques_realizados = new SaquesPainel();
-        $saques_realizados = $saques_realizados->getTotalSaques($_SESSION['busca_perfil_empresa']);
-        if ($saques_realizados->getResult()) {
-            $saques_realizados_total = $saques_realizados->getResult()[0]['total'];
-        }else{
-            $saques_realizados_total = 0.00;
-        }
-
-        $arrecadado = $vendas_agendamentos_total * ($contrato / 100);
-        $valor_base = $vendas_agendamentos_total - $arrecadado;
-
-        $carteira = ($valor_base - $saques_realizados_total);
-        $carteira = round($carteira, 2);
-        $valor_solicitado = str_replace(['.', ','], ['', '.'], $valor_enviado);
-
-        if($valor_solicitado > $carteira){
-            return '1';
-        }else{
-            return '0';
         }
         
     }
@@ -195,7 +133,7 @@ class SaquesController extends Controller
     private function saques()
     {
         $result = new SaquesPainel();
-        return $result->getSaques($_SESSION['busca_perfil_empresa'])->getResultSingle();
+        return $result->getSaques($_SESSION['busca_perfil_empresa'])->getResult();
     }
 
 

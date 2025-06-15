@@ -1,0 +1,27 @@
+{% set item = nome|split('.') %}
+<form action="javascript:void(0)" method="POST" id="link_{{ item[0] }}">
+  <div class="input-group input-group-sm">
+    <input type="url" class="form-control link" name="link" placeholder="https://google.com" value="{{ link }}">
+    <input type="hidden" name="nome" value="{{ nome }}">
+    <button class="btn btn-outline-secondary" type="submit"><i class="fa-solid fa-floppy-disk"></i></button>
+  </div>
+</form>
+
+<script>
+$('#link_{{ item[0] }}').submit(function(e){
+
+  var DOMAIN = $('body').data('domain');
+  var link = $('#link_{{ item[0] }} .link').val();
+  e.preventDefault();
+  var formData = new FormData(this);
+
+  $.ajax({
+    url: DOMAIN + '/banners/link/save', data: formData, type: 'POST',
+    success: function(){
+      $('#link_content_{{ id }}').html(link);
+      $('.popover').popover('hide');
+    },
+    processData: false,cache: false,contentType: false
+  });
+});
+</script>

@@ -697,7 +697,7 @@ class FileUploader {
 		
 		foreach($files as $key=>$file) {
 			$listInputName = $file['file'];
-			$fileListIndex = is_array($listInput['list']) ? array_search($listInputName, $listInput['list']) : false;
+			$fileListIndex = (isset($listInput['list']) && is_array($listInput['list'])) ? array_search($listInputName, $listInput['list']) : false;
             
 			// add editor to appended files if available
 			if ($fileListIndex !== false && isset($listInput['values'][$fileListIndex]['editor'])) {

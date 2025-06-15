@@ -16,7 +16,7 @@ class SaquesAdminPainel extends Model
         $read->FullRead("SELECT s.*, u.nome, u.email, c.`conta_banco`,c.`banco_pix`,c.`conta_ag`,c.`conta_numero`,c.`conta_tipo`,c.`conta_responsavel`,c.`conta_cpf_cnpj`
         FROM saques AS s 
         JOIN contas_bancarias AS c ON c.id = s.id_conta_bancaria
-        JOIN usuarios AS u ON u.id = s.id_licenciado
+        JOIN usuarios AS u ON u.id = s.id_motel
         GROUP BY s.id ORDER BY s.id DESC");
         return $read;
     }

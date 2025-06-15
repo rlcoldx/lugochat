@@ -22,16 +22,18 @@
                     <table id="datatable" class="table dataTable">
                         <thead>
                             <tr role="row">
-                                <th class="sorting">Cupom</th>
-                                <th class="sorting">Valor</th>
-                                <th class="sorting_asc">Qtd. Usos</th>
-                                <th class="sorting_asc">Data de Expiração</th>
-                                <th class="sorting" width="80">Ação</th>
+                                {% if cupons[0].nome_motel %}<th>Motel</th>{% endif %}
+                                <th>Cupom</th>
+                                <th>Valor</th>
+                                <th>Qtd. Usos</th>
+                                <th>Data de Expiração</th>
+                                <th width="80">Ação</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for cupom in cupons %}
                             <tr class="restaurante-{{ cupom.id }}">
+                                {% if cupom.nome_motel %}<td class="fw-bold text-uppercase">{{ cupom.nome_motel }}</td>{% endif %}
                                 <td class="fw-bold text-uppercase">{{ cupom.codigo }}</td>
                                 <td>
                                     {% if cupom.tipo_desconto == 'porcentagem' %}

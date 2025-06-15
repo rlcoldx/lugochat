@@ -62,7 +62,7 @@
                                         <td>R$ <b>{{ saque.valor|number_format(2, ',', '.') }}</b></td>
                                         <td width="100">
                                             {% if saque.status == 'Pendente' %}
-                                                <div class="text-center text-white p-1 bg-warning" title="Aguarde 24h. Seu saque está sendo processado.">{{ saque.status }}</div>
+                                                <div class="text-center p-1 bg-warning text-black" title="Aguarde 24h. Seu saque está sendo processado.">{{ saque.status }}</div>
                                             {% elseif saque.status == 'Concluido' %}
                                                 <div class="text-center p-1 bg-success text-black" title="Saque concluido.">{{ saque.status }}</div>
                                             {% else %}

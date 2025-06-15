@@ -53,12 +53,13 @@ $(document).ready(function () {
 				var conta_result = '<b>'+conta_banco+'</b>, Pix - '+conta_responsavel+', '+conta_cpf_cnpj;
 			}
 
+			$('.conta-result').show();
 			$('.conta-result').html(conta_result);
 
 			checkV($('#valor').val());
 
 		}else{
-			$('.conta-result').html('');
+			$('.conta-result').hide();
 			$('#salvar').addClass('disabled');
 		}
 
@@ -129,9 +130,9 @@ function checkV(v){
 		success: function(data){
 
 			if(data === '0'){
-				$('.valor-error').html('');
+				$('.valor-error').hide();
 			}else{
-				$('.valor-error').html('O valor digitado é maior que o valor em sua carteira.');
+				$('.valor-error').show();
 			}
 
 			if( ($('#conta_bancaria').children("option:selected").val() != '') && (data === '0')){

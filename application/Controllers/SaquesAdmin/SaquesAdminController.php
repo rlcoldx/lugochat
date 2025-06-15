@@ -11,6 +11,9 @@ class SaquesAdminController extends Controller
 
     public function index($params)
     {
+        if ($_SESSION['busca_perfil_tipo'] != 0) {
+            $this->router->redirect("/");
+        }
         $this->setParams($params);
         $saques = $this->saques();
         $this->render('pages/saquesadmin/lista.twig', ['menu' => 'saques', 'saques' => $saques]);

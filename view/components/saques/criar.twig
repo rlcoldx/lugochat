@@ -10,7 +10,7 @@
 				<input type="text" class="form-control money" placeholder="0,00"  name="valor" id="valor" onkeyup="checkV(this.value)" required="required">
 				<span class="input-group-text" title="O valor do saque não pode ser maior do que o saldo atual da sua carteira."><i class="fa-solid fa-square-question"></i></span>
 			</div>
-			<div class="valor-error text-danger"></div>
+			<div class="valor-error alert alert-danger mt-2" role="alert">O valor digitado é maior que o valor em sua carteira.</div>
         </div>
 
         <div class="mb-3">
@@ -32,7 +32,7 @@
 				{% endfor %}
 			</select>
 
-			<div class="conta-result text-success"></div>
+			<div class="conta-result alert alert-success" role="alert"></div>
         </div>
 
         <div class="col-md-12 col-sm-12 mt-3 pt-3 border-top mb-2">
