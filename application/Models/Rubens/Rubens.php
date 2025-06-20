@@ -138,7 +138,7 @@ class Rubens extends Model
             'integracao' => 'rubens',
             'data_reserva' => date('Y-m-d'),
             'chegada_reserva' => '18:00',
-            'periodo_reserva' => '4h',
+            'periodo_reserva' => '4:00',
             'valor_reserva' => '100.00',
             'codigo_reserva' => $codigo_reserva,
         ];
@@ -229,7 +229,7 @@ class Rubens extends Model
         $updateReserva->ExeUpdate(
             'reservas',
             [
-                'processado_rubens' => 'S',
+                'processado_rubens' => 'N',
                 'fase_rubens' => 2
             ],
             'WHERE id = :id',
@@ -261,10 +261,44 @@ class Rubens extends Model
         $updateReserva->ExeUpdate(
             'reservas',
             [
+                'processado_rubens' => 'N',
                 'cancelada_rubens' => 'S',
                 'fase_rubens' => 0,
-                'status_reserva' => 'Cancelado',
-                'processado_rubens' => 'S'
+                'status_reserva' => 'Cancelado'
+            ],
+            'WHERE id = :id',
+            "id={$id}"
+        );
+
+        // Verifica se pelo menos uma das atualizações afetou linhas
+        return $updatePagamento->getRowCount() > 0 || $updateReserva->getRowCount() > 0;
+    }
+
+    /**
+     * Simula o NÃO PAGAMENTO da reserva: atualiza pagamento_status, cancelada e fase
+     * @param int $id
+     * @return bool
+     */
+    public function simularNaoPagamentoReserva($id)
+    {
+        // Atualiza pagamento
+        $updatePagamento = new Update();
+        $updatePagamento->ExeUpdate(
+            'pagamentos',
+            ['pagamento_status' => 'rejected'],
+            'WHERE id_reserva = :id_reserva',
+            "id_reserva={$id}"
+        );
+
+        // Atualiza reserva
+        $updateReserva = new Update();
+        $updateReserva->ExeUpdate(
+            'reservas',
+            [
+                'processado_rubens' => 'N',
+                'cancelada_rubens' => 'S',
+                'fase_rubens' => 0,
+                'status_reserva' => 'Recusado'
             ],
             'WHERE id = :id',
             "id={$id}"

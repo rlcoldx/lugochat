@@ -128,6 +128,25 @@ class RubensController extends Controller
         }
     }
 
+    public function naoPagarReserva()
+    {
+        $codigo = isset($_GET['codigo']) ? intval($_GET['codigo']) : null;
+        if (!$codigo) {
+            http_response_code(400);
+            echo json_encode(['erro' => 'Parâmetro codigo é obrigatório.'], JSON_UNESCAPED_UNICODE);
+            return;
+        }
+
+        $model = new Rubens;
+        $ok = $model->simularNaoPagamentoReserva($codigo);
+        if ($ok) {
+            echo json_encode(['result' => 'recusada'], JSON_UNESCAPED_UNICODE);
+        } else {
+            http_response_code(404);
+            echo json_encode(['erro' => 'Reserva não encontrada ou erro ao atualizar.'], JSON_UNESCAPED_UNICODE);
+        }
+    }
+
     public function receberReservas()
     {
         $id_motel = isset($_GET['motel']) ? intval($_GET['motel']) : null;

@@ -11,3 +11,4 @@ $router->get("/api/rubens/reserva/ver", "RubensController:verReserva");
 $router->get("/api/rubens/reserva/processado", "RubensController:reservaProcessado");
 $router->get("/api/rubens/reserva/reserva_paga", "RubensController:reservaPaga");
 $router->get("/api/rubens/reserva/cancelar", "RubensController:cancelarReserva");
+$router->get("/api/rubens/reserva/nao_paga", "RubensController:naoPagarReserva");
