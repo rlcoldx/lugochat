@@ -61,7 +61,7 @@ class Rubens extends Model
 
     public function updateDisponibilidade($params)
     {
-        if (empty($params['qtde']) || empty($params['suite']) || empty($params['motel'])) {
+        if (!isset($params['qtde']) || !isset($params['suite']) || !isset($params['motel'])) {
             return 'Erro: Parâmetros insuficientes ou inválidos.';
         }
 
