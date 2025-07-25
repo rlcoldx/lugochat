@@ -29,15 +29,31 @@ class SuitesController extends Controller
     $this->setParams($params);
 
     $sis_categories = [];
-    if($this->dataCompany['token'] != null){
-      $sis_categories = new CategoriesSis();
-      $sis_categories = $sis_categories->listCategories($this->dataCompany['token']);
-      $sis_categories = $sis_categories["result"];
+    
+    if($this->dataCompany['integracao'] == 'sis'){
+      if($this->dataCompany['token'] != null){
+        $sis_categories_obj = new CategoriesSis();
+        $sis_categories_result = $sis_categories_obj->listCategories($this->dataCompany['token']);
+        $sis_categories = (is_array($sis_categories_result) && isset($sis_categories_result['result'])) ? $sis_categories_result['result'] : [];
+      }
     }
 
     $suite = new Suites();
     $result = $suite->getSuite($this->params['id'], $this->dataCompany['id']);
-    $suite = $result->getResult()[0];
+    $resultArray = $result->getResult();
+    $suite = (is_array($resultArray) && isset($resultArray[0])) ? $resultArray[0] : null;
+
+    if ($suite === null) {
+      $this->render('pages/suites/form.twig', [
+        'titulo' => 'Editar Suíte',
+        'erro' => 'Suíte não encontrada.',
+        'suite' => null,
+        'precos' => [],
+        'imagens' => [],
+        'sis_categories' => $sis_categories
+      ]);
+      return;
+    }
 
     $precos = new Suites();
     $precos = $precos->getSuitePrecos($this->params['id'], $this->dataCompany['id'])->getResult();

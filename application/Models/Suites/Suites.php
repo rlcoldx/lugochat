@@ -145,10 +145,10 @@ class Suites extends Model
         }        
     }
 
-    public function getCardadio(): Read
+    public function getCardadio($id_motel): Read
     {
         $read = new Read();
-        $read->FullRead("SELECT * FROM cardapios ORDER BY `order`,`id` DESC");
+        $read->FullRead("SELECT * FROM cardapios WHERE `id_motel` = :id_motel ORDER BY `order`,`id` DESC", "id_motel={$id_motel}");
         return $read;
     }
     
