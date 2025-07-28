@@ -1,6 +1,7 @@
 /vendor
 /uploads
 config/config.php
+config/db.php
 node_modules/
 composer.lock
 .idea
