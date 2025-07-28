@@ -41933,3 +41933,114 @@ span.tag.label.label-info {
 .bs-popover-bottom>.popover-arrow::after {
   border-bottom-color: #1b1b1b;
 }
+
+/* Estilos para seleção de dias da semana */
+.dias-semana-container {
+    flex: 1;
+}
+.dias-semana-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 2px;
+}
+.dia-checkbox {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 20px;
+  padding: 4px 8px;
+  background: #ffffff;
+  border: 2px solid #e0e0e0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 12px;
+  font-weight: 600;
+  color: #666;
+  min-width: 40px;
+  min-height: 30px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  user-select: none;
+}
+.dia-checkbox:hover {
+    background: #f8f9fa;
+    border-color: #fe634e;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(254, 99, 78, 0.15);
+}
+.dia-checkbox input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    width: 0;
+    height: 0;
+}
+.dia-checkbox.checked {
+    background: linear-gradient(135deg, #fe634e, #e55a47);
+    border-color: #fe634e;
+    color: white;
+    box-shadow: 0 4px 15px rgba(254, 99, 78, 0.4);
+    transform: translateY(-2px);
+}
+.dia-checkbox.checked .dia-label {
+    color: white;
+}
+.dia-label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    pointer-events: none;
+}
+/* Efeito de ripple ao clicar */
+.dia-checkbox::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(254, 99, 78, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.3s, height 0.3s;
+}
+.dia-checkbox:active::before {
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+}
+/* Responsividade */
+@media (max-width: 768px) {
+    .dias-semana-grid {
+        gap: 4px;
+    }
+    .dia-checkbox {
+        padding: 6px 10px;
+        font-size: 11px;
+        min-width: 36px;
+        min-height: 32px;
+    }
+}
+@media (max-width: 576px) {
+    .dias-semana-grid {
+        max-width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Estilos para campos com erro de validação */
+.form-control.is-invalid {
+    border-color: #fe634e;
+    box-shadow: 0 0 0 0.2rem rgba(254, 99, 78, 0.25);
+}
+
+.invalid-feedback {
+    display: block;
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.875em;
+    color: #fe634e;
+    font-weight: 500;
+}

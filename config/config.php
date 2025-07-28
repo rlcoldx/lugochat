@@ -16,7 +16,7 @@ define('SIS_API', 'https://api.sismotel.com.br');
 define('SOFTHOUSE', 'c283ecc655bf074fc99ff95f1d51dc6c-721b224025ef117caabeaf76d58f3d50');
 
 define('TOKEN', 'qgvCMRoHCTujhHswhiTyRALSY8QzRQyvlB0PWPqmuUpELHDf5vjirY04JQsaj3xx');
-define('ACCESSTOKEN', 'APP_USR-6619019503196756-111110-960e8da08d80ad993e73d4b3d423bd9f-263421911');
+define('ACCESSTOKEN', 'APP_USR-7344792450155289-042218-098d04ea1b43278887ef425218689d8f-270137611');
 
 @session_start();
 try {

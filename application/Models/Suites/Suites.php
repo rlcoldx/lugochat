@@ -79,7 +79,13 @@ class Suites extends Model
 
         foreach ($precos as $preco)
         {
-            $dias = implode(',', $preco['dias']);
+            // Verificar se dias existe e é um array
+            if (isset($preco['dias']) && is_array($preco['dias'])) {
+                $dias = implode(',', $preco['dias']);
+            } else {
+                $dias = ''; // Valor padrão se não existir
+            }
+            
             $preco['id_motel'] = $id_motel;
             $preco['id_suite'] = $id_suite;
             $preco['dias'] = $dias;

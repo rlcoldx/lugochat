@@ -14,7 +14,7 @@
             <div class="d-flex flex-wrap align-items-center justify-content-between">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ DOMAIN }}">Home</a></li>
-                    <li class="breadcrumb-item active"><a href="javascript:void(0)">Criar Suíte</a></li>
+                    <li class="breadcrumb-item active"><a href="javascript:void(0)">{{ (suite.id == '') ? 'Criar Suíte' : 'Editar Suíte' }}</a></li>
                 </ol>
             </div>
         </div>
@@ -37,6 +37,182 @@
 							<textarea name="texto" id="texto">{{ suite.texto }}</textarea>
 						</div>
 					</div>
+
+					<div class="card repeater">
+                       
+					    <div class="card-header py-2">
+                        	Tabela de Preços
+                        	<button data-repeater-create type="button" class="btn btn-primary py-0">Add</button>
+                        </div>
+
+                        <div class="card-body pb-2">
+                            <div class="repeater">
+							    <div data-repeater-list="preco">
+									{% if precos is empty %}
+										<div data-repeater-item class="mb-3">
+
+											<div class="d-flex justify-content-between">
+
+												<div>
+													<input type="text" name="valor" class="form-control form-control-sm money price_chance" placeholder="0,00" value="">
+												</div>
+												<div class="mx-2">
+													<select class="form-control form-control-sm price_chance" name="periodo">
+														<option value="01:00">01:00</option>
+														<option value="02:00">02:00</option>
+														<option value="03:00">03:00</option>
+														<option value="04:00">04:00</option>
+														<option value="06:00">06:00</option>
+														<option value="12:00">12:00</option>
+														<option value="Pernoite">Pernoite</option>
+													</select>
+												</div>
+												<div class="mx-2 pernoite-field" style="display: none;">
+													<input type="text" name="pernoite_chegada" class="form-control form-control-sm hour" placeholder="Inicio da Pernoite" value="">													
+												</div>
+
+												<div class="dias-semana-container">
+													<div class="dias-semana-grid">
+														<label class="dia-checkbox" title="Segunda-feira">
+															<input type="checkbox" class="price_chance" name="dias" value="seg" autocomplete="off" onclick="toggleCheckbox(this)">
+															<span class="dia-label">SEG</span>
+														</label>
+														<label class="dia-checkbox" title="Terça-feira">
+															<input type="checkbox" class="price_chance" name="dias" value="ter" autocomplete="off" onclick="toggleCheckbox(this)">
+															<span class="dia-label">TER</span>
+														</label>
+														<label class="dia-checkbox" title="Quarta-feira">
+															<input type="checkbox" class="price_chance" name="dias" value="qua" autocomplete="off" onclick="toggleCheckbox(this)">
+															<span class="dia-label">QUA</span>
+														</label>
+														<label class="dia-checkbox" title="Quinta-feira">
+															<input type="checkbox" class="price_chance" name="dias" value="qui" autocomplete="off" onclick="toggleCheckbox(this)">
+															<span class="dia-label">QUI</span>
+														</label>
+														<label class="dia-checkbox" title="Sexta-feira">
+															<input type="checkbox" class="price_chance" name="dias" value="sex" autocomplete="off" onclick="toggleCheckbox(this)">
+															<span class="dia-label">SEX</span>
+														</label>
+														<label class="dia-checkbox" title="Sábado">
+															<input type="checkbox" class="price_chance" name="dias" value="sab" autocomplete="off" onclick="toggleCheckbox(this)">
+															<span class="dia-label">SÁB</span>
+														</label>
+														<label class="dia-checkbox" title="Domingo">
+															<input type="checkbox" class="price_chance" name="dias" value="dom" autocomplete="off" onclick="toggleCheckbox(this)">
+															<span class="dia-label">DOM</span>
+														</label>
+													</div>
+												</div>
+
+												<div><button data-repeater-delete type="button" class="btn btn-sm btn-danger position-absolute p-1 ms-1"><i class="fa-solid fa-trash"></i></button></div>
+												
+											</div>
+										
+
+										</div>
+									{% endif %}
+							      
+									{% for preco in precos %}
+										
+										<div data-repeater-item class="mb-3">
+
+											<div class="d-flex justify-content-between">
+
+												<div>
+													<input type="text" name="valor" class="form-control form-control-sm money price_chance" placeholder="0,00" value="{{ preco.valor }}">
+												</div>
+												<div class="mx-2">
+													<select class="form-control form-control-sm price_chance" name="periodo">
+														<option {{ preco.periodo == '01:00' ? 'selected' }} value="01:00">01:00</option>
+														<option {{ preco.periodo == '02:00' ? 'selected' }} value="02:00">02:00</option>
+														<option {{ preco.periodo == '03:00' ? 'selected' }} value="03:00">03:00</option>
+														<option {{ preco.periodo == '04:00' ? 'selected' }} value="04:00">04:00</option>
+														<option {{ preco.periodo == '06:00' ? 'selected' }} value="06:00">06:00</option>
+														<option {{ preco.periodo == '12:00' ? 'selected' }} value="12:00">12:00</option>
+														<option {{ preco.periodo == 'Pernoite' ? 'selected' }} value="Pernoite">Pernoite</option>
+													</select>
+												</div>
+
+												<div class="mx-2 pernoite-field" style="display: none;">
+													<input type="text" name="pernoite_chegada" class="form-control form-control-sm hour" placeholder="Inicio da Pernoite" value="{{ preco.pernoite_chegada }}">													
+												</div>
+
+												<div class="dias-semana-container">
+													<div class="dias-semana-grid">
+														<label class="dia-checkbox {{ 'seg' in preco.dias ? 'checked' }}" title="Segunda-feira">
+															<input type="checkbox" class="price_chance" {{ 'seg' in preco.dias ? 'checked' }} name="dias" value="seg" autocomplete="off" onclick="toggleCheckbox(this)">
+															<span class="dia-label">SEG</span>
+														</label>
+														<label class="dia-checkbox {{ 'ter' in preco.dias ? 'checked' }}" title="Terça-feira">
+															<input type="checkbox" class="price_chance" {{ 'ter' in preco.dias ? 'checked' }} name="dias" value="ter" autocomplete="off" onclick="toggleCheckbox(this)">
+															<span class="dia-label">TER</span>
+														</label>
+														<label class="dia-checkbox {{ 'qua' in preco.dias ? 'checked' }}" title="Quarta-feira">
+															<input type="checkbox" class="price_chance" {{ 'qua' in preco.dias ? 'checked' }} name="dias" value="qua" autocomplete="off" onclick="toggleCheckbox(this)">
+															<span class="dia-label">QUA</span>
+														</label>
+														<label class="dia-checkbox {{ 'qui' in preco.dias ? 'checked' }}" title="Quinta-feira">
+															<input type="checkbox" class="price_chance" {{ 'qui' in preco.dias ? 'checked' }} name="dias" value="qui" autocomplete="off" onclick="toggleCheckbox(this)">
+															<span class="dia-label">QUI</span>
+														</label>
+														<label class="dia-checkbox {{ 'sex' in preco.dias ? 'checked' }}" title="Sexta-feira">
+															<input type="checkbox" class="price_chance" {{ 'sex' in preco.dias ? 'checked' }} name="dias" value="sex" autocomplete="off" onclick="toggleCheckbox(this)">
+															<span class="dia-label">SEX</span>
+														</label>
+														<label class="dia-checkbox {{ 'sab' in preco.dias ? 'checked' }}" title="Sábado">
+															<input type="checkbox" class="price_chance" {{ 'sab' in preco.dias ? 'checked' }} name="dias" value="sab" autocomplete="off" onclick="toggleCheckbox(this)">
+															<span class="dia-label">SÁB</span>
+														</label>
+														<label class="dia-checkbox {{ 'dom' in preco.dias ? 'checked' }}" title="Domingo">
+															<input type="checkbox" class="price_chance" {{ 'dom' in preco.dias ? 'checked' }} name="dias" value="dom" autocomplete="off" onclick="toggleCheckbox(this)">
+															<span class="dia-label">DOM</span>
+														</label>
+													</div>
+												</div>
+
+												<div><button data-repeater-delete type="button" class="btn btn-sm btn-danger position-absolute p-1 ms-1"><i class="fa-solid fa-trash"></i></button></div>
+												
+											</div>
+										
+
+										</div>
+
+									{% endfor %}
+
+							    </div>
+							    
+							</div>
+							<input type="hidden" name="price_chance" id="price_chance" value="nao">
+                        </div>
+
+						<div class="card-footer py-2">
+							<a class="text-primary {{ suite.promocao == '' ? 'collapsed' }}" data-bs-toggle="collapse" href="#promocao" role="button" aria-expanded="false" aria-controls="promocao">
+								<i class="fa-solid fa-stars"></i> Programar Valor Promocional
+							</a>
+							<div class="collapse {{ suite.promocao != '' ? 'show' }}" id="promocao">
+								<div class="row">
+									<div class="col-md-6 col-sm-12">
+										<select class="form-control form-control-sm" name="promocao_tipo">
+											<option value="fixo" {{ suite.promocao_tipo == 'fixo' ? 'selected' }}>Valor Fixo</option>
+											<option value="porcentagem" {{ suite.promocao_tipo == 'porcentagem' ? 'selected' }}>Porcentagem</option>
+										</select>
+									</div>
+									<div class="col-md-6 col-sm-12">
+										<input type="text" name="promocao" class="form-control form-control-sm" value="{{ suite.promocao|number_format(2, ',', '.')  }}" placeholder="Valor Fixo ou Porcentagem">
+									</div>
+								</div>
+								<div class="row mt-2">
+									<div class="col-md-6 col-sm-12">
+										<input class="form-control form-control-sm" type="datetime-local" name="promocao_de" value="{{ (suite.promocao_de) ? suite.promocao_de|date("Y-m-d\\TH:i", "America/Sao_Paulo") : "now"|date("Y-m-d\\TH:i", "America/Sao_Paulo") }}">
+									</div>
+									<div class="col-md-6 col-sm-12">
+										<input class="form-control form-control-sm" type="datetime-local" name="promocao_ate" value="{{ (suite.promocao_ate) ? suite.promocao_ate|date("Y-m-d\\TH:i", "America/Sao_Paulo") : "now"|date("Y-m-d\\TH:i", "America/Sao_Paulo") }}">
+									</div>
+								</div>
+							</div>
+						</div>
+
+                    </div>
 
 					<div class="card">
                         <div class="card-header py-2">Galeria de Imagens</div>
@@ -68,8 +244,8 @@
 					        </div>
 					        <div class="collapse {{ (suite.status == 'Rascunho') ? 'show' }}" id="suiteStatus">
 					           <select name="status" class="form-control">
-					               <option value="Publicado" {{ (suite.status == 'Publicado') ? 'selected' }}>Publicado</option>
-					               <option value="Rascunho" {{ (suite.status == 'Rascunho') ? 'selected' }}>Rascunho</option>
+					               <option value="Publicado" {{ (suite.status == 'Publicado' and _get.t == 'c') ? 'selected' }}>Publicado</option>
+					               <option value="Rascunho" {{ (suite.status == 'Rascunho' and _get.t != 'c') ? 'selected' }}>Rascunho</option>
 					           </select>
 					        </div>
 					        <div class="w-100 d-flex justify-content-between mt-1">
@@ -126,173 +302,6 @@
 	                    </div>
 	                </div>
 
-	                <div class="card repeater">
-                       
-					    <div class="card-header py-2">
-                        	Tabela de Preços
-                        	<button data-repeater-create type="button" class="btn btn-primary py-0">Add</button>
-                        </div>
-
-                        <div class="card-body pb-2">
-                            <div class="repeater">
-							    <div data-repeater-list="preco">
-									{% if precos is empty %}
-										<div data-repeater-item class="mb-3">
-
-											<div class="d-flex justify-content-between">
-
-												<div>
-													<input type="text" name="valor" class="form-control form-control-sm money price_chance" placeholder="0,00" value="">
-												</div>
-												<div class="mx-2">
-													<select class="form-control form-control-sm price_chance" name="periodo">
-														<option value="01:00">1hs</option>
-														<option value="02:00">2hs</option>
-														<option value="03:00">3hs</option>
-														<option value="04:00">4hs</option>
-														<option value="06:00">6hs</option>
-														<option value="12:00">12hs</option>
-														<option value="Pernoite">Pernoite</option>
-													</select>
-												</div>
-
-												<div class="btn-group btn-group-sm" role="group">
-													
-													<label class="btn btn-outline-primary border-0 border-bottom p-1">
-														<input type="checkbox" class="btn-check price_chance" name="dias" value="seg" autocomplete="off" onclick="toggleCheckbox(this)">seg
-													</label>
-
-													<label class="btn btn-outline-primary border-0 border-bottom p-1">
-														<input type="checkbox" class="btn-check price_chance" name="dias" value="ter" autocomplete="off" onclick="toggleCheckbox(this)">ter
-													</label>
-
-													<label class="btn btn-outline-primary border-0 border-bottom p-1">
-														<input type="checkbox" class="btn-check price_chance" name="dias" value="qua" autocomplete="off" onclick="toggleCheckbox(this)">qua
-													</label>
-
-													<label class="btn btn-outline-primary border-0 border-bottom p-1">
-														<input type="checkbox" class="btn-check price_chance" name="dias" value="qui" autocomplete="off" onclick="toggleCheckbox(this)">qui
-													</label>
-
-													<label class="btn btn-outline-primary border-0 border-bottom p-1">
-														<input type="checkbox" class="btn-check price_chance" name="dias" value="sex" autocomplete="off" onclick="toggleCheckbox(this)">sex
-													</label>
-
-													<label class="btn btn-outline-primary border-0 border-bottom p-1">
-														<input type="checkbox" class="btn-check price_chance" name="dias" value="sab" autocomplete="off" onclick="toggleCheckbox(this)">sab
-													</label>
-
-													<label class="btn btn-outline-primary border-0 border-bottom p-1">
-														<input type="checkbox" class="btn-check price_chance" name="dias" value="dom" autocomplete="off" onclick="toggleCheckbox(this)">dom
-													</label>
-
-												</div>
-
-												<div><button data-repeater-delete type="button" class="btn btn-sm btn-danger position-absolute p-1 ms-1"><i class="fa-solid fa-trash"></i></button></div>
-												
-											</div>
-										
-
-										</div>
-									{% endif %}
-							      
-									{% for preco in precos %}
-										
-										<div data-repeater-item class="mb-3">
-
-											<div class="d-flex justify-content-between">
-
-												<div>
-													<input type="text" name="valor" class="form-control form-control-sm money price_chance" placeholder="0,00" value="{{ preco.valor }}">
-												</div>
-												<div class="mx-2">
-													<select class="form-control form-control-sm price_chance" name="periodo">
-														<option {{ preco.periodo == '01:00' ? 'selected' }} value="01:00">1hs</option>
-														<option {{ preco.periodo == '02:00' ? 'selected' }} value="02:00">2hs</option>
-														<option {{ preco.periodo == '03:00' ? 'selected' }} value="03:00">3hs</option>
-														<option {{ preco.periodo == '04:00' ? 'selected' }} value="04:00">4hs</option>
-														<option {{ preco.periodo == '06:00' ? 'selected' }} value="06:00">6hs</option>
-														<option {{ preco.periodo == '12:00' ? 'selected' }} value="12:00">12hs</option>
-														<option {{ preco.periodo == 'Pernoite' ? 'selected' }} value="Pernoite">Pernoite</option>
-													</select>
-												</div>
-
-												<div class="btn-group btn-group-sm dias-semana" role="group">
-													
-													<label class="btn btn-outline-primary border-0 border-bottom p-1 {{ 'seg' in preco.dias ? 'active' }}">
-														<input type="checkbox" class="btn-check price_chance" {{ 'seg' in preco.dias ? 'checked' }} name="dias" value="seg" autocomplete="off" onclick="toggleCheckbox(this)">seg
-													</label>
-
-													<label class="btn btn-outline-primary border-0 border-bottom p-1 {{ 'ter' in preco.dias ? 'active' }}">
-														<input type="checkbox" class="btn-check price_chance" {{ 'ter' in preco.dias ? 'checked' }} name="dias" value="ter" autocomplete="off" onclick="toggleCheckbox(this)">ter
-													</label>
-
-													<label class="btn btn-outline-primary border-0 border-bottom p-1 {{ 'qua' in preco.dias ? 'active' }}">
-														<input type="checkbox" class="btn-check price_chance" {{ 'qua' in preco.dias ? 'checked' }} name="dias" value="qua" autocomplete="off" onclick="toggleCheckbox(this)">qua
-													</label>
-
-													<label class="btn btn-outline-primary border-0 border-bottom p-1 {{ 'qui' in preco.dias ? 'active' }}">
-														<input type="checkbox" class="btn-check price_chance" {{ 'qui' in preco.dias ? 'checked' }} name="dias" value="qui" autocomplete="off" onclick="toggleCheckbox(this)">qui
-													</label>
-
-													<label class="btn btn-outline-primary border-0 border-bottom p-1 {{ 'sex' in preco.dias ? 'active' }}">
-														<input type="checkbox" class="btn-check price_chance" {{ 'sex' in preco.dias ? 'checked' }} name="dias" value="sex" autocomplete="off" onclick="toggleCheckbox(this)">sex
-													</label>
-
-													<label class="btn btn-outline-primary border-0 border-bottom p-1 {{ 'sab' in preco.dias ? 'active' }}">
-														<input type="checkbox" class="btn-check price_chance" {{ 'sab' in preco.dias ? 'checked' }} name="dias" value="sab" autocomplete="off" onclick="toggleCheckbox(this)">sab
-													</label>
-
-													<label class="btn btn-outline-primary border-0 border-bottom p-1 {{ 'dom' in preco.dias ? 'active' }}">
-														<input type="checkbox" class="btn-check price_chance" {{ 'dom' in preco.dias ? 'checked' }} name="dias" value="dom" autocomplete="off" onclick="toggleCheckbox(this)">dom
-													</label>
-
-												</div>
-
-												<div><button data-repeater-delete type="button" class="btn btn-sm btn-danger position-absolute p-1 ms-1"><i class="fa-solid fa-trash"></i></button></div>
-												
-											</div>
-										
-
-										</div>
-
-									{% endfor %}
-
-							    </div>
-							    
-							</div>
-							<input type="hidden" name="price_chance" id="price_chance" value="nao">
-                        </div>
-
-						<div class="card-footer py-2">
-							<a class="text-primary {{ suite.promocao == '' ? 'collapsed' }}" data-bs-toggle="collapse" href="#promocao" role="button" aria-expanded="false" aria-controls="promocao">
-								<i class="fa-solid fa-stars"></i> Programar Valor Promocional
-							</a>
-							<div class="collapse {{ suite.promocao != '' ? 'show' }}" id="promocao">
-								<div class="row">
-									<div class="col-md-6 col-sm-12">
-										<select class="form-control form-control-sm" name="promocao_tipo">
-											<option value="fixo" {{ suite.promocao_tipo == 'fixo' ? 'selected' }}>Valor Fixo</option>
-											<option value="porcentagem" {{ suite.promocao_tipo == 'porcentagem' ? 'selected' }}>Porcentagem</option>
-										</select>
-									</div>
-									<div class="col-md-6 col-sm-12">
-										<input type="text" name="promocao" class="form-control form-control-sm" value="{{ suite.promocao|number_format(2, ',', '.')  }}" placeholder="Valor Fixo ou Porcentagem">
-									</div>
-								</div>
-								<div class="row mt-2">
-									<div class="col-md-6 col-sm-12">
-										<input class="form-control form-control-sm" type="datetime-local" name="promocao_de" value="{{ (suite.promocao_de) ? suite.promocao_de|date("Y-m-d\\TH:i", "America/Sao_Paulo") : "now"|date("Y-m-d\\TH:i", "America/Sao_Paulo") }}">
-									</div>
-									<div class="col-md-6 col-sm-12">
-										<input class="form-control form-control-sm" type="datetime-local" name="promocao_ate" value="{{ (suite.promocao_ate) ? suite.promocao_ate|date("Y-m-d\\TH:i", "America/Sao_Paulo") : "now"|date("Y-m-d\\TH:i", "America/Sao_Paulo") }}">
-									</div>
-								</div>
-							</div>
-						</div>
-
-                    </div>
-
 	            </div>
 
 			</div>
@@ -306,6 +315,6 @@
 
 <script src="{{ DOMAIN }}/view/assets/vendor/froala/js/froala_editor.pkgd.min.js"></script>
 <script src='{{ DOMAIN }}/view/assets/vendor/froala/js/languages/pt_br.js'></script>
-<script src="{{ DOMAIN }}/view/assets/js/pages/suites.js"></script>
+<script src="{{ DOMAIN }}/view/assets/js/pages/suites.js?12312"></script>
 
 {% endblock %}
