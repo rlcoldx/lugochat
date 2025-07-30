@@ -41847,8 +41847,11 @@ span.tag.label.label-info {
 .bg-Pendente {
   background-color: #ffc107 !important;
 }
-.bg-Recusado, .bg-Cancelado {
+.bg-Recusado {
   background-color: #b90808 !important;
+}
+.bg-Cancelado {
+  background-color: #ffc107 !important;
 }
 .alert-box {
   width: 40px;
