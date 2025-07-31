@@ -340,4 +340,20 @@ class Rubens extends Model
         return $update->getRowCount();
     }
 
+    public function confirmarCheckinReserva($id_reserva)
+    {
+        $update = new Update();
+
+        // Tratamento do fuso horário de São Paulo
+        date_default_timezone_set('America/Sao_Paulo');
+        $checking_hora = date('H:i:s');
+
+        $update->ExeUpdate(
+            'reservas',
+            ['status_reserva' => 'Checkin', 'checking_hora' => $checking_hora],
+            'WHERE id = :id AND status_reserva = "Confirmado"',
+            "id={$id_reserva}"
+        );
+    }
+
 }
