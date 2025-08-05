@@ -15,7 +15,7 @@ class Suites extends Model
     {
     	$read = new Read();
         $read->FullRead("SELECT suites.*, sp.valor FROM suites
-                        LEFT JOIN ( SELECT id_suite, MIN(valor) AS valor FROM suites_precos GROUP BY id_suite) AS sp ON suites.id = sp.id_suite
+                        LEFT JOIN ( SELECT id_suite, MIN(valor) AS valor FROM suites_precos WHERE `status` = 'S' GROUP BY id_suite) AS sp ON suites.id = sp.id_suite
                         WHERE suites.id_motel = :id_motel AND suites.`status` <> 'Deletado' ORDER BY suites.id DESC;", "id_motel={$id_motel}");
         return $read;
     }
