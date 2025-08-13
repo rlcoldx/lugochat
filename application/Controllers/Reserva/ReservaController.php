@@ -21,6 +21,13 @@ class ReservaController extends Controller
 
 	}
 
+	public function check_reservas_expiradas($params)
+	{
+		$this->setParams($params);
+		$check = new Reserva();
+		$check->checkReservasExpiradas();
+	}
+
 	public function get_reservas($params)
   	{
 		$this->setParams($params);
