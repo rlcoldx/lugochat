@@ -25,6 +25,7 @@ class NotificacaoController extends Controller
 
         do {
             $usuarios = $model->getUsersID($offset, $limit)->getResult();
+
             if (empty($usuarios)) {
                 break;
             }
@@ -50,7 +51,7 @@ class NotificacaoController extends Controller
     public function sendNotificacao($codes, $titulo, $mensagem){
 
         $data = [
-            "app_id" => "121ec2f2-6d96-477f-adc0-8fa6b3c58c74",
+            "app_id" => "05596de6-efb1-4699-8019-66c627701617",
             "contents" => ["en" => $mensagem],
             "headings" => ["en" => $titulo],
             "include_subscription_ids" => $codes
@@ -72,7 +73,7 @@ class NotificacaoController extends Controller
             CURLOPT_POSTFIELDS => $jsonData,
             CURLOPT_HTTPHEADER => array(
                 'Content-Type: application/json; charset=utf-8',
-                'Authorization: Key NGJhMjEyY2ItMzU5OS00OGI3LThhODUtMTI1M2ZiMmRhOWIw'
+                'Authorization: Key os_v2_app_avmw3zxpwfdjtaazm3dco4awc4g7dfgo4csuoz5uky7y3q4vznurhdj73ewvtmv6tuggthhnokz7qrgjizkmcuvv7ohkxvu535qgwyq'
             ),
         ));
         

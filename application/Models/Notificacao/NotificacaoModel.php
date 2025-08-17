@@ -10,7 +10,7 @@ class NotificacaoModel extends Model
     public function getUsersID($offset = 0, $limit = 10000)
     {
         $read = new Read();
-        $termos = "WHERE tipo = 4 AND pushKey is not null AND pushKey <> 'null' ORDER BY id DESC LIMIT :limit OFFSET :offset";
+        $termos = "WHERE tipo = 1 AND pushKey is not null AND pushKey <> 'null' ORDER BY id DESC LIMIT :limit OFFSET :offset";
         $parseString = "limit={$limit}&offset={$offset}";
         $read->exeRead("usuarios", $termos, $parseString);
         return $read;

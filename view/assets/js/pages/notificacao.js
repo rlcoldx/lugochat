@@ -5,7 +5,7 @@ $(document).ready(function () {
 		e.preventDefault();
 		var domain = $('body').data('domain');
 		var formData = new FormData(this);
-		$('#salvar').prop('type', 'button');
+		//$('#salvar').prop('type', 'button');
 
 		$.ajax({
 			url: domain + '/notificacao/enviar',
