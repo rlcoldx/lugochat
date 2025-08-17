@@ -20,28 +20,37 @@ class NotificacaoController extends Controller
         $this->setParams($params);
 
         $model = new NotificacaoModel();
-        $usuarios = $model->getUsersID()->getResult();
-        $codes = array();
-        foreach ($usuarios as $usuario) {
-            array_push($codes, $usuario['pushKey']); // Montando o array de subscription IDs
-        }
-        $response = $this->sendNotificacao($codes, $params['titulo'], $params['mensagem']);
-        echo $response;
+        $offset = 0;
+        $limit = 10000;
+
+        do {
+            $usuarios = $model->getUsersID($offset, $limit)->getResult();
+            if (empty($usuarios)) {
+                break;
+            }
+
+            $codes = array();
+            foreach ($usuarios as $usuario) {
+                $codes[] = $usuario['pushKey'];
+            }
+
+            if (!empty($codes)) {
+                $this->sendNotificacao($codes, $params['titulo'], $params['mensagem']);
+            }
+
+            $offset += $limit;
+        } while (count($usuarios) === $limit);
+
+        echo json_encode([
+            'status' => 'success',
+            'message' => 'Notificações enviadas com sucesso!'
+        ]);
     }
 
     public function sendNotificacao($codes, $titulo, $mensagem){
 
         $data = [
             "app_id" => "121ec2f2-6d96-477f-adc0-8fa6b3c58c74",
-            "android_accent_color" => "FF0000FF",
-            "small_icon" => "icon", 
-            "ios_badgeType" => "Increase",
-            "ios_badgeCount" => 1, // Aumenta o badge em 1
-            "ios_sound" => "default", // Som padrão para iOS
-            "chrome_web_icon" => DOMAIN."/view/assets/images/favicon.png", // Ícone para Web Push
-            "large_icon" => DOMAIN."/view/assets/images/favicon.png", // Ícone grande para Android
-            "big_picture" => DOMAIN."/view/assets/images/favicon.png", // Imagem na notificação
-            "mutable_content" => false,
             "contents" => ["en" => $mensagem],
             "headings" => ["en" => $titulo],
             "include_subscription_ids" => $codes

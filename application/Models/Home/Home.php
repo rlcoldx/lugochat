@@ -21,9 +21,9 @@ class Home extends Model
             $params = "id_motel={$idMotel}";
         }
         $this->read->FullRead("SELECT 
-        SUM(CASE WHEN p.pagamento_status = 'approved' THEN 1 ELSE 0 END) AS total_reservas_aprovadas,
-        SUM(CASE  WHEN (p.pagamento_status IS NULL OR p.pagamento_status != 'approved') AND r.status_reserva = 'Aceito' THEN 1  ELSE 0 END ) AS total_reservas_nao_concluidas,
-        SUM(CASE WHEN r.status_reserva = 'Recusado' THEN 1 ELSE 0 END) AS total_reservas_recusadas
+        SUM(CASE WHEN p.pagamento_status = 'approved' AND p.id_user <> '1' THEN 1 ELSE 0 END) AS total_reservas_aprovadas,
+        SUM(CASE WHEN (p.pagamento_status IS NULL OR p.pagamento_status != 'approved') AND p.id_user <> '1' AND r.status_reserva = 'Aceito' THEN 1  ELSE 0 END ) AS total_reservas_nao_concluidas,
+        SUM(CASE WHEN r.status_reserva = 'Recusado'  AND p.id_user <> '1' THEN 1 ELSE 0 END) AS total_reservas_recusadas
         FROM reservas r
         LEFT JOIN pagamentos p ON r.id = p.id_reserva" . $where, $params);
         return $this->read;
@@ -44,6 +44,7 @@ class Home extends Model
             JOIN pagamentos p ON r.id = p.id_reserva
             WHERE 
             p.pagamento_status = 'approved' 
+            AND p.id_user <> '1'
             AND MONTH(p.date_create) = MONTH(CURRENT_DATE()) 
             AND YEAR(p.date_create) = YEAR(CURRENT_DATE())" . $where, $params);
         return $this->read;
@@ -67,7 +68,7 @@ class Home extends Model
             (SELECT r.id_suite, COUNT(r.id_suite) AS total_reservas
             FROM reservas r
             JOIN pagamentos p ON r.id = p.id_reserva
-            WHERE p.pagamento_status = 'approved'" . $where . "
+            WHERE p.pagamento_status = 'approved' AND p.id_user <> '1'" . $where . "
             GROUP BY r.id_suite) AS sub
         JOIN 
             suites s ON sub.id_suite = s.id
@@ -96,7 +97,7 @@ class Home extends Model
             FROM reservas r
             JOIN pagamentos p ON r.id = p.id_reserva
             WHERE 
-            p.pagamento_status = 'approved'" . $where, $params);
+            p.pagamento_status = 'approved' AND p.id_user <> '1'" . $where, $params);
         return $this->read;
     }
 

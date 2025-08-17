@@ -17,7 +17,7 @@ class SaquesPainel extends Model
         JOIN pagamentos AS p ON p.id_reserva = r.id
         JOIN usuarios AS u ON u.id = r.id_motel
         WHERE u.id = :id_motel 
-        AND p.pagamento_status = 'approved'", "id_motel={$id_motel}");
+        AND p.pagamento_status = 'approved' AND p.id_user <> '1'", "id_motel={$id_motel}");
         return $read;
     }
 

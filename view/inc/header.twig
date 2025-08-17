@@ -17,12 +17,14 @@
                 </div>
 
                 <ul class="navbar-nav header-right">
+                    {% if _session.busca_perfil_master == '1' %}
 					<li class="nav-item dropdown notification_dropdown">
                         <a class="nav-link bell bell-link p-3" href="javascript:void(0)" data-bs-toggle="modal-remote" data-remote="{{ DOMAIN }}/notificacao/criar" data-bs-target="#notificacao">
                             <i class="fa-solid fa-bell fa-lg"></i>
 							<div class="pulse-css"></div>
                         </a>
 					</li>
+                    {% endif %}
                     <li class="nav-item dropdown header-profile">
                         <a class="nav-link" href="javascript:void(0)" data-bs-toggle="dropdown" aria-expanded="false">
 							<div class="header-info">
