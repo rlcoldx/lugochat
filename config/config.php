@@ -11,6 +11,14 @@ define('USER_MAIN', 'rafael_lugochat');
 define('PASS_MAIN', 'wU$S2Fam]N~{V4Ffia');
 define('DBSA_MAIN', 'rafael_lugochat');
 
+// CONFIGURAÇÕES DO EMAIL ########################
+define('MAIL_ADMIN', 'rl.cold.dev@gmail.com');
+define('MAIL_HOST', 'smtp.uni5.net');
+define('MAIL_EMAIL', 'no_replay@buscademoteis.com.br');
+define('MAIL_USER', 'no_replay@buscademoteis.com.br');
+define('MAIL_PASSWORD', 'senha$Total2026');
+define('MAIL_PORT', 587);
+
 // SISTEMA SIS
 define('SIS_API', 'https://api.sismotel.com.br');
 define('SOFTHOUSE', 'c283ecc655bf074fc99ff95f1d51dc6c-721b224025ef117caabeaf76d58f3d50');

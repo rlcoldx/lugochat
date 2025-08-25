@@ -122,6 +122,9 @@ $(document).ready(function () {
 });
 
 function checkV(v){
+
+	console.log(v);
+
 	var domain = $('body').data('domain');
 	$.ajax({
 		url: domain + '/saques/conta/check',

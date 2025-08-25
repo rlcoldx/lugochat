@@ -98,6 +98,30 @@ class SaquesPainel extends Model
 
         $create = new Create();
         $create->ExeCreate('saques', $data);
+        
+        // Enviar email de notificação se o saque foi criado com sucesso
+        if ($create->getResult()) {
+            $this->enviarNotificacaoEmail($create->getResult(), $id_motel);
+        }
+        
         return $create;
+    }
+    
+    /**
+     * Envia email de notificação para o admin quando um novo saque é criado
+     * 
+     * @param int $idSaque ID do saque criado
+     * @param int $idMotel ID do motel
+     * @return void
+     */
+    private function enviarNotificacaoEmail(int $idSaque, int $idMotel): void
+    {
+        try {
+            $notificationService = new \Agencia\Close\Services\Saques\SaqueNotificationService();
+            $notificationService->notificarNovoSaque($idSaque, $idMotel);
+        } catch (\Exception $e) {
+            // Log do erro (não interrompe o fluxo principal)
+            error_log("Erro ao enviar email de notificação de saque: " . $e->getMessage());
+        }
     }
 }

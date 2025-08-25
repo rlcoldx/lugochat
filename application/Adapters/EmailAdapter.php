@@ -34,7 +34,7 @@ class EmailAdapter
         $this->mail->Password = self::Password;                               //SMTP password
         $this->mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         //Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
         $this->mail->Port = 587;
-        $this->mail->setFrom(self::Email, name_site);
+        $this->mail->setFrom(self::Email, self::name_site);
         $this->mail->isHTML(true);
     }
 

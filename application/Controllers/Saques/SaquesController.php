@@ -41,7 +41,7 @@ class SaquesController extends Controller
         $this->setParams($params);
         $conta = new SaquesPainel();
 
-        $CarteiraCheck = $this->CarteiraCheck($params);
+        $CarteiraCheck = $this->CarteiraCheckReturn($params);
 
         if($CarteiraCheck == '0') {
             $conta->createSaque($params, $_SESSION['busca_perfil_empresa']);
@@ -109,6 +109,19 @@ class SaquesController extends Controller
 
         return $carteira;
 
+    }
+
+    public function CarteiraCheckReturn($valor_solicitado)
+    {
+
+        $carteira = $this->carteira();
+        $valor_solicitado = str_replace(['.', ','], ['', '.'], $valor_solicitado['valor']);
+
+        if ($valor_solicitado > $carteira) {
+            return '1';
+        } else {
+            return '0';
+        }
     }
 
     public function CarteiraCheck($valor_solicitado){
