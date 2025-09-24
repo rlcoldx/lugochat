@@ -1,61 +1,95 @@
+
+{% if 'reservas_ver'|verifyPermission %}
 <a href="{{ DOMAIN }}/reservas" class="add-menu-sidebar px-1">Lista de Reservas</a>
+{% endif %}
+
 <ul class="metismenu" id="menu">
+    {% if 'home_ver'|verifyPermission %}
     <li>
         <a class="ai-icon" href="{{ DOMAIN }}/" aria-expanded="false">
             <i class="flaticon-381-networking"></i>
             <span class="nav-text">Página Inicial</span>
         </a>
     </li>
+    {% endif %}
+    
+    {% if 'suites_ver'|verifyPermission %}
     <li>
         <a href="{{ DOMAIN }}/suites" class="ai-icon" aria-expanded="false">
             <i class="flaticon-381-layer-1"></i>
             <span class="nav-text">Suítes</span>
         </a>
-    </li>            
+    </li>
+    {% endif %}
+    
     <li class="d-none"><a class="ai-icon" href="{{ DOMAIN }}/chatbot">
             <i class="flaticon-381-controls-3"></i>
             <span class="nav-text">ChatBot</span>
         </a>
     </li>
+    
+    {% if 'cardapio_ver'|verifyPermission %}
     <li>
         <a class="ai-icon" href="{{ DOMAIN }}/cardapio">
             <i class="fa-regular fa-pot-food"></i>
             <span class="nav-text">Cardápio</span>
         </a>
     </li>
+    {% endif %}
+    
+    {% if 'cupons_ver'|verifyPermission %}
     <li>
         <a class="ai-icon" href="{{ DOMAIN }}/cupons">
             <i class="fa-solid fa-ticket"></i>
             <span class="nav-text">Lista de Cupons</span>
         </a>
     </li>
+    {% endif %}
+    
+    {% if 'saques_ver'|verifyPermission %}
     <li>
         <a class="ai-icon" href="{{ DOMAIN }}/saques">
             <i class="fa-solid fa-money-bill-transfer"></i>
             <span class="nav-text">Meus Saques</span>
         </a>
     </li>
-    <li class="d-none">
+    {% endif %}
+    
+    {% if 'equipe_ver'|verifyPermission or 'cargos_ver'|verifyPermission %}
+    <li>
         <a class="has-arrow ai-icon" href="javascript:void(0)" aria-expanded="false">
             <i class="flaticon-381-user"></i>
-            <span class="nav-text">Equipe</span>
+            <span class="nav-text">Usuários</span>
         </a>
         <ul aria-expanded="false">
+            {% if 'equipe_ver'|verifyPermission %}
             <li><a href="{{ DOMAIN }}/equipe">Listar Todos</a></li>
+            {% endif %}
+            {% if 'equipe_criar'|verifyPermission %}
             <li><a href="{{ DOMAIN }}/equipe/add">Add Novo</a></li>
+            {% endif %}
+            {% if 'cargos_ver'|verifyPermission %}
             <li><a href="{{ DOMAIN }}/cargos">Gerenciar Cargos</a></li>
+            {% endif %}
         </ul>
     </li>
+    {% endif %}
+    
+    {% if 'clientes_ver'|verifyPermission %}
     <li>
         <a class="ai-icon" href="{{ DOMAIN }}/clientes">
             <i class="flaticon-381-heart"></i>
             <span class="nav-text">Lista de Clientes</span>
         </a>
     </li>
+    {% endif %}
+    
+    {% if 'config_ver'|verifyPermission %}
     <li>
         <a class="ai-icon" href="{{ DOMAIN }}/configuracoes">
             <i class="flaticon-381-settings-2"></i>
             <span class="nav-text">Configurações</span>
         </a>
     </li>
+    {% endif %}
 </ul>

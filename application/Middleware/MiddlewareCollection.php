@@ -5,6 +5,7 @@ namespace Agencia\Close\Middleware;
 use Agencia\Close\Middleware\Login\LoginMiddleware;
 use Agencia\Close\Middleware\Login\LoginCheckMiddleware;
 use Agencia\Close\Middleware\Login\UserPermissionMiddleware;
+use Agencia\Close\Middleware\LoadPermissionsMiddleware;
 
 class MiddlewareCollection
 {
@@ -15,6 +16,7 @@ class MiddlewareCollection
         $this->push(new LoginMiddleware());
         $this->push(new LoginCheckMiddleware());
         $this->push(new UserPermissionMiddleware());
+        $this->push(new LoadPermissionsMiddleware());
     }
 
     public function run()
