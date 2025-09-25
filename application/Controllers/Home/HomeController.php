@@ -15,7 +15,7 @@ class HomeController extends Controller
   {
     $model = new Home();
     $idMotel = null;
-    if ($_SESSION['busca_perfil_tipo'] == 2) {
+    if (($_SESSION['busca_perfil_tipo'] == 2) || ($_SESSION['busca_perfil_tipo'] == 3)) {
       $idMotel = $_SESSION['busca_perfil_empresa'] ?? null;
     }
 
@@ -38,7 +38,7 @@ class HomeController extends Controller
     $moteis = new Moteis();
     $moteislista = $moteis->getMoteisList()->getResult();
 
-    if($_SESSION['busca_perfil_tipo'] == 2){
+    if(($_SESSION['busca_perfil_tipo'] == 2) || ($_SESSION['busca_perfil_tipo'] == 3)){
 
       $user = new User();
       $maxSaques = $user->getUserByID($_SESSION['busca_perfil_empresa'])->getResultSingle()['saques'];
