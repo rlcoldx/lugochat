@@ -10,7 +10,7 @@
         <div class="row">
             <div class="col-xl-3 col-xxl-4">
                 <div class="row">
-                    {% if _session.busca_perfil_tipo == 2 %}
+                    {% if _session.busca_perfil_tipo == 2 or _session.busca_perfil_tipo == 3  %}
                     <div class="col-xl-12 col-md-6">
                         <div class="card card-congratulation-medal">
                             <div class="card-body">
@@ -65,7 +65,7 @@
                         </div>
                     </div>
                     {% endif %}
-                     {% if _session.busca_perfil_tipo == 2 %}
+                     {% if _session.busca_perfil_tipo == 2 or _session.busca_perfil_tipo == 3  %}
                     <div class="col-xl-12 col-md-6">
                         <div class="card">
                             <div class="card-header border-0 pb-0">
@@ -164,7 +164,7 @@
                             </div>
                         </div>
                     </div>
-                    {% if _session.busca_perfil_tipo == 2 %}
+                    {% if _session.busca_perfil_tipo == 2 or _session.busca_perfil_tipo == 3  %}
                     <div class="col-xl-12">
                         <div class="card" id="sales-revenue">
                             <div class="card-header pb-0 d-block d-sm-flex border-0">
