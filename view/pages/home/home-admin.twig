@@ -1,0 +1,273 @@
+{% extends "layout/layoutMaster.twig" %}
+
+{% block title %}Página Inicial{% endblock %}
+
+{% block body %}
+
+<div class="content-body">
+    <!-- row -->
+    <div class="container-fluid">
+        <!-- Cards de Estatísticas -->
+        <div class="row">
+            <div class="col-xl-3 col-xxl-3 col-lg-3 col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-end">
+                            <div>
+                                <p class="fs-14 mb-1">Lucro desse Mês - {{ now|date("m/Y") }}</p>
+                                <h3 class="text-success font-w600">R$ {{ lucroMes|number_format(2, ',', '.') }}</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-xxl-3 col-lg-3 col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-end">
+                            <div>
+                                <p class="fs-14 mb-1">Lucro Total até o momento</p>
+                                <h3 class="text-success font-w600">R$ {{ lucroTotal|number_format(2, ',', '.') }}</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-xxl-3 col-lg-3 col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-end">
+                            <div>
+                                <p class="fs-14 mb-1">Total de Vendas desse Mês</p>
+                                <h3 class="text-success font-w600">R$ {{ totalValorMes.total_vendas|number_format(2, ',', '.') }}</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-xxl-3 col-lg-3 col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <p class="fs-14 mb-1">Total de Vendas Geral</p>
+                                <h3 class="text-success font-w600">R$ {{ totalValor.total_vendas|number_format(2, ',', '.') }}</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Listagem de Reservas -->
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <!-- Filtros -->
+                        <form method="GET" action="{{ DOMAIN }}/home" class="mb-4">
+                            <div class="row">
+                                <div class="col-xl-3 col-md-6 mb-3">
+                                    <label class="form-label">Buscar</label>
+                                    <input type="text" name="search" class="form-control" placeholder="Código ou Nome do Cliente" value="{{ filters.search }}">
+                                </div>
+                                <div class="col-xl-2 col-md-6 mb-3">
+                                    <label class="form-label">Status Pagamento</label>
+                                    <select name="pagamento_status" class="form-control">
+                                        <option value="">Todos</option>
+                                        <option value="approved" {{ filters.pagamento_status == 'approved' ? 'selected' : '' }}>Aprovado</option>
+                                        <option value="pending" {{ filters.pagamento_status == 'pending' ? 'selected' : '' }}>Pendente</option>
+                                        <option value="cancelled" {{ filters.pagamento_status == 'cancelled' ? 'selected' : '' }}>Cancelado</option>
+                                        <option value="refused" {{ filters.pagamento_status == 'refused' ? 'selected' : '' }}>Recusado</option>
+                                    </select>
+                                </div>
+                                <div class="col-xl-3 col-md-6 mb-3">
+                                    <label class="form-label">Motel</label>
+                                    <select name="id_motel" id="select-motel" class="form-control select2-motel">
+                                        <option value="">Todos os Motéis</option>
+                                        {% for motel in moteislista %}
+                                        <option value="{{ motel.id }}" {{ filters.id_motel == motel.id ? 'selected' : '' }}>{{ motel.nome }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-xl-2 col-md-6 mb-3">
+                                    <label class="form-label">Ordenar por</label>
+                                    <select name="order" class="form-control">
+                                        <option value="recente" {{ filters.order == 'recente' ? 'selected' : '' }}>Mais Recente</option>
+                                        <option value="proxima" {{ filters.order == 'proxima' ? 'selected' : '' }}>Mais Próxima</option>
+                                    </select>
+                                </div>
+                                <div class="col-xl-2 col-md-6 mb-3 d-flex align-items-end">
+                                    <button type="submit" class="btn btn-primary me-2">
+                                        <i class="fas fa-search"></i> Filtrar
+                                    </button>
+                                    <a href="{{ DOMAIN }}/home" class="btn btn-secondary">
+                                        <i class="fas fa-times"></i> Limpar
+                                    </a>
+                                </div>
+                            </div>
+                        </form>
+
+                        <!-- Tabela de Reservas -->
+                        <div class="table-responsive">
+                            <table class="table table-hover table-vcenter">
+                                <thead>
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Cliente</th>
+                                        <th>Motel</th>
+                                        <th>Reserva</th>
+                                        <th>Período</th>
+                                        <th>Pagamento</th>
+                                        <th>Status</th>
+                                        <th class="text-end">Ação</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% if reservas %}
+                                        {% for reserva in reservas %}
+                                        <tr>
+                                            <td class="align-middle">
+                                                <span class="badge badge-sm light badge-warning">#{{ reserva.codigo_reserva }}</span>
+                                            </td>
+                                            <td class="align-middle">
+                                                <div class="fw-bold fs-6">{{ reserva.nome }}</div>
+                                                <div class="fa-sm lh-1">{{ reserva.telefone }}</div>                                
+                                            </td>
+                                            <td class="align-middle">
+                                                <div class="text-uppercase text-success">
+                                                    <span class="badge badge-sm bg-success">{{ reserva.motel_nome }}</span>
+                                                </div>
+                                            </td>
+                                            <td class="align-middle">
+                                                <div class="fw-bold fs-6">{{ reserva.suite_nome }}</div>
+                                                <div class="text-success fa-sm lh-1">R$ {{ reserva.valor_reserva|number_format(2, ',', '.') }}</div>
+                                            </td>
+                                            <td class="align-middle">
+                                                <div class="fw-bold fs-6">{{ reserva.data_reserva|date("d/m/Y") }}</div>
+                                                <div class="d-flex justify-content-start flex-wrap fa-sm lh-1">
+                                                    <div data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Horário de Chegada">
+                                                        <i class="fa-solid fa-right-to-bracket"></i> {{ reserva.chegada_reserva }}
+                                                    </div>
+                                                    <span class="mx-2">---</span>
+                                                    <div  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Período de Permanência">
+                                                      {{ reserva.periodo_reserva }}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="align-middle">
+                                                <span class="badge bg-{{ reserva.pagamento_status|payStatusColor }} py-1">
+                                                    {{ reserva.pagamento_status|payStatus }}
+                                                </span>                                  
+                                            </td>
+                                            <td class="align-middle">
+                                                <a class="badge bg-{{ reserva.status_reserva }} py-1" href="javascript:void(0)" 
+                                                   data-bs-remote="{{ DOMAIN }}/reservas/status/{{ reserva.id }}" 
+                                                   data-bs-toggle="offcanvas" 
+                                                   data-bs-target="#statusReserva">{{ reserva.status_reserva }}
+                                                </a>
+                                            </td>
+                                            <td class="align-middle">
+                                                <div class="d-flex justify-content-end">
+                                                    <a href="{{ DOMAIN }}/reserva/{{ reserva.id }}" class="btn btn-primary btn-sm">
+                                                        <i class="fa fa-eye"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="8" class="text-center py-5">
+                                                <i class="fas fa-inbox fa-3x  mb-3"></i>
+                                                <p class="">Nenhuma reserva encontrada</p>
+                                            </td>
+                                        </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Paginação -->
+                        {% if pagination %}
+                        <nav aria-label="Paginação" class="mt-4">
+                            <ul class="pagination pagination-circle justify-content-center">
+                                {% if pagination.before %}
+                                    {% for page in pagination.before %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ page.number }}{% if filters.search %}&search={{ filters.search }}{% endif %}{% if filters.pagamento_status %}&pagamento_status={{ filters.pagamento_status }}{% endif %}{% if filters.id_motel %}&id_motel={{ filters.id_motel }}{% endif %}{% if filters.order %}&order={{ filters.order }}{% endif %}">{{ page.number }}</a>
+                                    </li>
+                                    {% endfor %}
+                                {% endif %}
+
+                                {% if pagination.beforeMiddle %}
+                                    {% for page in pagination.beforeMiddle %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ page.number }}{% if filters.search %}&search={{ filters.search }}{% endif %}{% if filters.pagamento_status %}&pagamento_status={{ filters.pagamento_status }}{% endif %}{% if filters.id_motel %}&id_motel={{ filters.id_motel }}{% endif %}{% if filters.order %}&order={{ filters.order }}{% endif %}">{{ page.number }}</a>
+                                    </li>
+                                    {% endfor %}
+                                {% endif %}
+
+                                {% if pagination.actual %}
+                                <li class="page-item active">
+                                    <a class="page-link" href="#">{{ pagination.actual }}</a>
+                                </li>
+                                {% endif %}
+
+                                {% if pagination.lateMiddle %}
+                                    {% for page in pagination.lateMiddle %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ page.number }}{% if filters.search %}&search={{ filters.search }}{% endif %}{% if filters.pagamento_status %}&pagamento_status={{ filters.pagamento_status }}{% endif %}{% if filters.id_motel %}&id_motel={{ filters.id_motel }}{% endif %}{% if filters.order %}&order={{ filters.order }}{% endif %}">{{ page.number }}</a>
+                                    </li>
+                                    {% endfor %}
+                                {% endif %}
+
+                                {% if pagination.late %}
+                                    {% for page in pagination.late %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ page.number }}{% if filters.search %}&search={{ filters.search }}{% endif %}{% if filters.pagamento_status %}&pagamento_status={{ filters.pagamento_status }}{% endif %}{% if filters.id_motel %}&id_motel={{ filters.id_motel }}{% endif %}{% if filters.order %}&order={{ filters.order }}{% endif %}">{{ page.number }}</a>
+                                    </li>
+                                    {% endfor %}
+                                {% endif %}
+                            </ul>
+                        </nav>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.table-vcenter td,
+.table-vcenter th {
+    vertical-align: middle !important;
+}
+</style>
+
+<script>
+// Aguarda o DOM estar completamente carregado
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+        // Debug: verificar se o select existe e quantas opções tem
+        var selectElement = document.getElementById('select-motel');
+        
+        $('#select-motel').select2({
+            placeholder: "Selecione um motel",
+            allowClear: true,
+            width: '100%',
+            language: {
+                noResults: function() {
+                    return "Nenhum motel encontrado";
+                },
+                searching: function() {
+                    return "Buscando...";
+                }
+            }
+        });
+    }, 100);
+});
+</script>
+        
+{% endblock %}

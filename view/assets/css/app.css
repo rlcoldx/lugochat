@@ -35259,7 +35259,6 @@ code {
 }
 [data-theme-version="dark"] .pagination .page-item .page-link {
   border-color: #4c4c4f;
-  color: var(--dark);
   background: rgba(255, 255, 255, 0);
 }
 .pagination .page-item .page-link:hover i,

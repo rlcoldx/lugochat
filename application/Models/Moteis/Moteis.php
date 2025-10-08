@@ -21,7 +21,7 @@ class Moteis extends Model
     public function getMoteisList(): Read
     {
         $read = new Read();
-        $read->FullRead("SELECT id, nome FROM usuarios WHERE tipo = '2' ORDER BY nome ASC");
+        $read->FullRead("SELECT id, nome FROM usuarios WHERE tipo = '2' AND `status` = 'Ativo' ORDER BY nome ASC");
         return $read;
     }
 

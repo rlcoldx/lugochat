@@ -90,6 +90,97 @@ class Reserva extends Model
         return $read;
     }
 
+    public function getReservasWithFilters($filters = [], $limit = 20, $offset = 0): Read
+    {
+        $read = new Read();
+        
+        // Construção da query base
+        $sql = "SELECT r.*, s.nome AS suite_nome, u.nome AS motel_nome, p.pagamento_status, p.pagamento_metodo, p.pagamento_valor 
+                FROM reservas AS r
+                INNER JOIN suites AS s ON s.id = r.id_suite
+                INNER JOIN usuarios AS u ON u.id = r.id_motel
+                LEFT JOIN pagamentos AS p ON p.id_reserva = r.id
+                WHERE r.status_reserva <> ''";
+        
+        $params = [];
+        
+        // Filtro por status de pagamento
+        if (!empty($filters['pagamento_status'])) {
+            $sql .= " AND p.pagamento_status = :pagamento_status";
+            $params[] = "pagamento_status={$filters['pagamento_status']}";
+        }
+        
+        // Filtro por motel
+        if (!empty($filters['id_motel'])) {
+            $sql .= " AND r.id_motel = :id_motel";
+            $params[] = "id_motel={$filters['id_motel']}";
+        }
+        
+        // Busca por código ou nome
+        if (!empty($filters['search'])) {
+            $sql .= " AND (r.codigo LIKE :search OR r.nome LIKE :search)";
+            $search = "%{$filters['search']}%";
+            $params[] = "search={$search}";
+        }
+        
+        // Ordenação
+        if (!empty($filters['order'])) {
+            switch ($filters['order']) {
+                case 'proxima':
+                    $sql .= " ORDER BY ABS(DATEDIFF(r.data_reserva, CURDATE())) ASC, r.data_reserva ASC";
+                    break;
+                case 'recente':
+                default:
+                    $sql .= " ORDER BY r.id DESC";
+                    break;
+            }
+        } else {
+            $sql .= " ORDER BY r.id DESC"; // Padrão: mais recente
+        }
+        
+        $sql .= " LIMIT {$limit} OFFSET {$offset}";
+        
+        $read->FullRead($sql, implode('&', $params));
+        return $read;
+    }
+
+    public function countReservasWithFilters($filters = []): int
+    {
+        $read = new Read();
+        
+        $sql = "SELECT COUNT(*) as total 
+                FROM reservas AS r
+                INNER JOIN suites AS s ON s.id = r.id_suite
+                LEFT JOIN pagamentos AS p ON p.id_reserva = r.id
+                WHERE r.status_reserva <> ''";
+        
+        $params = [];
+        
+        // Filtro por status de pagamento
+        if (!empty($filters['pagamento_status'])) {
+            $sql .= " AND p.pagamento_status = :pagamento_status";
+            $params[] = "pagamento_status={$filters['pagamento_status']}";
+        }
+        
+        // Filtro por motel
+        if (!empty($filters['id_motel'])) {
+            $sql .= " AND r.id_motel = :id_motel";
+            $params[] = "id_motel={$filters['id_motel']}";
+        }
+        
+        // Busca por código ou nome
+        if (!empty($filters['search'])) {
+            $sql .= " AND (r.codigo LIKE :search OR r.nome LIKE :search)";
+            $search = "%{$filters['search']}%";
+            $params[] = "search={$search}";
+        }
+        
+        $read->FullRead($sql, implode('&', $params));
+        $result = $read->getResultSingle();
+        
+        return $result ? (int)$result['total'] : 0;
+    }
+
     public function statusReserva($id_reserva): Read
     {
         $read = new Read();

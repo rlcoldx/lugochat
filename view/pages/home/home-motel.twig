@@ -10,7 +10,6 @@
         <div class="row">
             <div class="col-xl-3 col-xxl-4">
                 <div class="row">
-                    {% if _session.busca_perfil_tipo == 2 or _session.busca_perfil_tipo == 3  %}
                     <div class="col-xl-12 col-md-6">
                         <div class="card card-congratulation-medal">
                             <div class="card-body">
@@ -29,8 +28,6 @@
                             </div>
                         </div>
                     </div>
-                    {% endif %}
-                    {% if _session.busca_perfil_tipo == 2 or _session.busca_perfil_tipo == 3  %}
                     <div class="col-xl-12 col-md-6">
                         <div class="card">
                             <div class="card-header border-0 pb-0">
@@ -56,47 +53,10 @@
                             </div>
                         </div>
                     </div>
-                    {% endif %}
                 </div>
             </div>
             <div class="col-xl-9 col-xxl-8">
                 <div class="row">
-                    {% if _session.busca_perfil_tipo == 0 %}
-                    <div class="col-xl-4 col-xxl-6 col-lg-4 col-sm-6">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="d-flex align-items-end">
-                                    <div>
-                                        <p class="fs-14 mb-1">Lucro desse Mês - {{ now|date("m/Y") }}</p>
-                                        <span class="fs-35  font-w600">R$ {{ lucroMes|number_format(2, ',', '.') }}
-                                            <svg class="ml-1" width="19" height="12" viewBox="0 0 19 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M2.00401 11.1924C0.222201 11.1924 -0.670134 9.0381 0.589795 7.77817L7.78218 0.585786C8.56323 -0.195262 9.82956 -0.195262 10.6106 0.585786L17.803 7.77817C19.0629 9.0381 18.1706 11.1924 16.3888 11.1924H2.00401Z" fill="#33C25B"/>
-                                            </svg>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-4 col-xxl-6 col-lg-4 col-sm-6">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="d-flex align-items-end">
-                                    <div>
-                                        <p class="fs-14 mb-1">Lucro Total até o momento</p>
-                                        <span class="fs-35  font-w600">R$ {{ lucroTotal|number_format(2, ',', '.') }}
-                                            <svg class="ml-1" width="19" height="12" viewBox="0 0 19 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M2.00401 11.1924C0.222201 11.1924 -0.670134 9.0381 0.589795 7.77817L7.78218 0.585786C8.56323 -0.195262 9.82956 -0.195262 10.6106 0.585786L17.803 7.77817C19.0629 9.0381 18.1706 11.1924 16.3888 11.1924H2.00401Z" fill="#33C25B"/>
-                                            </svg>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {% endif %}
-                  
                     <div class="col-xl-4 col-xxl-6 col-lg-4 col-sm-6">
                         <div class="card">
                             <div class="card-body">
@@ -129,7 +89,6 @@
                             </div>
                         </div>
                     </div>
-                    {% if _session.busca_perfil_tipo == 2 or _session.busca_perfil_tipo == 3  %}
                     <div class="col-xl-12">
                         <div class="card" id="sales-revenue">
                             <div class="card-header pb-0 d-block d-sm-flex border-0">
@@ -245,7 +204,6 @@
                             </div>
                         </div>
                     </div>
-                    {% endif %}
                 </div>
             </div>
         </div>
