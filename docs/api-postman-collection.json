@@ -1,0 +1,353 @@
+{
+	"info": {
+		"_postman_id": "api-collection",
+		"name": "Sistema API",
+		"description": "Collection completa da API do Sistema API para importação no Postman",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Suítes",
+			"item": [
+				{
+					"name": "Listar Todas as Suítes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/integracao/suites",
+							"host": [
+								"{{base_url}}"
+							],
+						"path": [
+							"api",
+							"integracao",
+								"suites"
+							]
+						},
+						"description": "Retorna todas as suítes de todos os motéis que têm integração API ativa"
+					},
+					"response": []
+				},
+				{
+					"name": "Consultar Disponibilidade",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/integracao/suite/qtde_disp?motel=1&suite=5",
+							"host": [
+								"{{base_url}}"
+							],
+						"path": [
+							"api",
+							"integracao",
+								"suite",
+								"qtde_disp"
+							],
+							"query": [
+								{
+									"key": "motel",
+									"value": "1",
+									"description": "ID do motel (obrigatório)"
+								},
+								{
+									"key": "suite",
+									"value": "5",
+									"description": "ID da suíte (opcional)"
+								}
+							]
+						},
+						"description": "Retorna a quantidade de disponibilidade de suítes de um motel"
+					},
+					"response": []
+				},
+				{
+					"name": "Atualizar Disponibilidade",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/integracao/suite/disponibilidade?motel=1&suite=5&qtde=10",
+							"host": [
+								"{{base_url}}"
+							],
+						"path": [
+							"api",
+							"integracao",
+								"suite",
+								"disponibilidade"
+							],
+							"query": [
+								{
+									"key": "motel",
+									"value": "1",
+									"description": "ID do motel (obrigatório)"
+								},
+								{
+									"key": "suite",
+									"value": "5",
+									"description": "ID da suíte (obrigatório)"
+								},
+								{
+									"key": "qtde",
+									"value": "10",
+									"description": "Quantidade de disponibilidade (obrigatório)"
+								}
+							]
+						},
+						"description": "Atualiza a disponibilidade de uma suíte específica em um motel"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Reservas",
+			"item": [
+				{
+					"name": "Ver Reserva",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/integracao/reserva/ver?codigo=12345",
+							"host": [
+								"{{base_url}}"
+							],
+						"path": [
+							"api",
+							"integracao",
+								"reserva",
+								"ver"
+							],
+							"query": [
+								{
+									"key": "codigo",
+									"value": "12345",
+									"description": "ID da reserva (obrigatório)"
+								}
+							]
+						},
+						"description": "Retorna informações completas de uma reserva, incluindo dados de pagamento"
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Reservas Não Processadas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/integracao/receber_reservas?motel=1",
+							"host": [
+								"{{base_url}}"
+							],
+						"path": [
+							"api",
+							"integracao",
+								"receber_reservas"
+							],
+							"query": [
+								{
+									"key": "motel",
+									"value": "1",
+									"description": "ID do motel (obrigatório)"
+								}
+							]
+						},
+						"description": "Retorna todas as reservas não processadas de um motel específico"
+					},
+					"response": []
+				},
+				{
+					"name": "Marcar Reserva como Processada",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/integracao/reserva/processado?codigo=12345",
+							"host": [
+								"{{base_url}}"
+							],
+						"path": [
+							"api",
+							"integracao",
+								"reserva",
+								"processado"
+							],
+							"query": [
+								{
+									"key": "codigo",
+									"value": "12345",
+									"description": "ID da reserva (obrigatório)"
+								}
+							]
+						},
+						"description": "Marca uma reserva específica como processada"
+					},
+					"response": []
+				},
+				{
+					"name": "Confirmar Check-in",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/integracao/reserva/checkin?codigo=12345",
+							"host": [
+								"{{base_url}}"
+							],
+						"path": [
+							"api",
+							"integracao",
+								"reserva",
+								"checkin"
+							],
+							"query": [
+								{
+									"key": "codigo",
+									"value": "12345",
+									"description": "ID da reserva (obrigatório)"
+								}
+							]
+						},
+						"description": "Confirma o check-in de uma reserva confirmada"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Testes",
+			"item": [
+				{
+					"name": "Criar Reserva de Teste",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/integracao/reserva/criar/teste?motel=1&suite=5",
+							"host": [
+								"{{base_url}}"
+							],
+						"path": [
+							"api",
+							"integracao",
+								"reserva",
+								"criar",
+								"teste"
+							],
+							"query": [
+								{
+									"key": "motel",
+									"value": "1",
+									"description": "ID do motel (obrigatório)"
+								},
+								{
+									"key": "suite",
+									"value": "5",
+									"description": "ID da suíte (obrigatório)"
+								}
+							]
+						},
+						"description": "Cria uma pré-reserva de teste com dados fictícios para testar a integração"
+					},
+					"response": []
+				},
+				{
+					"name": "Simular Pagamento Aprovado",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/integracao/reserva/reserva_paga?codigo=12345",
+							"host": [
+								"{{base_url}}"
+							],
+						"path": [
+							"api",
+							"integracao",
+								"reserva",
+								"reserva_paga"
+							],
+							"query": [
+								{
+									"key": "codigo",
+									"value": "12345",
+									"description": "ID da reserva (obrigatório)"
+								}
+							]
+						},
+						"description": "Simula o pagamento aprovado de uma reserva (para testes)"
+					},
+					"response": []
+				},
+				{
+					"name": "Simular Cancelamento",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/integracao/reserva/cancelar?codigo=12345",
+							"host": [
+								"{{base_url}}"
+							],
+						"path": [
+							"api",
+							"integracao",
+								"reserva",
+								"cancelar"
+							],
+							"query": [
+								{
+									"key": "codigo",
+									"value": "12345",
+									"description": "ID da reserva (obrigatório)"
+								}
+							]
+						},
+						"description": "Simula o cancelamento de uma reserva (para testes)"
+					},
+					"response": []
+				},
+				{
+					"name": "Simular Não Pagamento",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/integracao/reserva/nao_paga?codigo=12345",
+							"host": [
+								"{{base_url}}"
+							],
+						"path": [
+							"api",
+							"integracao",
+								"reserva",
+								"nao_paga"
+							],
+							"query": [
+								{
+									"key": "codigo",
+									"value": "12345",
+									"description": "ID da reserva (obrigatório)"
+								}
+							]
+						},
+						"description": "Simula a recusa de pagamento de uma reserva (para testes)"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost/lugochat",
+			"type": "string"
+		}
+	]
+}
+

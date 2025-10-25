@@ -28,6 +28,7 @@ require  __DIR__ . '/chatbot/agendamento.php';
 
 //API
 require  __DIR__ . '/API/rubens.php';
+require  __DIR__ . '/API/api.php';
 require  __DIR__ . '/API/sis.php';
 
 // ERROR
