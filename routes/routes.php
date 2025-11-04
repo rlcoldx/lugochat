@@ -20,6 +20,7 @@ require  __DIR__ . '/pages/reservas.php';
 require  __DIR__ . '/pages/notificacao.php';
 require  __DIR__ . '/pages/banners.php';
 require  __DIR__ . '/pages/cardapio.php';
+require  __DIR__ . '/pages/api-integracao.php';
 
 //WIDGET
 require  __DIR__ . '/chatbot/inicio.php';

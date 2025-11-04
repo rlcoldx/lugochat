@@ -16,6 +16,33 @@ O Sistema API é uma integração de reservas para o sistema LugoChat. Este sist
 
 ---
 
+## Autenticação
+
+### Sistema de Tokens
+
+A API utiliza autenticação por token. Todos os endpoints que requerem identificação do motel usam o parâmetro `motel` com o **token de autenticação** (não mais o ID).
+
+**Como funciona:**
+1. O token é gerado no painel de Integração API (`/api/integracao/list`)
+2. O token é enviado via parâmetro `motel` nas requisições
+3. O sistema valida o token na tabela `api_motel`
+4. Se válido, incrementa o contador de acessos e retorna o `id_motel`
+5. Se inválido, retorna erro 401 (Unauthorized)
+
+**Formato do token:** String de 64 caracteres hexadecimais
+
+**Exemplo de uso:**
+```bash
+GET /api/integracao/suites?motel=a1b2c3d4e5f6...
+```
+
+### Códigos de Resposta de Autenticação
+
+- **401 Unauthorized**: Token não fornecido ou inválido
+- **403 Forbidden**: Token válido, mas motel está inativo
+
+---
+
 ## Controller: ApiController
 
 **Localização**: `application/Controllers/Api/ApiController.php`
@@ -24,6 +51,7 @@ O Sistema API é uma integração de reservas para o sistema LugoChat. Este sist
 
 O `ApiController` é responsável por:
 - Receber requisições HTTP da API
+- **Autenticar requisições via token**
 - Validar parâmetros de entrada
 - Chamar métodos do Model para processar dados
 - Retornar respostas JSON formatadas
@@ -33,6 +61,8 @@ O `ApiController` é responsável por:
 #### 1. `suites()`
 - **Método HTTP**: GET
 - **Endpoint**: `/api/integracao/suites`
+- **Parâmetros Query**:
+  - `motel` (obrigatório): **Token de autenticação** (gerado no painel de Integração API)
 - **Descrição**: Retorna todas as suítes de todos os motéis que têm integração API ativa
 - **Retorno**: JSON com estrutura hierárquica de motéis e suas suítes
 - **Uso**: Consulta geral de suítes disponíveis
@@ -41,18 +71,18 @@ O `ApiController` é responsável por:
 - **Método HTTP**: GET
 - **Endpoint**: `/api/integracao/suite/disponibilidade`
 - **Parâmetros Query**:
-  - `motel` (obrigatório): ID do motel
+  - `motel` (obrigatório): **Token de autenticação** (gerado no painel de Integração API)
   - `suite` (obrigatório): ID da suíte
   - `qtde` (obrigatório): Quantidade de disponibilidade a ser atualizada
 - **Descrição**: Atualiza a disponibilidade de uma suíte específica em um motel
-- **Validações**: Verifica se o motel existe e está ativo com integração API
+- **Validações**: Verifica se o token é válido e se o motel está ativo
 - **Retorno**: `'ok'` em caso de sucesso ou mensagem de erro
 
 #### 3. `qtde_disp()`
 - **Método HTTP**: GET
 - **Endpoint**: `/api/integracao/suite/qtde_disp`
 - **Parâmetros Query**:
-  - `motel` (obrigatório): ID do motel
+  - `motel` (obrigatório): **Token de autenticação** (gerado no painel de Integração API)
   - `suite` (opcional): ID da suíte específica
 - **Descrição**: Retorna a quantidade de disponibilidade de suítes de um motel
 - **Retorno**: JSON com informações de disponibilidade
@@ -61,10 +91,10 @@ O `ApiController` é responsável por:
 - **Método HTTP**: GET
 - **Endpoint**: `/api/integracao/reserva/criar/teste`
 - **Parâmetros Query**:
-  - `motel` (obrigatório): ID do motel
+  - `motel` (obrigatório): **Token de autenticação** (gerado no painel de Integração API)
   - `suite` (obrigatório): ID da suíte
 - **Descrição**: Cria uma pré-reserva de teste com dados fictícios para testar a integração
-- **Validações**: Verifica se a suíte está disponível antes de criar
+- **Validações**: Verifica se o token é válido e se a suíte está disponível
 - **Retorno**: JSON com `reserva_id` da reserva criada
 
 #### 5. `verReserva()`
@@ -106,7 +136,7 @@ O `ApiController` é responsável por:
 - **Método HTTP**: GET
 - **Endpoint**: `/api/integracao/receber_reservas`
 - **Parâmetros Query**:
-  - `motel` (obrigatório): ID do motel
+  - `motel` (obrigatório): **Token de autenticação** (gerado no painel de Integração API)
 - **Descrição**: Retorna todas as reservas não processadas de um motel específico
 - **Retorno**: JSON com array de reservas, incluindo dados de pagamento
 

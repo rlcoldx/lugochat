@@ -4,9 +4,28 @@ Este documento contém exemplos de respostas da API do Sistema API para facilita
 
 ---
 
+## ⚠️ IMPORTANTE: Autenticação por Token
+
+**Todos os endpoints requerem autenticação via token!**
+
+O parâmetro `motel` agora recebe o **token de autenticação** (não mais o ID do motel).
+
+**Como obter o token:**
+1. Acesse `/api/integracao/list` no painel admin
+2. Crie um novo token para seu motel
+3. Copie o token gerado (64 caracteres)
+4. Use o token no parâmetro `motel` nas requisições
+
+**Exemplo:**
+```bash
+GET /api/integracao/suites?motel=a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2
+```
+
+---
+
 ## 1. Listar Todas as Suítes
 
-**Endpoint**: `GET /api/integracao/suites`
+**Endpoint**: `GET /api/integracao/suites?motel=SEU_TOKEN_AQUI`
 
 **Resposta**:
 ```json
@@ -47,7 +66,7 @@ Este documento contém exemplos de respostas da API do Sistema API para facilita
 
 ## 2. Consultar Disponibilidade
 
-**Endpoint**: `GET /api/integracao/suite/qtde_disp?motel=1&suite=5`
+**Endpoint**: `GET /api/integracao/suite/qtde_disp?motel=SEU_TOKEN_AQUI&suite=5`
 
 **Resposta**:
 ```json
@@ -77,7 +96,7 @@ Este documento contém exemplos de respostas da API do Sistema API para facilita
 
 ## 3. Atualizar Disponibilidade
 
-**Endpoint**: `GET /api/integracao/suite/disponibilidade?motel=1&suite=5&qtde=10`
+**Endpoint**: `GET /api/integracao/suite/disponibilidade?motel=SEU_TOKEN_AQUI&suite=5&qtde=10`
 
 **Resposta de Sucesso**:
 ```
@@ -93,6 +112,25 @@ Erro: Motel não encontrado
 ```
 Erro: Suíte não encontrada.
 Erro: Parâmetros insuficientes ou inválidos.
+```
+
+**Erro de autenticação**:
+```json
+{
+  "erro": "Token não fornecido. Use o parâmetro motel=SEU_TOKEN"
+}
+```
+ou
+```json
+{
+  "erro": "Token inválido"
+}
+```
+ou
+```json
+{
+  "erro": "Motel inativo"
+}
 ```
 
 ---
@@ -147,7 +185,7 @@ Erro: Parâmetros insuficientes ou inválidos.
 
 ## 5. Listar Reservas Não Processadas
 
-**Endpoint**: `GET /api/integracao/receber_reservas?motel=1`
+**Endpoint**: `GET /api/integracao/receber_reservas?motel=SEU_TOKEN_AQUI`
 
 **Resposta de Sucesso**:
 ```json
@@ -238,7 +276,7 @@ ok
 
 ## 8. Criar Reserva de Teste
 
-**Endpoint**: `GET /api/integracao/reserva/criar/teste?motel=1&suite=5`
+**Endpoint**: `GET /api/integracao/reserva/criar/teste?motel=SEU_TOKEN_AQUI&suite=5`
 
 **Resposta de Sucesso**:
 ```json
@@ -383,7 +421,7 @@ Retornado quando ocorre um erro interno do servidor.
 
 ### 1. Criar uma reserva de teste
 ```bash
-GET /api/integracao/reserva/criar/teste?motel=1&suite=5
+GET /api/integracao/reserva/criar/teste?motel=SEU_TOKEN_AQUI&suite=5
 ```
 **Resposta**: `{"reserva_id": 12345}`
 

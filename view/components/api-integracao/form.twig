@@ -1,0 +1,78 @@
+<div class="border-bottom px-3 py-3 mb-2">
+    <span class="mb-0 fs-5 text-white">{{ token.id is defined ? 'EDITAR TOKEN' : 'ADICIONAR NOVO TOKEN' }}</span>
+</div>
+<div class="px-3 py-2 pt-0">
+    <form action="javascript:void(0);" method="POST" id="salvar_token">
+        <div class="row mb-3">
+            <!-- Motel -->
+            <div class="col-md-6">
+                <label for="id_motel" class="form-label">Motel <span class="text-danger">*</span></label>
+                <select id="id_motel" name="id_motel" class="form-control select2" required {{ motel_id_logado ? 'disabled' : '' }}>
+                    <option value="">Selecione o Motel</option>
+                    {% for motel in moteis %}
+                        <option value="{{ motel.id }}" 
+                            {{ (token.id_motel == motel.id) or (motel_id_logado == motel.id) ? 'selected' : '' }}>
+                            {{ motel.nome }}
+                        </option>
+                    {% endfor %}
+                </select>
+                {% if motel_id_logado %}
+                    <input type="hidden" name="id_motel" value="{{ motel_id_logado }}">
+                {% endif %}
+            </div>
+            
+            <!-- Sistema -->
+            <div class="col-md-6">
+                <label for="sistema" class="form-label">Sistema de Integração <span class="text-danger">*</span></label>
+                <input type="text" id="sistema" name="sistema" class="form-control" maxlength="255" value="{{ token.sistema }}" placeholder="Ex: Sistema Externo, API Mobile, etc." required>
+            </div>
+        </div>
+
+        {% if token.token %}
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <label class="form-label">Token Atual</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" value="{{ token.token }}" readonly id="token-display">
+                    <button class="btn btn-outline-secondary copy-token-btn" type="button" data-token="{{ token.token }}">
+                        <i class="fa fa-copy"></i> Copiar
+                    </button>
+                </div>
+                <small class="form-text">Para gerar um novo token, clique no botão "Gerar Novo Token" na listagem.</small>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label class="form-label">Acessos</label>
+                <input type="text" class="form-control" value="{{ token.acessos }}" readonly>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Última Atualização</label>
+                <input type="text" class="form-control" value="{{ token.date_update|date('d/m/Y H:i:s') }}" readonly>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="alert alert-info" role="alert">
+            <i class="fa fa-info-circle"></i> 
+            {% if token.id is defined %}
+                O token será mantido. Para gerar um novo token, use o botão "Gerar Novo Token" na listagem.
+            {% else %}
+                Um token único será gerado automaticamente ao salvar.
+            {% endif %}
+        </div>
+
+        <div class="col-md-12 col-sm-12 mt-3 pt-3 border-top mb-2">
+            <div class="d-flex justify-content-start w-100">
+                <input type="hidden" name="id" value="{{ token.id is defined ? token.id : '-1' }}">
+                <button type="submit" id="salvar" class="btn btn-primary">
+                    <i class="fa fa-save"></i> SALVAR TOKEN
+                </button>
+            </div>
+        </div>
+    </form>
+       
+</div>
+<script src="{{ PATH }}/view/assets/js/pages/api-integracao.js"></script>
+

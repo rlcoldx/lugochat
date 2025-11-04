@@ -3,11 +3,50 @@ namespace Agencia\Close\Controllers\Api;
 
 use Agencia\Close\Controllers\Controller;
 use Agencia\Close\Models\Api\Api;
+use Agencia\Close\Models\ApiIntegracao\ApiIntegracao;
 
 class ApiController extends Controller
 {
+    /**
+     * Valida o token e retorna o ID do motel
+     * Incrementa contador de acessos
+     * @param string|null $token
+     * @return int|null
+     */
+    private function autenticarToken($token = null)
+    {
+        if (!$token) {
+            http_response_code(401);
+            echo json_encode(['erro' => 'Token não fornecido. Use o parâmetro motel=SEU_TOKEN'], JSON_UNESCAPED_UNICODE);
+            return null;
+        }
+
+        $modelIntegracao = new ApiIntegracao();
+        $validacao = $modelIntegracao->validarToken($token);
+
+        if (!$validacao) {
+            http_response_code(401);
+            echo json_encode(['erro' => 'Token inválido'], JSON_UNESCAPED_UNICODE);
+            return null;
+        }
+
+        if ($validacao['motel_status'] !== 'Ativo') {
+            http_response_code(403);
+            echo json_encode(['erro' => 'Motel inativo'], JSON_UNESCAPED_UNICODE);
+            return null;
+        }
+
+        // Incrementa o contador de acessos
+        $modelIntegracao->incrementarAcessos($validacao['id']);
+
+        return (int)$validacao['id_motel'];
+    }
     public function suites()
     {
+        // Autentica e obtém ID do motel via token
+        $id_motel = $this->autenticarToken($_GET['motel'] ?? null);
+        if (!$id_motel) return;
+
         $model = new Api;
         $suites = $model->getSuites()->getResult();
         $json_result = $suites[0]["json_result"];
@@ -17,24 +56,33 @@ class ApiController extends Controller
     public function disponibilidade($params)
     {
         $this->setParams($params);
+        
+        // Autentica e obtém ID do motel via token
+        $id_motel = $this->autenticarToken($_GET['motel'] ?? null);
+        if (!$id_motel) return;
+
         $model = new Api;
-
-        $checkMotel = $model->checkMotelApi($_GET['motel'])->getResult();
-
-        if (!empty($checkMotel)) {
-            $resultado = $model->updateDisponibilidade($_GET);
-            if ($resultado === true) {
-                echo 'ok';
-            } else {
-                echo $resultado;
-            }
-        }else{
-            echo 'Erro: Motel não encontrado';
+        
+        // Substitui o token pelo id_motel nos parâmetros
+        $_GET['motel'] = $id_motel;
+        
+        $resultado = $model->updateDisponibilidade($_GET);
+        if ($resultado === true) {
+            echo 'ok';
+        } else {
+            echo $resultado;
         }
     }
 
     public function qtde_disp()
     {
+        // Autentica e obtém ID do motel via token
+        $id_motel = $this->autenticarToken($_GET['motel'] ?? null);
+        if (!$id_motel) return;
+
+        // Substitui o token pelo id_motel nos parâmetros
+        $_GET['motel'] = $id_motel;
+
         $model = new Api;
         $disponibilidade = $model->getDisponibilidade($_GET)->getResult();
         $json_result = $disponibilidade[0]["json_result"];
@@ -43,11 +91,14 @@ class ApiController extends Controller
 
     public function CriarReservaTeste()
     {
-        $id_motel = isset($_GET['motel']) ? intval($_GET['motel']) : null;
+        // Autentica e obtém ID do motel via token
+        $id_motel = $this->autenticarToken($_GET['motel'] ?? null);
+        if (!$id_motel) return;
+
         $id_suite = isset($_GET['suite']) ? intval($_GET['suite']) : null;
-        if ($id_motel <= 0 || $id_suite <= 0) {
+        if ($id_suite <= 0) {
             http_response_code(400);
-            echo json_encode(['erro' => 'Parâmetros motel e suite são obrigatórios.'], JSON_UNESCAPED_UNICODE);
+            echo json_encode(['erro' => 'Parâmetro suite é obrigatório.'], JSON_UNESCAPED_UNICODE);
             return;
         }
 
@@ -149,12 +200,10 @@ class ApiController extends Controller
 
     public function receberReservas()
     {
-        $id_motel = isset($_GET['motel']) ? intval($_GET['motel']) : null;
-        if (!$id_motel) {
-            http_response_code(400);
-            echo json_encode(['erro' => 'Parâmetro motel é obrigatório.'], JSON_UNESCAPED_UNICODE);
-            return;
-        }
+        // Autentica e obtém ID do motel via token
+        $id_motel = $this->autenticarToken($_GET['motel'] ?? null);
+        if (!$id_motel) return;
+
         $model = new Api;
         $reservas = $model->getReservasNaoProcessadasPorMotel($id_motel);
         header('Content-Type: application/json');

@@ -15,7 +15,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/api/integracao/suites",
+							"raw": "{{base_url}}/api/integracao/suites?motel={{api_token}}",
 							"host": [
 								"{{base_url}}"
 							],
@@ -23,6 +23,13 @@
 							"api",
 							"integracao",
 								"suites"
+							],
+							"query": [
+								{
+									"key": "motel",
+									"value": "{{api_token}}",
+									"description": "Token de autenticação"
+								}
 							]
 						},
 						"description": "Retorna todas as suítes de todos os motéis que têm integração API ativa"
@@ -35,7 +42,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/api/integracao/suite/qtde_disp?motel=1&suite=5",
+							"raw": "{{base_url}}/api/integracao/suite/qtde_disp?motel={{api_token}}&suite=5",
 							"host": [
 								"{{base_url}}"
 							],
@@ -48,8 +55,8 @@
 							"query": [
 								{
 									"key": "motel",
-									"value": "1",
-									"description": "ID do motel (obrigatório)"
+									"value": "{{api_token}}",
+									"description": "Token de autenticação (obrigatório)"
 								},
 								{
 									"key": "suite",
@@ -68,7 +75,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/api/integracao/suite/disponibilidade?motel=1&suite=5&qtde=10",
+							"raw": "{{base_url}}/api/integracao/suite/disponibilidade?motel={{api_token}}&suite=5&qtde=10",
 							"host": [
 								"{{base_url}}"
 							],
@@ -81,8 +88,8 @@
 							"query": [
 								{
 									"key": "motel",
-									"value": "1",
-									"description": "ID do motel (obrigatório)"
+									"value": "{{api_token}}",
+									"description": "Token de autenticação (obrigatório)"
 								},
 								{
 									"key": "suite",
@@ -139,7 +146,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/api/integracao/receber_reservas?motel=1",
+							"raw": "{{base_url}}/api/integracao/receber_reservas?motel={{api_token}}",
 							"host": [
 								"{{base_url}}"
 							],
@@ -227,7 +234,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/api/integracao/reserva/criar/teste?motel=1&suite=5",
+							"raw": "{{base_url}}/api/integracao/reserva/criar/teste?motel={{api_token}}&suite=5",
 							"host": [
 								"{{base_url}}"
 							],
@@ -241,8 +248,8 @@
 							"query": [
 								{
 									"key": "motel",
-									"value": "1",
-									"description": "ID do motel (obrigatório)"
+									"value": "{{api_token}}",
+									"description": "Token de autenticação (obrigatório)"
 								},
 								{
 									"key": "suite",
@@ -346,6 +353,11 @@
 		{
 			"key": "base_url",
 			"value": "http://localhost/lugochat",
+			"type": "string"
+		},
+		{
+			"key": "api_token",
+			"value": "SEU_TOKEN_AQUI",
 			"type": "string"
 		}
 	]

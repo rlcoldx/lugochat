@@ -1,0 +1,83 @@
+{% extends "layout/layoutMaster.twig" %}
+
+{% block title %}Integração API{% endblock %}
+
+{% block body %}
+
+<div class="content-body">
+    <div class="container-fluid">
+    
+	    <div class="d-flex justify-content-between align-items-center mb-4">
+	        <div>
+	            <h3 class="content-title card-title mb-0">Tokens de Integração API</h3>
+	            <p class="mb-0">Gerencie os tokens de acesso à API para cada motel</p>
+	        </div>
+	        <div>
+	            <a href="javascript:void(0)" data-bs-toggle="modal-remote" data-remote="{{ DOMAIN }}/api/integracao/add" data-bs-target="#tokenmodal" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> Add Novo Token</a>
+	        </div>
+	    </div>
+    
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="datatable" class="table dataTable">
+                        <thead>
+                            <tr role="row">
+                                <th>Motel</th>
+                                <th>Sistema</th>
+                                <th>Token</th>
+                                <th>Acessos</th>
+                                <th>Criado em</th>
+                                <th width="150">Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for token in tokens %}
+                            <tr class="token-{{ token.id }}">
+                                <td class="align-middle fw-bold text-uppercase">{{ token.nome_motel }}</td>
+                                <td class="align-middle fw-bold">{{ token.sistema }}</td>
+                                <td class="align-middle">
+                                    <div class="d-flex align-items-center">
+                                        <code class="token-value">{{ token.token }}</code>
+                                        <button class="btn btn-sm btn-link py-1 copy-token" data-token="{{ token.token }}" title="Copiar Token">
+                                            <i class="fa fa-copy"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                                <td class="align-middle"><span class="fs-5 fw-bold">{{ token.acessos }}</span></td>
+                                <td class="align-middle">{{ token.date_create|date("d/m/Y H:i") }}</td>
+                                <td class="align-middle">
+                                    <div class="d-flex justify-content-end align-items-center">
+                                        <a href="javascript:void(0)" data-bs-toggle="modal-remote" data-remote="{{ DOMAIN }}/api/integracao/edit/{{ token.id }}" data-bs-target="#tokenmodal" class="btn btn-sm btn-primary py-1 me-1" title="Editar">
+                                            <i class="fa fa-pencil"></i>
+                                        </a>
+                                        <a href="javascript:void(0)" class="btn btn-sm btn-danger py-1 deletar-token" data-id="{{ token.id }}" title="Deletar">
+                                            <i class="fa fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="modal fade" id="tokenmodal" tabindex="-1" role="dialog" aria-labelledby="tokenmodalLabel">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-body"></div>
+        </div>
+    </div>
+</div>
+
+<script src="{{ DOMAIN }}/view/assets/vendor/datatables/js/jquery.dataTables.min.js"></script>
+<script src="{{ DOMAIN }}/view/assets/vendor/datatables/js/datatables.init.js"></script>
+<script src="{{ DOMAIN }}/view/assets/js/pages/api-integracao.js"></script>
+
+{% endblock %}
+
