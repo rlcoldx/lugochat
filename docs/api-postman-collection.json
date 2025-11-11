@@ -1,365 +1,529 @@
 {
-	"info": {
-		"_postman_id": "api-collection",
-		"name": "Sistema API",
-		"description": "Collection completa da API do Sistema API para importação no Postman",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-	},
-	"item": [
-		{
-			"name": "Suítes",
-			"item": [
-				{
-					"name": "Listar Todas as Suítes",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/integracao/suites?motel={{api_token}}",
-							"host": [
-								"{{base_url}}"
-							],
-						"path": [
-							"api",
-							"integracao",
-								"suites"
-							],
-							"query": [
-								{
-									"key": "motel",
-									"value": "{{api_token}}",
-									"description": "Token de autenticação"
-								}
-							]
-						},
-						"description": "Retorna todas as suítes de todos os motéis que têm integração API ativa"
-					},
-					"response": []
-				},
-				{
-					"name": "Consultar Disponibilidade",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/integracao/suite/qtde_disp?motel={{api_token}}&suite=5",
-							"host": [
-								"{{base_url}}"
-							],
-						"path": [
-							"api",
-							"integracao",
-								"suite",
-								"qtde_disp"
-							],
-							"query": [
-								{
-									"key": "motel",
-									"value": "{{api_token}}",
-									"description": "Token de autenticação (obrigatório)"
-								},
-								{
-									"key": "suite",
-									"value": "5",
-									"description": "ID da suíte (opcional)"
-								}
-							]
-						},
-						"description": "Retorna a quantidade de disponibilidade de suítes de um motel"
-					},
-					"response": []
-				},
-				{
-					"name": "Atualizar Disponibilidade",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/integracao/suite/disponibilidade?motel={{api_token}}&suite=5&qtde=10",
-							"host": [
-								"{{base_url}}"
-							],
-						"path": [
-							"api",
-							"integracao",
-								"suite",
-								"disponibilidade"
-							],
-							"query": [
-								{
-									"key": "motel",
-									"value": "{{api_token}}",
-									"description": "Token de autenticação (obrigatório)"
-								},
-								{
-									"key": "suite",
-									"value": "5",
-									"description": "ID da suíte (obrigatório)"
-								},
-								{
-									"key": "qtde",
-									"value": "10",
-									"description": "Quantidade de disponibilidade (obrigatório)"
-								}
-							]
-						},
-						"description": "Atualiza a disponibilidade de uma suíte específica em um motel"
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Reservas",
-			"item": [
-				{
-					"name": "Ver Reserva",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/integracao/reserva/ver?codigo=12345",
-							"host": [
-								"{{base_url}}"
-							],
-						"path": [
-							"api",
-							"integracao",
-								"reserva",
-								"ver"
-							],
-							"query": [
-								{
-									"key": "codigo",
-									"value": "12345",
-									"description": "ID da reserva (obrigatório)"
-								}
-							]
-						},
-						"description": "Retorna informações completas de uma reserva, incluindo dados de pagamento"
-					},
-					"response": []
-				},
-				{
-					"name": "Listar Reservas Não Processadas",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/integracao/receber_reservas?motel={{api_token}}",
-							"host": [
-								"{{base_url}}"
-							],
-						"path": [
-							"api",
-							"integracao",
-								"receber_reservas"
-							],
-							"query": [
-								{
-									"key": "motel",
-									"value": "1",
-									"description": "ID do motel (obrigatório)"
-								}
-							]
-						},
-						"description": "Retorna todas as reservas não processadas de um motel específico"
-					},
-					"response": []
-				},
-				{
-					"name": "Marcar Reserva como Processada",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/integracao/reserva/processado?codigo=12345",
-							"host": [
-								"{{base_url}}"
-							],
-						"path": [
-							"api",
-							"integracao",
-								"reserva",
-								"processado"
-							],
-							"query": [
-								{
-									"key": "codigo",
-									"value": "12345",
-									"description": "ID da reserva (obrigatório)"
-								}
-							]
-						},
-						"description": "Marca uma reserva específica como processada"
-					},
-					"response": []
-				},
-				{
-					"name": "Confirmar Check-in",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/integracao/reserva/checkin?codigo=12345",
-							"host": [
-								"{{base_url}}"
-							],
-						"path": [
-							"api",
-							"integracao",
-								"reserva",
-								"checkin"
-							],
-							"query": [
-								{
-									"key": "codigo",
-									"value": "12345",
-									"description": "ID da reserva (obrigatório)"
-								}
-							]
-						},
-						"description": "Confirma o check-in de uma reserva confirmada"
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Testes",
-			"item": [
-				{
-					"name": "Criar Reserva de Teste",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/integracao/reserva/criar/teste?motel={{api_token}}&suite=5",
-							"host": [
-								"{{base_url}}"
-							],
-						"path": [
-							"api",
-							"integracao",
-								"reserva",
-								"criar",
-								"teste"
-							],
-							"query": [
-								{
-									"key": "motel",
-									"value": "{{api_token}}",
-									"description": "Token de autenticação (obrigatório)"
-								},
-								{
-									"key": "suite",
-									"value": "5",
-									"description": "ID da suíte (obrigatório)"
-								}
-							]
-						},
-						"description": "Cria uma pré-reserva de teste com dados fictícios para testar a integração"
-					},
-					"response": []
-				},
-				{
-					"name": "Simular Pagamento Aprovado",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/integracao/reserva/reserva_paga?codigo=12345",
-							"host": [
-								"{{base_url}}"
-							],
-						"path": [
-							"api",
-							"integracao",
-								"reserva",
-								"reserva_paga"
-							],
-							"query": [
-								{
-									"key": "codigo",
-									"value": "12345",
-									"description": "ID da reserva (obrigatório)"
-								}
-							]
-						},
-						"description": "Simula o pagamento aprovado de uma reserva (para testes)"
-					},
-					"response": []
-				},
-				{
-					"name": "Simular Cancelamento",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/integracao/reserva/cancelar?codigo=12345",
-							"host": [
-								"{{base_url}}"
-							],
-						"path": [
-							"api",
-							"integracao",
-								"reserva",
-								"cancelar"
-							],
-							"query": [
-								{
-									"key": "codigo",
-									"value": "12345",
-									"description": "ID da reserva (obrigatório)"
-								}
-							]
-						},
-						"description": "Simula o cancelamento de uma reserva (para testes)"
-					},
-					"response": []
-				},
-				{
-					"name": "Simular Não Pagamento",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/integracao/reserva/nao_paga?codigo=12345",
-							"host": [
-								"{{base_url}}"
-							],
-						"path": [
-							"api",
-							"integracao",
-								"reserva",
-								"nao_paga"
-							],
-							"query": [
-								{
-									"key": "codigo",
-									"value": "12345",
-									"description": "ID da reserva (obrigatório)"
-								}
-							]
-						},
-						"description": "Simula a recusa de pagamento de uma reserva (para testes)"
-					},
-					"response": []
-				}
-			]
-		}
-	],
-	"variable": [
-		{
-			"key": "base_url",
-			"value": "http://localhost/lugochat",
-			"type": "string"
-		},
-		{
-			"key": "api_token",
-			"value": "SEU_TOKEN_AQUI",
-			"type": "string"
-		}
-	]
+  "info": {
+    "_postman_id": "api-collection",
+    "name": "Sistema API",
+    "description": "Coleção pronta para importação no Apidog com descrição completa dos fluxos da Integração API.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Introdução",
+      "description": "# Sistema API – Guia de Integração\n\nBem-vindo à coleção oficial do Sistema API para uso no Apidog. Aqui você encontra todos os endpoints necessários para consultar suítes, gerenciar reservas e executar cenários de teste.\n\n## Como usar esta coleção no Apidog\n- Importe o arquivo `api-postman-collection.json` diretamente no Apidog.\n- Ajuste as **variáveis globais** `base_url`, `api_token`, `id_suite`, `qtde` e `codigo` conforme o seu ambiente.\n- Todas as requisições utilizam autenticação via **token** (parâmetro `motel`). Gere o token no painel `Integração API` e mantenha-o seguro.\n\n## Convenções de resposta\n- Respostas com sucesso retornam status `200` e corpo em JSON.\n- Erros de autenticação retornam status `401`.\n- Erros de validação retornam status `400` com mensagem explicativa.\n\n## Estrutura da coleção\n1. **Suítes** – Consulta e atualização de disponibilidade.\n2. **Reservas** – Fluxo principal de reservas (consulta, recebimento, processamento e check-in).\n3. **Testes** – Endpoints auxiliares para simular criação de reserva, pagamento e cancelamentos.\n\n> Dica: utilize os exemplos de resposta incluídos em cada requisição para entender o formato esperado."
+    },
+    {
+      "name": "Suítes",
+      "description": "Endpoints responsáveis por listar e administrar a disponibilidade de suítes. Todo acesso requer o token do motel no parâmetro `motel`.",
+      "item": [
+        {
+          "name": "Listar Todas as Suítes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/integracao/suites?motel={{api_token}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "integracao",
+                "suites"
+              ],
+              "query": [
+                {
+                  "key": "motel",
+                  "value": "{{api_token}}",
+                  "description": "Token de autenticação de 64 caracteres."
+                }
+              ]
+            },
+            "description": "### Descrição\nRetorna todas as suítes disponíveis de motéis integrados via Sistema API.\n\n### Como usar\n1. Gere um token no painel `Integração API` e copie o valor para a variável `api_token`.\n2. Execute a requisição com o `base_url` do seu ambiente.\n\n### Respostas esperadas\n- `200 OK`: lista hierárquica de motéis com suas suítes.\n- `401 Unauthorized`: token ausente ou inválido.\n\n### Observações\n- Use este endpoint para montar catálogos de suítes atualizados."
+          },
+          "response": [
+            {
+              "name": "Sucesso",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"motels\": [\n    {\n      \"id\": 101,\n      \"nome\": \"Motel Exemplo\",\n      \"suites\": [\n        {\n          \"id\": 501,\n          \"nome\": \"Suíte Luxo\",\n          \"disponibilidade\": 3,\n          \"preco\": 189.9\n        }\n      ]\n    }\n  ]\n}",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Consultar Disponibilidade",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/integracao/suite/qtde_disp?motel={{api_token}}&suite={{id_suite}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "integracao",
+                "suite",
+                "qtde_disp"
+              ],
+              "query": [
+                {
+                  "key": "motel",
+                  "value": "{{api_token}}",
+                  "description": "Token de autenticação (obrigatório)."
+                },
+                {
+                  "key": "suite",
+                  "value": "{{id_suite}}",
+                  "description": "ID da suíte (opcional para filtrar uma única suíte)."
+                }
+              ]
+            },
+            "description": "### Descrição\nExibe a quantidade de disponibilidade (estoque) por suíte de um motel autorizado pelo token.\n\n### Como usar\n- Informe o token no parâmetro `motel`.\n- Utilize o parâmetro `suite` quando quiser retornar apenas uma suíte específica.\n\n### Respostas esperadas\n- `200 OK`: retorna JSON com quantidade por suíte.\n- `400 Bad Request`: parâmetros ausentes ou inválidos.\n- `401 Unauthorized`: token inválido.\n\n### Observações\nIdeal para monitoramento rápido de estoque antes de aceitar reservas."
+          },
+          "response": [
+            {
+              "name": "Sucesso",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"disponibilidades\": [\n    {\n      \"id_suite\": 501,\n      \"nome\": \"Suíte Luxo\",\n      \"disponibilidade\": 3\n    }\n  ]\n}",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Atualizar Disponibilidade",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/integracao/suite/disponibilidade?motel={{api_token}}&suite={{id_suite}}&qtde={{qtde}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "integracao",
+                "suite",
+                "disponibilidade"
+              ],
+              "query": [
+                {
+                  "key": "motel",
+                  "value": "{{api_token}}",
+                  "description": "Token de autenticação (obrigatório)."
+                },
+                {
+                  "key": "suite",
+                  "value": "{{id_suite}}",
+                  "description": "ID da suíte (obrigatório)."
+                },
+                {
+                  "key": "qtde",
+                  "value": "{{qtde}}",
+                  "description": "Quantidade disponível (obrigatório)."
+                }
+              ]
+            },
+            "description": "### Descrição\nAtualiza o estoque disponível de uma suíte específica.\n\n### Como usar\n1. Consulte a disponibilidade atual com o endpoint anterior.\n2. Informe a nova quantidade desejada no parâmetro `qtde`.\n\n### Respostas esperadas\n- `200 OK`: string `\"ok\"` indicando atualização concluída.\n- `400 Bad Request`: parâmetros ausentes ou suíte inexistente.\n- `401 Unauthorized`: token inválido.\n\n### Observações\nConsidere criar uma lógica de compensação para manter o estoque sincronizado com o seu PMS."
+          },
+          "response": [
+            {
+              "name": "Sucesso",
+              "status": "OK",
+              "code": 200,
+              "body": "\"ok\"",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Reservas",
+      "description": "Fluxo principal para consulta, recebimento, processamento e confirmação de reservas feitas pelo Sistema API.",
+      "item": [
+        {
+          "name": "Ver Reserva",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/integracao/reserva/ver?codigo={{codigo}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "integracao",
+                "reserva",
+                "ver"
+              ],
+              "query": [
+                {
+                  "key": "codigo",
+                  "value": "{{codigo}}",
+                  "description": "Código único retornado na criação da reserva."
+                }
+              ]
+            },
+            "description": "### Descrição\nRetorna dados completos da reserva, incluindo informações do cliente, suíte, valores e status de pagamento.\n\n### Como usar\n- Execute após criar uma reserva ou receber o webhook para obter os detalhes completos.\n\n### Respostas esperadas\n- `200 OK`: objeto com dados da reserva e pagamento.\n- `404 Not Found`: reserva inexistente.\n\n### Observações\nÚtil para conciliação e auditoria de reservas."
+          },
+          "response": [
+            {
+              "name": "Sucesso",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"reserva\": {\n    \"codigo\": \"ABC123\",\n    \"status_reserva\": \"Confirmado\",\n    \"fase_api\": 1,\n    \"pagamento\": {\n      \"status\": \"pending\",\n      \"valor\": 199.9\n    }\n  }\n}",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Listar Reservas Não Processadas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/integracao/receber_reservas?motel={{api_token}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "integracao",
+                "receber_reservas"
+              ],
+              "query": [
+                {
+                  "key": "motel",
+                  "value": "{{api_token}}",
+                  "description": "Token de autenticação (obrigatório)."
+                }
+              ]
+            },
+            "description": "### Descrição\nRetorna todas as reservas pendentes de processamento para o motel vinculado ao token informado.\n\n### Como usar\n1. Configure o token na variável `api_token`.\n2. Consuma periodicamente para buscar novas reservas.\n3. Após processar, marque cada reserva como processada usando o endpoint específico.\n\n### Respostas esperadas\n- `200 OK`: array de reservas com dados de pagamento.\n- `204 No Content`: nenhuma reserva pendente.\n- `401 Unauthorized`: token inválido.\n\n### Observações\n- Execute em um job agendado ou serviço de polling.\n- Campos `processado_api` e `fase_api` indicam o estado atual da reserva."
+          },
+          "response": [
+            {
+              "name": "Sucesso",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"reservas\": [\n    {\n      \"codigo\": \"ABC123\",\n      \"status_reserva\": \"Aceito\",\n      \"processado_api\": \"N\",\n      \"pagamento\": {\n        \"status\": \"pending\",\n        \"valor\": 199.9\n      }\n    }\n  ]\n}",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Marcar Reserva como Processada",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/integracao/reserva/processado?codigo={{codigo}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "integracao",
+                "reserva",
+                "processado"
+              ],
+              "query": [
+                {
+                  "key": "codigo",
+                  "value": "{{codigo}}",
+                  "description": "Código da reserva (obrigatório)."
+                }
+              ]
+            },
+            "description": "### Descrição\nAtualiza o status interno para indicar que a reserva foi consumida pelo sistema externo.\n\n### Como usar\n- Chame este endpoint após registrar a reserva no seu PMS para evitar recebê-la novamente.\n\n### Respostas esperadas\n- `200 OK`: retorna `\"ok\"` confirmando o processamento.\n- `404 Not Found`: código inválido.\n\n### Observações\nMantenha o processamento idempotente guardando o código da reserva."
+          },
+          "response": [
+            {
+              "name": "Sucesso",
+              "status": "OK",
+              "code": 200,
+              "body": "\"ok\"",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Confirmar Check-in",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/integracao/reserva/checkin?codigo={{codigo}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "integracao",
+                "reserva",
+                "checkin"
+              ],
+              "query": [
+                {
+                  "key": "codigo",
+                  "value": "{{codigo}}",
+                  "description": "Código da reserva confirmada."
+                }
+              ]
+            },
+            "description": "### Descrição\nRegistra o check-in da reserva no Sistema API.\n\n### Como usar\n- Execute assim que o hóspede realizar o check-in no motel.\n\n### Respostas esperadas\n- `200 OK`: objeto `{ \"result\": \"ok\" }` informando sucesso.\n- `400 Bad Request`: reserva ainda não confirmada.\n\n### Observações\nGarante a sincronização do status entre sistemas e evita discrepâncias de disponibilidade."
+          },
+          "response": [
+            {
+              "name": "Sucesso",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"result\": \"ok\"\n}",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Testes",
+      "description": "Use estes endpoints em ambiente de homologação para validar a integração sem impactar reservas reais.",
+      "item": [
+        {
+          "name": "Criar Reserva de Teste",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/integracao/reserva/criar/teste?motel={{api_token}}&suite={{id_suite}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "integracao",
+                "reserva",
+                "criar",
+                "teste"
+              ],
+              "query": [
+                {
+                  "key": "motel",
+                  "value": "{{api_token}}",
+                  "description": "Token de autenticação (obrigatório)."
+                },
+                {
+                  "key": "suite",
+                  "value": "{{id_suite}}",
+                  "description": "ID da suíte (obrigatório)."
+                }
+              ]
+            },
+            "description": "### Descrição\nCria uma pré-reserva fictícia reduzindo a disponibilidade da suíte informada.\n\n### Como usar\n1. Defina `api_token` e `id_suite` nas variáveis.\n2. Execute a requisição para gerar uma reserva de teste.\n3. Armazene o `codigo` retornado para as próximas etapas de simulação.\n\n### Respostas esperadas\n- `200 OK`: retorna `{ \"reserva_id\": <id> }` e código único da reserva.\n- `400 Bad Request`: suíte sem disponibilidade.\n\n### Observações\nReponha o estoque manualmente ou via endpoint de disponibilidade após os testes."
+          },
+          "response": [
+            {
+              "name": "Sucesso",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"reserva_id\": 999,\n  \"codigo\": \"TESTE123\"\n}",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Simular Pagamento Aprovado",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/integracao/reserva/reserva_paga?codigo={{codigo}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "integracao",
+                "reserva",
+                "reserva_paga"
+              ],
+              "query": [
+                {
+                  "key": "codigo",
+                  "value": "{{codigo}}",
+                  "description": "Código da reserva de teste (obrigatório)."
+                }
+              ]
+            },
+            "description": "### Descrição\nAltera o status da reserva de teste para \"paga\" simulando aprovação de pagamento.\n\n### Como usar\n- Informe o `codigo` retornado na criação da reserva de teste.\n\n### Respostas esperadas\n- `200 OK`: `{ \"result\": \"atualizado\" }`.\n- `404 Not Found`: reserva inexistente.\n\n### Observações\nApós a simulação, a reserva aparecerá no endpoint de `receber_reservas`."
+          },
+          "response": [
+            {
+              "name": "Sucesso",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"result\": \"atualizado\"\n}",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Simular Cancelamento",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/integracao/reserva/cancelar?codigo={{codigo}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "integracao",
+                "reserva",
+                "cancelar"
+              ],
+              "query": [
+                {
+                  "key": "codigo",
+                  "value": "{{codigo}}",
+                  "description": "Código da reserva de teste (obrigatório)."
+                }
+              ]
+            },
+            "description": "### Descrição\nSimula o cancelamento de uma reserva alterando status e pagamento para \"cancelado\".\n\n### Como usar\n- Execute após criar uma reserva para representar um cancelamento voluntário.\n\n### Respostas esperadas\n- `200 OK`: `{ \"result\": \"cancelada\" }`.\n- `404 Not Found`: reserva não encontrada.\n\n### Observações\nUtilize em conjunto com o endpoint de `receber_reservas` para validar o fluxo de cancelamento."
+          },
+          "response": [
+            {
+              "name": "Sucesso",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"result\": \"cancelada\"\n}",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Simular Não Pagamento",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/integracao/reserva/nao_paga?codigo={{codigo}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "integracao",
+                "reserva",
+                "nao_paga"
+              ],
+              "query": [
+                {
+                  "key": "codigo",
+                  "value": "{{codigo}}",
+                  "description": "Código da reserva de teste (obrigatório)."
+                }
+              ]
+            },
+            "description": "### Descrição\nSimula a recusa de pagamento de uma reserva, marcando-a como recusada.\n\n### Como usar\n- Informe o código da reserva anteriormente criada.\n\n### Respostas esperadas\n- `200 OK`: `{ \"result\": \"recusada\" }`.\n- `404 Not Found`: código inválido.\n\n### Observações\nPermite testar o tratamento de reservas com pagamento rejeitado."
+          },
+          "response": [
+            {
+              "name": "Sucesso",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"result\": \"recusada\"\n}",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://buscademoteis.com.br",
+      "type": "string"
+    },
+    {
+      "key": "api_token",
+      "value": "SEU_TOKEN_AQUI",
+      "type": "string"
+    },
+    {
+      "key": "id_suite",
+      "value": "501",
+      "type": "string"
+    },
+    {
+      "key": "qtde",
+      "value": "5",
+      "type": "string"
+    },
+    {
+      "key": "codigo",
+      "value": "TESTE123",
+      "type": "string"
+    }
+  ]
 }
-

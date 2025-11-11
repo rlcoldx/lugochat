@@ -130,15 +130,25 @@
 									</div>
 
 									<div class="row mb-3">
-										<div class="col-md-8 col-sm-12">
+										<div class="col-md-12 col-sm-12">
 											<label class="form-label">Senha de Login</label>
 											<input type="password" class="form-control" name="senha" value="" placeholder="{{ motel.senha != '' ? 'Preencha se deseja alterar' : 'Senha de Login' }}" role="presentation" autocomplete="new-password">
 										</div>
-										<div class="col-md-4 col-sm-12">
+									</div>
+
+									<div class="row mb-3">
+										<div class="col-md-6 col-sm-12">
 											<label class="form-label">Status do Motel</label>
 											<select name="status" class="form-control">
 												<option value="Ativo">Ativo</option>
 												<option value="Inativo" {{ motel.status == 'Inativo' ? 'selected' }}>Inativo</option>
+											</select>
+										</div>
+										<div class="col-md-6 col-sm-12">
+											<label class="form-label">Modo de Desenvolvimento</label>
+											<select name="developer" class="form-control">
+												<option value="Ativo">Ativo</option>
+												<option value="Inativo" {{ motel.developer == 'Inativo' ? 'selected' }}>Inativo</option>
 											</select>
 										</div>
 									</div>
@@ -167,10 +177,10 @@
 									<label>Selecione a Integração</label>
 									<select name="integracao" class="form-control mb-3 integracao">
 										<option value="N">Sem Integração</option>
+										<option value="api" {{ motel.integracao == 'api' ? 'selected' }}>API Interna</option>
 										<option value="sis" {{ motel.integracao == 'sis' ? 'selected' }}>Sistema Sis</option>
-										<option value="rubens" {{ motel.integracao == 'rubens' ? 'selected' }}>Sistema Rubens</option>
 									</select>
-									<div class="integracao-token" style="{{ motel.integracao != 'sis' ? 'display:none' }}">
+									<div class="integracao-token">
 										<label>Token do Motel</label>
 										<input class="form-control" type="text" name="token" value="{{ motel.token }}">
 									</div>
