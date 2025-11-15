@@ -48,7 +48,7 @@ class ApiController extends Controller
         if (!$id_motel) return;
 
         $model = new Api;
-        $suites = $model->getSuites()->getResult();
+        $suites = $model->getSuites($id_motel)->getResult();
         $json_result = $suites[0]["json_result"];
         echo $json_result;
     }

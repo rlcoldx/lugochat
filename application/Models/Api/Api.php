@@ -17,7 +17,7 @@ class Api extends Model
         return $this->read;
     }
 
-    public function getSuites(): Read
+    public function getSuites($id_motel): Read
     {
         $this->read = new Read();
         $this->read->FullRead("WITH usuarios_cte AS (
@@ -27,7 +27,7 @@ class Api extends Model
                 u.status
         FROM usuarios u
         WHERE u.integracao = 'api'
-            AND EXISTS (SELECT 1 FROM suites WHERE id_motel = u.id)
+            AND EXISTS (SELECT 1 FROM suites WHERE id_motel = u.id) AND u.id = :id_motel
         ),
         suites_cte AS (
         SELECT ROW_NUMBER() OVER (PARTITION BY s.id_motel ORDER BY s.id) - 1 AS s_idx,
@@ -55,7 +55,7 @@ class Api extends Model
                 )
                 ) AS user_json
         FROM usuarios_cte u
-        ) t");
+        ) t", "id_motel={$id_motel}");
         return $this->read;
     }
 
