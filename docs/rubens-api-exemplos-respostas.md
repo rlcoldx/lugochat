@@ -112,9 +112,9 @@ Erro: Parâmetros insuficientes ou inválidos.
   "cpf": "111.111.111-11",
   "email": "joao.silva@email.com",
   "telefone": "(11) 99999-9999",
-  "fase_rubens": 1,
-  "processado_rubens": "N",
-  "cancelada_rubens": "N",
+  "fase_api": 1,
+  "processado_api": "N",
+  "cancelada_api": "N",
   "status_reserva": "Aceito",
   "integracao": "rubens",
   "data_reserva": "2024-01-15",
@@ -161,8 +161,8 @@ Erro: Parâmetros insuficientes ou inválidos.
       "cpf": "111.111.111-11",
       "email": "joao.silva@email.com",
       "codigo_reserva": "a1b2c3d4",
-      "processado_rubens": "N",
-      "cancelada_rubens": "N",
+      "processado_api": "N",
+      "cancelada_api": "N",
       "status_reserva": "Aceito",
       "valor_reserva": "100.00",
       "pagamento_status": "pending",
@@ -177,8 +177,8 @@ Erro: Parâmetros insuficientes ou inválidos.
       "cpf": "222.222.222-22",
       "email": "maria.santos@email.com",
       "codigo_reserva": "e5f6g7h8",
-      "processado_rubens": "N",
-      "cancelada_rubens": "N",
+      "processado_api": "N",
+      "cancelada_api": "N",
       "status_reserva": "Aceito",
       "valor_reserva": "150.00",
       "pagamento_status": "approved",
@@ -403,7 +403,7 @@ GET /api/rubens/reserva/reserva_paga?codigo=12345
 ```bash
 GET /api/rubens/reserva/ver?codigo=12345
 ```
-**Resposta**: Status agora é `fase_rubens: 2` e `pagamento_status: approved`
+**Resposta**: Status agora é `fase_api: 2` e `pagamento_status: approved`
 
 ### 5. Confirmar check-in
 ```bash

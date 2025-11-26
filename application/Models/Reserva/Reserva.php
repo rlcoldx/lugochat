@@ -37,8 +37,8 @@ class Reserva extends Model
                 $update = new Update();
                 $update->ExeUpdate('reservas', ['status_reserva' => 'Cancelado'], 'WHERE id = :id',  "id={$reserva['id']}");
 
-                if ($reserva['integracao'] == 'rubens') {
-                    $update->ExeUpdate('reservas', ['fase_rubens' => 0, 'processado_rubens' => 'N', 'cancelada_rubens' => 'S'], 'WHERE id = :id',  "id={$reserva['id']}");
+                if ($reserva['integracao'] == 'api') {
+                    $update->ExeUpdate('reservas', ['fase_api' => 0, 'processado_api' => 'N', 'cancelada_api' => 'S'], 'WHERE id = :id',  "id={$reserva['id']}");
                 }
 
                 if ($reserva['integracao'] == 'sis') {

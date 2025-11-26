@@ -152,7 +152,7 @@ class ApiIntegracao extends Model
             "SELECT a.*, u.nome as nome_motel, u.status as motel_status 
             FROM api_motel a 
             LEFT JOIN usuarios u ON a.id_motel = u.id 
-            WHERE a.token = :token 
+            WHERE a.token = :token and u.status = 'Ativo'
             LIMIT 1",
             "token={$token}"
         );

@@ -13,7 +13,7 @@ class Rubens extends Model
     public function checkMotelRubens($id): Read
     {   
         $this->read = new Read();
-        $this->read->FullRead("SELECT * FROM usuarios WHERE `status` = 'Ativo' AND integracao = 'rubens' AND id = :id", "id={$id}");
+        $this->read->FullRead("SELECT * FROM usuarios WHERE `status` = 'Ativo' AND integracao = 'api' AND id = :id", "id={$id}");
         return $this->read;
     }
 
@@ -26,7 +26,7 @@ class Rubens extends Model
                 u.nome,
                 u.status
         FROM usuarios u
-        WHERE u.integracao = 'rubens'
+        WHERE u.integracao = 'api'
             AND EXISTS (SELECT 1 FROM suites WHERE id_motel = u.id)
         ),
         suites_cte AS (
@@ -131,11 +131,11 @@ class Rubens extends Model
             'cpf' => '111.111.111-11',
             'email' => 'joao.silva@email.com',
             'telefone' => '(11) 99999-9999',
-            'fase_rubens' => 1, // pré-reserva
-            'processado_rubens' => 'N',
-            'cancelada_rubens' => 'N',
+            'fase_api' => 1, // pré-reserva
+            'processado_api' => 'N',
+            'cancelada_api' => 'N',
             'status_reserva' => 'Aceito',
-            'integracao' => 'rubens',
+            'integracao' => 'api',
             'data_reserva' => date('Y-m-d'),
             'chegada_reserva' => '18:00',
             'periodo_reserva' => '4:00',
@@ -200,7 +200,7 @@ class Rubens extends Model
         $read->FullRead("SELECT r.*, p.pagamento_status, p.pagamento_metodo, p.pagamento_valor, p.external_reference
             FROM reservas r
             LEFT JOIN pagamentos p ON p.id_reserva = r.id
-            WHERE r.id = :id AND r.integracao = 'rubens' LIMIT 1", "id={$id}");
+            WHERE r.id = :id AND r.integracao = 'api' LIMIT 1", "id={$id}");
         $result = $read->getResult();
         if ($result && isset($result[0])) {
             return $result[0];
@@ -229,8 +229,8 @@ class Rubens extends Model
         $updateReserva->ExeUpdate(
             'reservas',
             [
-                'processado_rubens' => 'N',
-                'fase_rubens' => 2
+                'processado_api' => 'N',
+                'fase_api' => 2
             ],
             'WHERE id = :id',
             "id={$id}"
@@ -261,9 +261,9 @@ class Rubens extends Model
         $updateReserva->ExeUpdate(
             'reservas',
             [
-                'processado_rubens' => 'N',
-                'cancelada_rubens' => 'S',
-                'fase_rubens' => 0,
+                'processado_api' => 'N',
+                'cancelada_api' => 'S',
+                'fase_api' => 0,
                 'status_reserva' => 'Cancelado'
             ],
             'WHERE id = :id',
@@ -295,9 +295,9 @@ class Rubens extends Model
         $updateReserva->ExeUpdate(
             'reservas',
             [
-                'processado_rubens' => 'N',
-                'cancelada_rubens' => 'S',
-                'fase_rubens' => 0,
+                'processado_api' => 'N',
+                'cancelada_api' => 'S',
+                'fase_api' => 0,
                 'status_reserva' => 'Recusado'
             ],
             'WHERE id = :id',
@@ -317,7 +317,7 @@ class Rubens extends Model
     {
         $read = new Read();
         $read->FullRead(
-            "SELECT r.*, p.pagamento_status, p.pagamento_metodo, p.pagamento_valor FROM reservas AS r LEFT JOIN pagamentos AS p ON p.id_reserva = r.id WHERE r.id_motel = :id_motel AND r.processado_rubens = 'N' AND r.integracao = 'rubens' ORDER BY r.id DESC",
+            "SELECT r.*, p.pagamento_status, p.pagamento_metodo, p.pagamento_valor FROM reservas AS r LEFT JOIN pagamentos AS p ON p.id_reserva = r.id WHERE r.id_motel = :id_motel AND r.processado_api = 'N' AND r.integracao = 'api' ORDER BY r.id DESC",
             "id_motel={$id_motel}"
         );
         return $read->getResult();
@@ -333,8 +333,8 @@ class Rubens extends Model
         $update = new Update();
         $update->ExeUpdate(
             'reservas',
-            ['processado_rubens' => 'S', 'status_reserva' => 'Aceito'],
-            'WHERE id = :id AND processado_rubens = "N" AND integracao = "rubens"',
+            ['processado_api' => 'S', 'status_reserva' => 'Aceito'],
+            'WHERE id = :id AND processado_api = "N" AND integracao = "api"',
             "id={$id_reserva}"
         );
         return $update->getRowCount();

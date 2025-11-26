@@ -44,10 +44,13 @@ class Create extends Conn {
     private function Execute() {
         $this->Connect();
         try {
-            $this->Create->execute($this->data);
-            $this->Result = $this->Conn->lastInsertId();
+            $executeResult = $this->Create->execute($this->data);
+            $lastInsertId = $this->Conn->lastInsertId();
+            $this->Result = $lastInsertId;
+            
         } catch (PDOException $e) {
             $this->Result = null;
+            
             EchoMsg("<b>Erro ao cadastrar:</b> {$e->getMessage()}", $e->getCode());
         }
     }

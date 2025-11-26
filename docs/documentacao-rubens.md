@@ -116,7 +116,7 @@ O `RubensController` é responsável por:
 - **Parâmetros Query**:
   - `codigo` (obrigatório): ID da reserva
 - **Descrição**: Marca uma reserva específica como processada
-- **Ações**: Atualiza `processado_rubens` para 'S' e status para 'Aceito'
+- **Ações**: Atualiza `processado_api` para 'S' e status para 'Aceito'
 - **Retorno**: String `'ok'`
 
 #### 11. `confirmarCheckin()`
@@ -192,16 +192,16 @@ O Model `Rubens` é responsável por:
 - **Descrição**: Simula pagamento aprovado de uma reserva
 - **Ações**:
   - Atualiza `pagamentos.pagamento_status` para 'approved'
-  - Atualiza `reservas.processado_rubens` para 'N'
-  - Atualiza `reservas.fase_rubens` para 2
+  - Atualiza `reservas.processado_api` para 'N'
+  - Atualiza `reservas.fase_api` para 2
 - **Retorno**: `true` se atualizou pelo menos uma linha
 
 #### 9. `simularCancelamentoReserva($id)`
 - **Descrição**: Simula cancelamento de uma reserva
 - **Ações**:
   - Atualiza `pagamentos.pagamento_status` para 'cancelled'
-  - Atualiza `reservas.cancelada_rubens` para 'S'
-  - Atualiza `reservas.fase_rubens` para 0
+  - Atualiza `reservas.cancelada_api` para 'S'
+  - Atualiza `reservas.fase_api` para 0
   - Atualiza `reservas.status_reserva` para 'Cancelado'
 - **Retorno**: `true` se atualizou pelo menos uma linha
 
@@ -209,21 +209,21 @@ O Model `Rubens` é responsável por:
 - **Descrição**: Simula recusa de pagamento de uma reserva
 - **Ações**:
   - Atualiza `pagamentos.pagamento_status` para 'rejected'
-  - Atualiza `reservas.cancelada_rubens` para 'S'
-  - Atualiza `reservas.fase_rubens` para 0
+  - Atualiza `reservas.cancelada_api` para 'S'
+  - Atualiza `reservas.fase_api` para 0
   - Atualiza `reservas.status_reserva` para 'Recusado'
 - **Retorno**: `true` se atualizou pelo menos uma linha
 
 #### 11. `getReservasNaoProcessadasPorMotel($id_motel)`
 - **Descrição**: Busca todas as reservas não processadas de um motel
-- **Condições**: `processado_rubens = 'N'` e `integracao = 'rubens'`
+- **Condições**: `processado_api = 'N'` e `integracao = 'rubens'`
 - **Join**: LEFT JOIN com tabela `pagamentos`
 - **Retorno**: Array de reservas ordenadas por ID decrescente
 
 #### 12. `marcarReservasComoProcessadasPorMotel($id_reserva)`
 - **Descrição**: Marca uma reserva específica como processada
 - **Ações**:
-  - Atualiza `processado_rubens` para 'S'
+  - Atualiza `processado_api` para 'S'
   - Atualiza `status_reserva` para 'Aceito'
 - **Retorno**: Número de linhas afetadas
 
@@ -253,9 +253,9 @@ O Model `Rubens` é responsável por:
   - `id_motel`: ID do motel
   - `id_suite`: ID da suíte
   - `codigo_reserva`: Código único da reserva
-  - `processado_rubens`: Flag de processamento ('S' ou 'N')
-  - `cancelada_rubens`: Flag de cancelamento ('S' ou 'N')
-  - `fase_rubens`: Fase da reserva (0=cancelada, 1=pré-reserva, 2=paga)
+  - `processado_api`: Flag de processamento ('S' ou 'N')
+  - `cancelada_api`: Flag de cancelamento ('S' ou 'N')
+  - `fase_api`: Fase da reserva (0=cancelada, 1=pré-reserva, 2=paga)
   - `status_reserva`: Status da reserva ('Aceito', 'Confirmado', 'Checkin', 'Cancelado', 'Recusado')
   - `integracao`: Tipo de integração ('rubens')
   - `checking_hora`: Hora do check-in
@@ -282,7 +282,7 @@ CriarReservaTeste() → criarPreReservaTeste() →
 ### 2. Simulação de Pagamento
 ```
 reservaPaga() → simularPagamentoReserva() → 
-  [Atualiza pagamento_status] + [Atualiza fase_rubens]
+  [Atualiza pagamento_status] + [Atualiza fase_api]
 ```
 
 ### 3. Processamento de Reservas

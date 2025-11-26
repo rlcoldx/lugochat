@@ -366,7 +366,7 @@ O Sistema API é idêntico ao Sistema Rubens, mas usa identificadores diferentes
 
 - **Namespace**: `Api` ao invés de `Rubens`
 - **Endpoints**: `/api/integracao/` ao invés de `/api/rubens/`
-- **Campos de Banco**: `fase_api`, `processado_api`, `cancelada_api` ao invés de `fase_rubens`, `processado_rubens`, `cancelada_rubens`
+- **Campos de Banco**: `fase_api`, `processado_api`, `cancelada_api` ao invés de `fase_api`, `processado_api`, `cancelada_api`
 - **Integração**: `'api'` ao invés de `'rubens'` na tabela usuarios e reservas
 
 Isso permite que ambos os sistemas coexistam independentemente no mesmo ambiente.

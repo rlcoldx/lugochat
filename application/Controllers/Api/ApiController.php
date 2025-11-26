@@ -109,7 +109,86 @@ class ApiController extends Controller
             return;
         }
 
-        $reserva_id = $model->criarPreReservaTeste($id_motel, $id_suite);
+        // Formato padrão: ISO 8601 (2025-11-29T22:36:00)
+        $inicio = date('Y-m-d\TH:i:s');
+        $periodo = '4:00';
+        $chegada = '18:00';
+
+        // Se ambos inicio e chegada estiverem presentes, combina no formato ISO 8601
+        if(isset($_GET['inicio']) && isset($_GET['chegada'])){
+            $data_inicio = $_GET['inicio'];
+            $hora_chegada = $_GET['chegada'];
+            
+            // Se chegada estiver vazio, usa hora atual + 1h
+            if(empty($hora_chegada)){
+                $hora_chegada = date('H:i:s', strtotime('+1 hour'));
+            } else {
+                // Normaliza a hora de chegada (adiciona segundos se necessário para o formato ISO)
+                if (preg_match('/^\d{2}:\d{2}$/', $hora_chegada)) {
+                    $hora_chegada .= ':00';
+                }
+                // Usa o valor fornecido SEM somar 1 hora
+            }
+            
+            // Se inicio já estiver no formato ISO completo, usa diretamente
+            if (preg_match('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/', $data_inicio)) {
+                $inicio = $data_inicio;
+            }
+            // Se inicio for apenas data (Y-m-d), combina com chegada
+            elseif (preg_match('/^\d{4}-\d{2}-\d{2}$/', $data_inicio)) {
+                $inicio = $data_inicio . 'T' . $hora_chegada;
+            }
+            // Tenta converter outros formatos
+            else {
+                $timestamp = strtotime($data_inicio);
+                if ($timestamp !== false) {
+                    $data_formatada = date('Y-m-d', $timestamp);
+                    $inicio = $data_formatada . 'T' . $hora_chegada;
+                }
+            }
+            // Formata chegada como H:i (sem segundos) para exibição
+            $chegada = preg_match('/^\d{2}:\d{2}:\d{2}$/', $hora_chegada) ? substr($hora_chegada, 0, 5) : $hora_chegada;
+        }
+        // Se apenas inicio estiver presente
+        elseif(isset($_GET['inicio'])){
+            $inicio_input = $_GET['inicio'];
+            $hora_atual_mais_1h = date('H:i:s', strtotime('+1 hour'));
+            
+            // Se já estiver no formato ISO, substitui a hora pela hora atual + 1h
+            if (preg_match('/^(\d{4}-\d{2}-\d{2})T\d{2}:\d{2}:\d{2}$/', $inicio_input, $matches)) {
+                $inicio = $matches[1] . 'T' . $hora_atual_mais_1h;
+            } 
+            // Se estiver no formato Y-m-d, combina com hora atual + 1h
+            elseif (preg_match('/^\d{4}-\d{2}-\d{2}$/', $inicio_input)) {
+                $inicio = $inicio_input . 'T' . $hora_atual_mais_1h;
+            }
+            // Se tiver outro formato, tenta converter
+            else {
+                $timestamp = strtotime($inicio_input);
+                if ($timestamp !== false) {
+                    $data_formatada = date('Y-m-d', $timestamp);
+                    $inicio = $data_formatada . 'T' . $hora_atual_mais_1h;
+                }
+            }
+        }
+        
+        if(isset($_GET['periodo'])){
+            $periodo = $_GET['periodo'];
+        }
+        
+        // Se chegada não foi informado ou estiver vazio, usa hora atual + 1h (formato H:i sem segundos)
+        if(!isset($_GET['chegada']) || empty($_GET['chegada'])){
+            $chegada = date('H:i', strtotime('+1 hour'));
+        } else {
+            // Se chegada tiver valor, usa o valor fornecido SEM somar 1h
+            $chegada = $_GET['chegada'];
+            // Remove segundos se existirem (formato H:i)
+            if (preg_match('/^\d{2}:\d{2}:\d{2}$/', $chegada)) {
+                $chegada = substr($chegada, 0, 5); // Remove os segundos
+            }
+        }
+
+        $reserva_id = $model->criarPreReservaTeste($id_motel, $id_suite, $inicio, $periodo, $chegada);
 
         if (!$reserva_id) {
             http_response_code(500);

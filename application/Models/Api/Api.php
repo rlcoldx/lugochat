@@ -119,7 +119,7 @@ class Api extends Model
      * @param int $id_suite
      * @return int|null ID da reserva criada ou null em caso de erro
      */
-    public function criarPreReservaTeste($id_motel, $id_suite)
+    public function criarPreReservaTeste($id_motel, $id_suite, $inicio, $periodo, $chegada)
     {
         $codigo_reserva = substr(md5(uniqid()), 0, 8);
         // Dados fictícios do cliente
@@ -136,9 +136,9 @@ class Api extends Model
             'cancelada_api' => 'N',
             'status_reserva' => 'Aceito',
             'integracao' => 'api',
-            'data_reserva' => date('Y-m-d'),
-            'chegada_reserva' => '18:00',
-            'periodo_reserva' => '4:00',
+            'data_reserva' => $inicio,
+            'chegada_reserva' => $chegada,
+            'periodo_reserva' => $periodo,
             'valor_reserva' => '100.00',
             'codigo_reserva' => $codigo_reserva,
         ];
@@ -146,10 +146,6 @@ class Api extends Model
         $create = new Create();
         $create->ExeCreate('reservas', $dadosReserva);
         $reserva_id = $create->getResult();
-
-        if (!$reserva_id) {
-            return null;
-        }
 
         // Cria pagamento fictício
         $dadosPagamento = [
@@ -162,6 +158,7 @@ class Api extends Model
             'pagamento_status' => 'pending',
             'external_reference' => $codigo_reserva
         ];
+
         $createPagamento = new Create();
         $createPagamento->ExeCreate('pagamentos', $dadosPagamento);
 

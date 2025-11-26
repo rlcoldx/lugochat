@@ -489,8 +489,8 @@ suite_id = 5
 
 O Sistema API usa campos diferentes no banco de dados para coexistir com o Sistema Rubens:
 
-- **Campos de reserva**: `fase_api`, `processado_api`, `cancelada_api` (ao invés de `fase_rubens`, `processado_rubens`, `cancelada_rubens`)
-- **Campo de integração**: `integracao = 'api'` (ao invés de `integracao = 'rubens'`)
+- **Campos de reserva**: `fase_api`, `processado_api`, `cancelada_api` (ao invés de `fase_api`, `processado_api`, `cancelada_api`)
+- **Campo de integração**: `integracao = 'api'` (ao invés de `integracao = 'api'`)
 - **Endpoints**: `/api/integracao/` (ao invés de `/api/rubens/`)
 
  Isso permite que ambos os sistemas operem independentemente sem conflitos.
