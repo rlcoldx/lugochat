@@ -139,7 +139,7 @@ class Api extends Model
             'data_reserva' => $inicio,
             'chegada_reserva' => $chegada,
             'periodo_reserva' => $periodo,
-            'valor_reserva' => '100.00',
+            'valor_reserva' => '0.10',
             'codigo_reserva' => $codigo_reserva,
         ];
 
