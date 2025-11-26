@@ -153,7 +153,7 @@ class Api extends Model
             'id_reserva' => $reserva_id,
             'id_user' => '1',
             'pagamento_metodo' => 'cartao',
-            'pagamento_valor' => '100.00',
+            'pagamento_valor' => '0.10',
             'pagamento_parcelas' => '1',
             'pagamento_status' => 'pending',
             'external_reference' => $codigo_reserva
