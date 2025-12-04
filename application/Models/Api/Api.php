@@ -247,6 +247,7 @@ class Api extends Model
             [
                 'processado_api' => 'S',
                 'cancelada_api' => 'N',
+                'status_reserva' => 'Aceito',
                 'fase_api' => 2
             ],
             'WHERE id = :id_reserva',
