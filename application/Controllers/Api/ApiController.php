@@ -204,6 +204,9 @@ class ApiController extends Controller
     {
         $model = new Api;
         $id_reserva = $model->getReservaByCodigo($codigo_reserva);
+
+        var_dump($id_reserva);
+        die;
         if (!$id_reserva) {
             http_response_code(404);
             echo json_encode(['erro' => 'Reserva não encontrada.'], JSON_UNESCAPED_UNICODE);
