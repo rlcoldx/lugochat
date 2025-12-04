@@ -210,10 +210,10 @@ class Rubens extends Model
 
     /**
      * Simula o pagamento da reserva: atualiza pagamento_status, processado e fase
-     * @param int $id
+     * @param int $id_reserva
      * @return bool
      */
-    public function simularPagamentoReserva($id)
+    public function simularPagamentoReserva($id_reserva)
     {
         // Atualiza pagamento
         $updatePagamento = new Update();
@@ -221,7 +221,7 @@ class Rubens extends Model
             'pagamentos',
             ['pagamento_status' => 'approved'],
             'WHERE id_reserva = :id_reserva',
-            "id_reserva={$id}"
+            "id_reserva={$id_reserva}"
         );
 
         // Atualiza reserva
@@ -229,11 +229,13 @@ class Rubens extends Model
         $updateReserva->ExeUpdate(
             'reservas',
             [
-                'processado_api' => 'N',
+                'processado_api' => 'S',
+                'cancelada_api' => 'N',
+                'status_reserva' => 'Aceito',
                 'fase_api' => 2
             ],
-            'WHERE id = :id',
-            "id={$id}"
+            'WHERE id = :id_reserva',
+            "id_reserva={$id_reserva}"
         );
 
         // Verifica se pelo menos uma das atualizações afetou linhas
@@ -242,18 +244,19 @@ class Rubens extends Model
 
     /**
      * Simula o cancelamento da reserva: atualiza pagamento_status, cancelada e fase
-     * @param int $id
+     * @param int $id_reserva
+     * @param int $id_motel
      * @return bool
      */
-    public function simularCancelamentoReserva($id)
+    public function simularCancelamentoReserva($id_reserva, $id_motel)
     {
         // Atualiza pagamento
         $updatePagamento = new Update();
         $updatePagamento->ExeUpdate(
             'pagamentos',
             ['pagamento_status' => 'cancelled'],
-            'WHERE id_reserva = :id_reserva',
-            "id_reserva={$id}"
+            'WHERE id_reserva = :id_reserva AND id_motel = :id_motel',
+            "id_reserva={$id_reserva}&id_motel={$id_motel}"
         );
 
         // Atualiza reserva
@@ -261,13 +264,13 @@ class Rubens extends Model
         $updateReserva->ExeUpdate(
             'reservas',
             [
-                'processado_api' => 'N',
+                'processado_api' => 'S',
                 'cancelada_api' => 'S',
                 'fase_api' => 0,
                 'status_reserva' => 'Cancelado'
             ],
-            'WHERE id = :id',
-            "id={$id}"
+            'WHERE id = :id_reserva AND id_motel = :id_motel',
+            "id_reserva={$id_reserva}&id_motel={$id_motel}"
         );
 
         // Verifica se pelo menos uma das atualizações afetou linhas
@@ -276,18 +279,19 @@ class Rubens extends Model
 
     /**
      * Simula o NÃO PAGAMENTO da reserva: atualiza pagamento_status, cancelada e fase
-     * @param int $id
+     * @param int $id_reserva
+     * @param int $id_motel
      * @return bool
      */
-    public function simularNaoPagamentoReserva($id)
+    public function simularNaoPagamentoReserva($id_reserva, $id_motel)
     {
         // Atualiza pagamento
         $updatePagamento = new Update();
         $updatePagamento->ExeUpdate(
             'pagamentos',
             ['pagamento_status' => 'rejected'],
-            'WHERE id_reserva = :id_reserva',
-            "id_reserva={$id}"
+            'WHERE id_reserva = :id_reserva AND id_motel = :id_motel',
+            "id_reserva={$id_reserva}&id_motel={$id_motel}"
         );
 
         // Atualiza reserva
@@ -300,8 +304,8 @@ class Rubens extends Model
                 'fase_api' => 0,
                 'status_reserva' => 'Recusado'
             ],
-            'WHERE id = :id',
-            "id={$id}"
+            'WHERE id = :id_reserva AND id_motel = :id_motel',
+            "id_reserva={$id_reserva}&id_motel={$id_motel}"
         );
 
         // Verifica se pelo menos uma das atualizações afetou linhas
@@ -325,22 +329,23 @@ class Rubens extends Model
 
     /**
      * Marca todas as reservas não processadas de um motel como processadas
+     * @param int $id_reserva
      * @param int $id_motel
      * @return int Número de reservas atualizadas
      */
-    public function marcarReservasComoProcessadasPorMotel($id_reserva)
+    public function marcarReservasComoProcessadasPorMotel($id_reserva, $id_motel)
     {
         $update = new Update();
         $update->ExeUpdate(
             'reservas',
             ['processado_api' => 'S', 'status_reserva' => 'Aceito'],
-            'WHERE id = :id AND processado_api = "N" AND integracao = "api"',
-            "id={$id_reserva}"
+            'WHERE id = :id_reserva AND id_motel = :id_motel AND integracao = "api"',
+            "id_reserva={$id_reserva}&id_motel={$id_motel}"
         );
         return $update->getRowCount();
     }
 
-    public function confirmarCheckinReserva($id_reserva)
+    public function confirmarCheckinReserva($id_reserva, $id_motel)
     {
         $update = new Update();
 
@@ -350,9 +355,9 @@ class Rubens extends Model
 
         $update->ExeUpdate(
             'reservas',
-            ['status_reserva' => 'Checkin', 'checking_hora' => $checking_hora],
-            'WHERE id = :id AND status_reserva = "Confirmado"',
-            "id={$id_reserva}"
+            ['status_reserva' => 'Confirmado', 'checking_hora' => $checking_hora],
+            'WHERE id = :id_reserva AND id_motel = :id_motel AND status_reserva = "Aceito"',
+            "id_reserva={$id_reserva}&id_motel={$id_motel}"
         );
     }
 

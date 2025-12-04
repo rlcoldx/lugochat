@@ -119,7 +119,15 @@ class RubensController extends Controller
         }
 
         $model = new Rubens;
-        $ok = $model->simularCancelamentoReserva($codigo);
+        // Busca a reserva para obter o id_motel
+        $reserva = $model->getReservaComPagamento($codigo);
+        if (!$reserva || !isset($reserva['id_motel'])) {
+            http_response_code(404);
+            echo json_encode(['erro' => 'Reserva não encontrada.'], JSON_UNESCAPED_UNICODE);
+            return;
+        }
+
+        $ok = $model->simularCancelamentoReserva($codigo, $reserva['id_motel']);
         if ($ok) {
             echo json_encode(['result' => 'cancelada'], JSON_UNESCAPED_UNICODE);
         } else {
@@ -138,7 +146,15 @@ class RubensController extends Controller
         }
 
         $model = new Rubens;
-        $ok = $model->simularNaoPagamentoReserva($codigo);
+        // Busca a reserva para obter o id_motel
+        $reserva = $model->getReservaComPagamento($codigo);
+        if (!$reserva || !isset($reserva['id_motel'])) {
+            http_response_code(404);
+            echo json_encode(['erro' => 'Reserva não encontrada.'], JSON_UNESCAPED_UNICODE);
+            return;
+        }
+
+        $ok = $model->simularNaoPagamentoReserva($codigo, $reserva['id_motel']);
         if ($ok) {
             echo json_encode(['result' => 'recusada'], JSON_UNESCAPED_UNICODE);
         } else {
@@ -172,7 +188,14 @@ class RubensController extends Controller
             return;
         }
         $model = new Rubens;
-        $model->marcarReservasComoProcessadasPorMotel($id_reserva);
+        // Busca a reserva para obter o id_motel
+        $reserva = $model->getReservaComPagamento($id_reserva);
+        if (!$reserva || !isset($reserva['id_motel'])) {
+            http_response_code(404);
+            echo json_encode(['erro' => 'Reserva não encontrada.'], JSON_UNESCAPED_UNICODE);
+            return;
+        }
+        $model->marcarReservasComoProcessadasPorMotel($id_reserva, $reserva['id_motel']);
         echo 'ok';
     }
 
@@ -185,7 +208,14 @@ class RubensController extends Controller
             return;
         }
         $model = new Rubens;
-        $model->confirmarCheckinReserva($id_reserva);
+        // Busca a reserva para obter o id_motel
+        $reserva = $model->getReservaComPagamento($id_reserva);
+        if (!$reserva || !isset($reserva['id_motel'])) {
+            http_response_code(404);
+            echo json_encode(['erro' => 'Reserva não encontrada.'], JSON_UNESCAPED_UNICODE);
+            return;
+        }
+        $model->confirmarCheckinReserva($id_reserva, $reserva['id_motel']);
         echo json_encode(['result' => 'ok'], JSON_UNESCAPED_UNICODE);
         
     }
