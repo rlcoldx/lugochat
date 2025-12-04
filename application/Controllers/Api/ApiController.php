@@ -200,17 +200,30 @@ class ApiController extends Controller
         echo json_encode(['reserva_id' => $reserva_id]);
     }
 
+    public function getReservaReturnID($codigo_reserva)
+    {
+        $model = new Api;
+        $dados = $model->getReservaComPagamento($codigo_reserva);
+        if (!$dados) {
+            http_response_code(404);
+            echo json_encode(['erro' => 'Reserva não encontrada.'], JSON_UNESCAPED_UNICODE);
+            return;
+        }
+        return $dados[0]['id'];
+    }
+
     public function verReserva()
     {
-        $codigo = isset($_GET['codigo']) ? intval($_GET['codigo']) : null;
-        if (!$codigo) {
+        $codigo_reserva = isset($_GET['codigo']) ? intval($_GET['codigo']) : null;
+        $id_reserva = $this->getReservaReturnID($codigo_reserva);
+        if (!$id_reserva) {
             http_response_code(400);
             echo json_encode(['erro' => 'Parâmetro codigo é obrigatório.'], JSON_UNESCAPED_UNICODE);
             return;
         }
 
         $model = new Api;
-        $dados = $model->getReservaComPagamento($codigo);
+        $dados = $model->getReservaComPagamento($id_reserva);
         if (!$dados) {
             http_response_code(404);
             echo json_encode(['erro' => 'Reserva não encontrada.'], JSON_UNESCAPED_UNICODE);
@@ -222,15 +235,17 @@ class ApiController extends Controller
 
     public function reservaPaga()
     {
-        $codigo = isset($_GET['codigo']) ? intval($_GET['codigo']) : null;
-        if (!$codigo) {
+        $codigo_reserva = isset($_GET['codigo']) ? intval($_GET['codigo']) : null;
+        $id_reserva = $this->getReservaReturnID($codigo_reserva);
+
+        if (!$codigo_reserva) {
             http_response_code(400);
             echo json_encode(['erro' => 'Parâmetro codigo é obrigatório.'], JSON_UNESCAPED_UNICODE);
             return;
         }
 
         $model = new Api;
-        $ok = $model->simularPagamentoReserva($codigo);
+        $ok = $model->simularPagamentoReserva($id_reserva);
         if ($ok) {
             echo json_encode(['result' => 'atualizado'], JSON_UNESCAPED_UNICODE);
         } else {
@@ -241,15 +256,22 @@ class ApiController extends Controller
 
     public function cancelarReserva()
     {
-        $codigo = isset($_GET['codigo']) ? intval($_GET['codigo']) : null;
-        if (!$codigo) {
+        // Autentica e obtém ID do motel via token
+        $id_motel = $this->autenticarToken($_GET['motel'] ?? null);
+        if (!$id_motel) return;
+
+        $codigo_reserva = isset($_GET['codigo']) ? intval($_GET['codigo']) : null;
+        $id_reserva = $this->getReservaReturnID($codigo_reserva);
+
+        if (!$id_reserva) {
             http_response_code(400);
             echo json_encode(['erro' => 'Parâmetro codigo é obrigatório.'], JSON_UNESCAPED_UNICODE);
             return;
         }
 
         $model = new Api;
-        $ok = $model->simularCancelamentoReserva($codigo);
+        $ok = $model->simularCancelamentoReserva($id_reserva, $id_motel);
+
         if ($ok) {
             echo json_encode(['result' => 'cancelada'], JSON_UNESCAPED_UNICODE);
         } else {
@@ -260,15 +282,21 @@ class ApiController extends Controller
 
     public function naoPagarReserva()
     {
-        $codigo = isset($_GET['codigo']) ? intval($_GET['codigo']) : null;
-        if (!$codigo) {
+        // Autentica e obtém ID do motel via token
+        $id_motel = $this->autenticarToken($_GET['motel'] ?? null);
+        if (!$id_motel) return;
+
+        $codigo_reserva = isset($_GET['codigo']) ? intval($_GET['codigo']) : null;
+        $id_reserva = $this->getReservaReturnID($codigo_reserva);
+
+        if (!$id_reserva) {
             http_response_code(400);
             echo json_encode(['erro' => 'Parâmetro codigo é obrigatório.'], JSON_UNESCAPED_UNICODE);
             return;
         }
 
         $model = new Api;
-        $ok = $model->simularNaoPagamentoReserva($codigo);
+        $ok = $model->simularNaoPagamentoReserva($id_reserva, $id_motel);
         if ($ok) {
             echo json_encode(['result' => 'recusada'], JSON_UNESCAPED_UNICODE);
         } else {
@@ -293,27 +321,37 @@ class ApiController extends Controller
 
     public function reservaProcessado()
     {
-        $id_reserva = isset($_GET['codigo']) ? intval($_GET['codigo']) : null;
+        $id_motel = $this->autenticarToken($_GET['motel'] ?? null);
+        if (!$id_motel) return;
+
+        $codigo_reserva = isset($_GET['codigo']) ? intval($_GET['codigo']) : null;
+        $id_reserva = $this->getReservaReturnID($codigo_reserva);
+
         if (!$id_reserva) {
             http_response_code(400);
             echo json_encode(['erro' => 'Parâmetro código é obrigatório.'], JSON_UNESCAPED_UNICODE);
             return;
         }
         $model = new Api;
-        $model->marcarReservasComoProcessadasPorMotel($id_reserva);
+        $model->marcarReservasComoProcessadasPorMotel($id_reserva, $id_motel);
         echo 'ok';
     }
 
     public function confirmarCheckin()
     {
-        $id_reserva = isset($_GET['codigo']) ? intval($_GET['codigo']) : null;
+        $id_motel = $this->autenticarToken($_GET['motel'] ?? null);
+        if (!$id_motel) return;
+
+        $codigo_reserva = isset($_GET['codigo']) ? intval($_GET['codigo']) : null;
+        $id_reserva = $this->getReservaReturnID($codigo_reserva);
+
         if (!$id_reserva) {
             http_response_code(400);
             echo json_encode(['erro' => 'Parâmetro código é obrigatório.'], JSON_UNESCAPED_UNICODE);
             return;
         }
         $model = new Api;
-        $model->confirmarCheckinReserva($id_reserva);
+        $model->confirmarCheckinReserva($id_reserva, $id_motel);
         echo json_encode(['result' => 'ok'], JSON_UNESCAPED_UNICODE);
         
     }

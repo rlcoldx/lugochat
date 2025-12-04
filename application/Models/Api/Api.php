@@ -134,7 +134,7 @@ class Api extends Model
             'fase_api' => 1, // pré-reserva
             'processado_api' => 'N',
             'cancelada_api' => 'N',
-            'status_reserva' => 'Aceito',
+            'status_reserva' => 'Pendente',
             'integracao' => 'api',
             'data_reserva' => $inicio,
             'chegada_reserva' => $chegada,
@@ -191,13 +191,13 @@ class Api extends Model
      * @param int $id
      * @return array|null
      */
-    public function getReservaComPagamento($id)
+    public function getReservaComPagamento($id_reserva)
     {
         $read = new Read();
         $read->FullRead("SELECT r.*, p.pagamento_status, p.pagamento_metodo, p.pagamento_valor, p.external_reference
             FROM reservas r
             LEFT JOIN pagamentos p ON p.id_reserva = r.id
-            WHERE r.id = :id AND r.integracao = 'api' LIMIT 1", "id={$id}");
+            WHERE r.id = :id_reserva AND r.integracao = 'api' LIMIT 1", "id_reserva={$id_reserva}");
         $result = $read->getResult();
         if ($result && isset($result[0])) {
             return $result[0];
@@ -210,7 +210,7 @@ class Api extends Model
      * @param int $id
      * @return bool
      */
-    public function simularPagamentoReserva($id)
+    public function simularPagamentoReserva($id_reserva)
     {
         // Atualiza pagamento
         $updatePagamento = new Update();
@@ -218,7 +218,7 @@ class Api extends Model
             'pagamentos',
             ['pagamento_status' => 'approved'],
             'WHERE id_reserva = :id_reserva',
-            "id_reserva={$id}"
+            "id_reserva={$id_reserva}"
         );
 
         // Atualiza reserva
@@ -229,8 +229,8 @@ class Api extends Model
                 'processado_api' => 'N',
                 'fase_api' => 2
             ],
-            'WHERE id = :id',
-            "id={$id}"
+            'WHERE id = :id_reserva',
+            "id_reserva={$id_reserva}"
         );
 
         // Verifica se pelo menos uma das atualizações afetou linhas
@@ -242,15 +242,15 @@ class Api extends Model
      * @param int $id
      * @return bool
      */
-    public function simularCancelamentoReserva($id)
+    public function simularCancelamentoReserva($id_reserva, $id_motel)
     {
         // Atualiza pagamento
         $updatePagamento = new Update();
         $updatePagamento->ExeUpdate(
             'pagamentos',
             ['pagamento_status' => 'cancelled'],
-            'WHERE id_reserva = :id_reserva',
-            "id_reserva={$id}"
+            'WHERE id_reserva = :id_reserva AND id_motel = :id_motel',
+            "id_reserva={$id_reserva}&id_motel={$id_motel}"
         );
 
         // Atualiza reserva
@@ -263,8 +263,8 @@ class Api extends Model
                 'fase_api' => 0,
                 'status_reserva' => 'Cancelado'
             ],
-            'WHERE id = :id',
-            "id={$id}"
+            'WHERE id = :id_reserva AND id_motel = :id_motel',
+            "id_reserva={$id_reserva}&id_motel={$id_motel}"
         );
 
         // Verifica se pelo menos uma das atualizações afetou linhas
@@ -276,15 +276,15 @@ class Api extends Model
      * @param int $id
      * @return bool
      */
-    public function simularNaoPagamentoReserva($id)
+    public function simularNaoPagamentoReserva($id_reserva, $id_motel)
     {
         // Atualiza pagamento
         $updatePagamento = new Update();
         $updatePagamento->ExeUpdate(
             'pagamentos',
             ['pagamento_status' => 'rejected'],
-            'WHERE id_reserva = :id_reserva',
-            "id_reserva={$id}"
+            'WHERE id_reserva = :id_reserva AND id_motel = :id_motel',
+            "id_reserva={$id_reserva}&id_motel={$id_motel}"
         );
 
         // Atualiza reserva
@@ -297,8 +297,8 @@ class Api extends Model
                 'fase_api' => 0,
                 'status_reserva' => 'Recusado'
             ],
-            'WHERE id = :id',
-            "id={$id}"
+            'WHERE id = :id_reserva AND id_motel = :id_motel',
+            "id_reserva={$id_reserva}&id_motel={$id_motel}"
         );
 
         // Verifica se pelo menos uma das atualizações afetou linhas
@@ -325,19 +325,19 @@ class Api extends Model
      * @param int $id_motel
      * @return int Número de reservas atualizadas
      */
-    public function marcarReservasComoProcessadasPorMotel($id_reserva)
+    public function marcarReservasComoProcessadasPorMotel($id_reserva, $id_motel)
     {
         $update = new Update();
         $update->ExeUpdate(
             'reservas',
             ['processado_api' => 'S', 'status_reserva' => 'Aceito'],
-            'WHERE id = :id AND processado_api = "N" AND integracao = "api"',
-            "id={$id_reserva}"
+            'WHERE id = :id_reserva AND id_motel = :id_motel AND integracao = "api"',
+            "id_reserva={$id_reserva}&id_motel={$id_motel}"
         );
         return $update->getRowCount();
     }
 
-    public function confirmarCheckinReserva($id_reserva)
+    public function confirmarCheckinReserva($id_reserva, $id_motel)
     {
         $update = new Update();
 
@@ -347,9 +347,9 @@ class Api extends Model
 
         $update->ExeUpdate(
             'reservas',
-            ['status_reserva' => 'Checkin', 'checking_hora' => $checking_hora],
-            'WHERE id = :id AND status_reserva = "Confirmado"',
-            "id={$id_reserva}"
+            ['status_reserva' => 'Confirmado', 'checking_hora' => $checking_hora],
+            'WHERE id = :id_reserva AND id_motel = :id_motel AND status_reserva = "Aceito"',
+            "id_reserva={$id_reserva}&id_motel={$id_motel}"
         );
     }
 
