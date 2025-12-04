@@ -304,6 +304,20 @@ class ApiController extends Controller
         }
     }
 
+    public function cancelarReservaAutomaticamente($id_reserva, $id_motel)
+    {
+ 
+        $model = new Api;
+        $ok = $model->simularCancelamentoReserva($id_reserva, $id_motel);
+
+        if ($ok) {
+            echo json_encode(['result' => 'cancelada'], JSON_UNESCAPED_UNICODE);
+        } else {
+            http_response_code(404);
+            echo json_encode(['erro' => 'Reserva não encontrada ou erro ao atualizar.'], JSON_UNESCAPED_UNICODE);
+        }
+    }
+
     public function naoPagarReserva()
     {
         // Autentica e obtém ID do motel via token
@@ -375,6 +389,11 @@ class ApiController extends Controller
         }
         $model = new Api;
         $model->marcarReservasComoProcessadasPorMotel($id_reserva, $id_motel, $status_reserva);
+
+        if ($status_reserva == 'Recusado' || $status_reserva == 'Cancelado') {   
+            $this->cancelarReservaAutomaticamente($id_reserva, $id_motel);
+        }
+        
         echo 'ok';
     }
 
