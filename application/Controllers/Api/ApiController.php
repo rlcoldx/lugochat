@@ -368,8 +368,13 @@ class ApiController extends Controller
             echo json_encode(['erro' => 'Reserva não encontrada.'], JSON_UNESCAPED_UNICODE);
             return;
         }
+        if (isset($_GET['status_reserva'])) {
+            $status_reserva = $_GET['status_reserva'];
+        }else{
+            $status_reserva = 'Aceito';
+        }
         $model = new Api;
-        $model->marcarReservasComoProcessadasPorMotel($id_reserva, $id_motel);
+        $model->marcarReservasComoProcessadasPorMotel($id_reserva, $id_motel, $status_reserva);
         echo 'ok';
     }
 

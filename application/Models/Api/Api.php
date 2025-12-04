@@ -346,12 +346,12 @@ class Api extends Model
      * @param int $id_motel
      * @return int Número de reservas atualizadas
      */
-    public function marcarReservasComoProcessadasPorMotel($id_reserva, $id_motel)
+    public function marcarReservasComoProcessadasPorMotel($id_reserva, $id_motel, $status_reserva)
     {
         $update = new Update();
         $update->ExeUpdate(
             'reservas',
-            ['processado_api' => 'S', 'status_reserva' => 'Aceito'],
+            ['processado_api' => 'S', 'status_reserva' => $status_reserva],
             'WHERE id = :id_reserva AND id_motel = :id_motel AND integracao = "api"',
             "id_reserva={$id_reserva}&id_motel={$id_motel}"
         );
