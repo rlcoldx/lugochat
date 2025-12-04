@@ -203,7 +203,7 @@ class ApiController extends Controller
     public function getReservaReturnID($codigo_reserva)
     {
         $model = new Api;
-        $dados = $model->getReservaComPagamento($codigo_reserva);
+        $dados = $model->getReservaByCodigo($codigo_reserva);
         if (!$dados) {
             http_response_code(404);
             echo json_encode(['erro' => 'Reserva não encontrada.'], JSON_UNESCAPED_UNICODE);
