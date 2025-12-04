@@ -198,9 +198,9 @@ class Api extends Model
             FROM reservas r
             LEFT JOIN pagamentos p ON p.id_reserva = r.id
             WHERE r.codigo_reserva = :codigo_reserva AND r.integracao = 'api' LIMIT 1", "codigo_reserva={$codigo_reserva}");
-        $result = $read->getResult();
-        if ($result && isset($result[0])) {
-            return $result[0];
+        $result = $read->getResultSingle();
+        if ($result && isset($result['id'])) {
+            return $result['id'];
         }
         return null;
     }
