@@ -245,7 +245,7 @@ class Api extends Model
         $updateReserva->ExeUpdate(
             'reservas',
             [
-                'processado_api' => 'S',
+                'processado_api' => 'N',
                 'cancelada_api' => 'N',
                 'status_reserva' => 'Aceito',
                 'fase_api' => 2
