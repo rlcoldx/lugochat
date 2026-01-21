@@ -220,6 +220,7 @@ class ApiController extends Controller
     public function verReserva()
     {
         $codigo_reserva = isset($_GET['codigo']) ? $_GET['codigo'] : null;
+        $codigo_reserva = strtoupper($codigo_reserva);
         
         if (!$codigo_reserva) {
             http_response_code(400);
@@ -248,6 +249,7 @@ class ApiController extends Controller
     public function reservaPaga()
     {
         $codigo_reserva = isset($_GET['codigo']) ? $_GET['codigo'] : null;
+        $codigo_reserva = strtoupper($codigo_reserva);
 
         if (!$codigo_reserva) {
             http_response_code(400);
@@ -279,6 +281,7 @@ class ApiController extends Controller
         if (!$id_motel) return;
 
         $codigo_reserva = isset($_GET['codigo']) ? $_GET['codigo'] : null;
+        $codigo_reserva = strtoupper($codigo_reserva);
         
         if (!$codigo_reserva) {
             http_response_code(400);
@@ -318,6 +321,7 @@ class ApiController extends Controller
         if (!$id_motel) return;
 
         $codigo_reserva = isset($_GET['codigo']) ? $_GET['codigo'] : null;
+        $codigo_reserva = strtoupper($codigo_reserva);
         
         if (!$codigo_reserva) {
             http_response_code(400);
@@ -362,6 +366,7 @@ class ApiController extends Controller
         if (!$id_motel) return;
 
         $codigo_reserva = isset($_GET['codigo']) ? $_GET['codigo'] : null;
+        $codigo_reserva = strtoupper($codigo_reserva);
         
         if (!$codigo_reserva) {
             http_response_code(400);
@@ -397,6 +402,7 @@ class ApiController extends Controller
         if (!$id_motel) return;
 
         $codigo_reserva = isset($_GET['codigo']) ? $_GET['codigo'] : null;
+        $codigo_reserva = strtoupper($codigo_reserva);
         
         if (!$codigo_reserva) {
             http_response_code(400);
