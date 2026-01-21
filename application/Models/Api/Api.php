@@ -335,10 +335,26 @@ class Api extends Model
     {
         $read = new Read();
         $read->FullRead(
-            "SELECT r.*, p.pagamento_status, p.pagamento_metodo, p.pagamento_valor FROM reservas AS r LEFT JOIN pagamentos AS p ON p.id_reserva = r.id WHERE r.id_motel = :id_motel AND r.processado_api = 'N' AND r.integracao = 'api' ORDER BY r.id DESC",
+            "SELECT r.*, p.pagamento_status, p.pagamento_metodo, p.pagamento_valor, p.external_reference FROM reservas AS r LEFT JOIN pagamentos AS p ON p.id_reserva = r.id WHERE r.id_motel = :id_motel AND r.processado_api = 'N' AND r.integracao = 'api' ORDER BY r.id DESC",
             "id_motel={$id_motel}"
         );
-        return $read->getResult();
+        $result = $read->getResult();
+        
+        // Processa os resultados para substituir valores null pelos valores padrão
+        if ($result && is_array($result)) {
+            foreach ($result as &$reserva) {
+                // Substitui valores null pelos valores padrão
+                $reserva['cupom_reserva'] = $reserva['cupom_reserva'] ?? 0;
+                $reserva['external_reference'] = $reserva['external_reference'] ?? 0;
+                $reserva['checking_hora'] = $reserva['checking_hora'] ?? 'Nao Realizado';
+                $reserva['pagamento_status'] = $reserva['pagamento_status'] ?? 'Nao iniciado';
+                $reserva['pagamento_metodo'] = $reserva['pagamento_metodo'] ?? 'Nao iniciado';
+                $reserva['pagamento_valor'] = $reserva['pagamento_valor'] ?? 0;
+            }
+            unset($reserva); // Remove a referência do último elemento
+        }
+        
+        return $result;
     }
 
     /**
