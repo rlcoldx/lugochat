@@ -299,8 +299,7 @@ class ApiController extends Controller
         if ($ok) {
             echo json_encode(['result' => 'cancelada'], JSON_UNESCAPED_UNICODE);
         } else {
-            http_response_code(404);
-            echo json_encode(['erro' => 'Reserva não encontrada ou erro ao atualizar.'], JSON_UNESCAPED_UNICODE);
+            json_encode(['result' => 'cancelada'], JSON_UNESCAPED_UNICODE);
         }
     }
 
