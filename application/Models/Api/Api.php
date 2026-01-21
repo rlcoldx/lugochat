@@ -279,7 +279,7 @@ class Api extends Model
         $updateReserva->ExeUpdate(
             'reservas',
             [
-                'processado_api' => 'S',
+                'processado_api' => 'N',
                 'cancelada_api' => 'S',
                 'fase_api' => 0,
                 'status_reserva' => 'Cancelado'
@@ -289,7 +289,7 @@ class Api extends Model
         );
 
         // Verifica se pelo menos uma das atualizações afetou linhas
-        return $updatePagamento->getRowCount() > 0 || $updateReserva->getRowCount() > 0;
+        return $updateReserva->getRowCount() > 0;
     }
 
     /**
