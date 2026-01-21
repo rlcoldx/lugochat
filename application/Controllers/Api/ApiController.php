@@ -390,13 +390,9 @@ class ApiController extends Controller
             return;
         }
 
+        // Se atualizou o banco, tenta cancelar se necessário (mas não falha se já estiver cancelado)
         if ($status_reserva == 'Recusado' || $status_reserva == 'Cancelado') {   
-            $ok = $this->cancelarReservaAutomaticamente($id_reserva, $id_motel);
-            if (!$ok) {
-                http_response_code(404);
-                echo json_encode(['erro' => 'Reserva não encontrada ou erro ao atualizar.'], JSON_UNESCAPED_UNICODE);
-                return;
-            }
+            $this->cancelarReservaAutomaticamente($id_reserva, $id_motel);
         }
         
         echo 'ok';
