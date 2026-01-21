@@ -306,16 +306,9 @@ class ApiController extends Controller
 
     public function cancelarReservaAutomaticamente($id_reserva, $id_motel)
     {
- 
         $model = new Api;
         $ok = $model->simularCancelamentoReserva($id_reserva, $id_motel);
-
-        if ($ok) {
-            echo json_encode(['result' => 'cancelada'], JSON_UNESCAPED_UNICODE);
-        } else {
-            http_response_code(404);
-            echo json_encode(['erro' => 'Reserva não encontrada ou erro ao atualizar.'], JSON_UNESCAPED_UNICODE);
-        }
+        return $ok;
     }
 
     public function naoPagarReserva()
@@ -388,10 +381,22 @@ class ApiController extends Controller
             $status_reserva = 'Aceito';
         }
         $model = new Api;
-        $model->marcarReservasComoProcessadasPorMotel($id_reserva, $id_motel, $status_reserva);
+        $linhasAfetadas = $model->marcarReservasComoProcessadasPorMotel($id_reserva, $id_motel, $status_reserva);
+
+        // Se a reserva já estava processada, retorna erro
+        if ($linhasAfetadas == 0) {
+            http_response_code(404);
+            echo json_encode(['erro' => 'Reserva não encontrada ou erro ao atualizar.'], JSON_UNESCAPED_UNICODE);
+            return;
+        }
 
         if ($status_reserva == 'Recusado' || $status_reserva == 'Cancelado') {   
-            $this->cancelarReservaAutomaticamente($id_reserva, $id_motel);
+            $ok = $this->cancelarReservaAutomaticamente($id_reserva, $id_motel);
+            if (!$ok) {
+                http_response_code(404);
+                echo json_encode(['erro' => 'Reserva não encontrada ou erro ao atualizar.'], JSON_UNESCAPED_UNICODE);
+                return;
+            }
         }
         
         echo 'ok';
