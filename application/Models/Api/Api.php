@@ -36,6 +36,7 @@ class Api extends Model
                 s.nome,
                 s.status
         FROM suites s
+        WHERE s.status = 'Publicado'
         )
         SELECT JSON_OBJECTAGG(u_idx, user_json) AS json_result
         FROM (
