@@ -37078,6 +37078,7 @@ table.dataTable thead th {
   font-size: 18px;
   white-space: nowrap;
   font-weight: 600;
+  padding-right: 35px;
 }
 [data-theme-version="dark"] table.dataTable thead th {
   color: #fff;

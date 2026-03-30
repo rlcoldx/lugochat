@@ -86,7 +86,7 @@
                                     <select name="id_motel" id="select-motel" class="form-control select2-motel">
                                         <option value="">Todos os Motéis</option>
                                         {% for motel in moteislista %}
-                                        <option value="{{ motel.id }}" {{ filters.id_motel == motel.id ? 'selected' : '' }}>{{ motel.nome }}</option>
+                                        <option value="{{ motel.id }}" {{ filters.id_motel == motel.id ? 'selected' : '' }}>{{ motel.nome|upper }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
@@ -136,7 +136,7 @@
                                             </td>
                                             <td class="align-middle">
                                                 <div class="text-uppercase text-success">
-                                                    <span class="badge badge-sm bg-success">{{ reserva.motel_nome }}</span>
+                                                    <span class="badge badge-sm bg-success text-uppercase">{{ reserva.motel_nome|upper }}</span>
                                                 </div>
                                             </td>
                                             <td class="align-middle">

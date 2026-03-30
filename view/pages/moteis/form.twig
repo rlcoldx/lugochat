@@ -43,6 +43,26 @@
 								<div class="card-header py-2">INFORMAÇÕES DO MOTEL</div>
 								<div class="card-body">
 									<div class="row">
+										<div class="col-md-4">
+											<div class="mb-3">
+												<label class="form-label">CNPJ</label>
+												<input type="text" class="form-control" name="cnpj" value="{{ motel.cnpj|default('') }}" maxlength="18" autocomplete="organization">
+											</div>
+										</div>
+										<div class="col-md-4">
+											<div class="mb-3">
+												<label class="form-label">Razão social</label>
+												<input type="text" class="form-control" name="razao_social" value="{{ motel.razao_social|default('') }}" maxlength="255" autocomplete="organization">
+											</div>
+										</div>
+										<div class="col-md-4">
+											<div class="mb-3">
+												<label class="form-label">Inscrição estadual</label>
+												<input type="text" class="form-control" name="inscr_estadual" value="{{ motel.inscr_estadual|default('') }}" maxlength="50">
+											</div>
+										</div>
+									</div>
+									<div class="row">
 										<div class="col-md-3">
 											<div class="mb-3">
 												<label class="form-label">CEP</label>

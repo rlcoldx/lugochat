@@ -33,7 +33,7 @@
                         <tbody>
                             {% for cupom in cupons %}
                             <tr class="restaurante-{{ cupom.id }}">
-                                {% if cupom.nome_motel %}<td class="fw-bold text-uppercase">{{ cupom.nome_motel }}</td>{% endif %}
+                                {% if cupom.nome_motel %}<td class="fw-bold text-uppercase">{{ cupom.nome_motel|upper }}</td>{% endif %}
                                 <td class="fw-bold text-uppercase">{{ cupom.codigo }}</td>
                                 <td>
                                     {% if cupom.tipo_desconto == 'porcentagem' %}

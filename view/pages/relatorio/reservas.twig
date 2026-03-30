@@ -1,0 +1,143 @@
+{% extends "layout/layoutMaster.twig" %}
+
+{% block title %}Relatório de Reservas{% endblock %}
+
+{% block body %}
+
+<div class="content-body">
+    <div class="container-fluid">
+        <div class="page-titles">
+            <div class="d-flex flex-wrap align-items-center justify-content-between">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ DOMAIN }}">Home</a></li>
+                    <li class="breadcrumb-item active"><a href="javascript:void(0)">Relatório de Reservas</a></li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Filtros</h5>
+            </div>
+            <div class="card-body">
+                <form method="get" action="{{ DOMAIN }}/admin/relatorio/reservas" class="row g-3 align-items-end">
+                    <div class="col-md-2">
+                        <label class="form-label">Data inicial</label>
+                        <input type="date" name="data_inicio" class="form-control" value="{{ filtro_data_inicio }}">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Data final</label>
+                        <input type="date" name="data_fim" class="form-control" value="{{ filtro_data_fim }}">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Motel</label>
+                        <select name="id_motel" class="form-control">
+                            <option value="">Todos os motéis</option>
+                            {% for m in lista_moteis %}
+                            <option value="{{ m.id }}" {{ filtro_id_motel == m.id ? 'selected' : '' }}>{{ m.nome|upper }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Cidade do motel</label>
+                        <select name="cidade" class="form-control">
+                            <option value="">Todas as cidades</option>
+                            {% for c in lista_cidades %}
+                            <option value="{{ c }}" {{ filtro_cidade == c ? 'selected' : '' }}>{{ c }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">Aplicar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xl-3 col-lg-6 col-sm-6 mb-3">
+                <div class="card mb-2 mb-lg-0">
+                    <div class="card-body">
+                        <p class="fs-14 mb-1">Reservas pagas (aprovadas)</p>
+                        <h3 class="font-w600">{{ resumo.qtd_reservas }}</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-6 col-sm-6 mb-3">
+                <div class="card mb-2 mb-lg-0">
+                    <div class="card-body">
+                        <p class="fs-14 mb-1">Soma valor das reservas (pagas)</p>
+                        <h3 class="font-w600">R$ {{ resumo.total_valor_reservas|number_format(2, ',', '.') }}</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-6 col-sm-6 mb-3">
+                <div class="card mb-2 mb-lg-0">
+                    <div class="card-body">
+                        <p class="fs-14 mb-1">Total pago (gateway)</p>
+                        <h3 class="font-w600">R$ {{ resumo.total_valor_pago|number_format(2, ',', '.') }}</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-6 col-sm-6 mb-3">
+                <div class="card mb-2 mb-lg-0">
+                    <div class="card-body">
+                        <p class="fs-14 mb-1">Lucro plataforma (contrato %)</p>
+                        <h3 class="text-success font-w600">R$ {{ resumo.lucro_plataforma|number_format(2, ',', '.') }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Lista de Reservas Concluídas</h5>
+            </div>
+            <div class="card-body pb-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0" id="datatable_relatorio_reservas_concluidas">
+                        <thead>
+                            <tr>
+                                <th>Motel</th>
+                                <th class="text-end">Qtd</th>
+                                <th class="text-end">Total pago (aprovado)</th>
+                                <th class="text-end">Lucro plataforma</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for linha in por_motel %}
+                            <tr>
+                                <td>{{ linha.motel_nome|upper }}</td>
+                                <td class="text-end">{{ linha.qtd_reservas }}</td>
+                                <td class="text-end">R$ {{ linha.total_valor_pago|number_format(2, ',', '.') }}</td>
+                                <td class="text-end">R$ {{ linha.lucro_plataforma|number_format(2, ',', '.') }}</td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="4">Nenhum registro no período.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{{ DOMAIN }}/view/assets/vendor/datatables/js/jquery.dataTables.min.js"></script>
+<script>
+(function ($) {
+    'use strict';
+    $('#datatable_relatorio_reservas_concluidas').DataTable({
+        order: [[1, 'desc']],
+        pageLength: 25,
+        lengthMenu: [[25, 50, 100, -1], [25, 50, 100, 'Todos']],
+        language: {
+            url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json'
+        }
+    });
+})(jQuery);
+</script>
+
+{% endblock %}

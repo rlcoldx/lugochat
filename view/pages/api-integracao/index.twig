@@ -34,7 +34,7 @@
                         <tbody>
                             {% for token in tokens %}
                             <tr class="token-{{ token.id }}">
-                                <td class="align-middle fw-bold text-uppercase">{{ token.nome_motel }}</td>
+                                <td class="align-middle fw-bold text-uppercase">{{ token.nome_motel|upper }}</td>
                                 <td class="align-middle fw-bold">{{ token.sistema }}</td>
                                 <td class="align-middle">
                                     <div class="d-flex align-items-center">

@@ -9,7 +9,7 @@
                         <select class="form-control select2 text-uppercase" name="motel" id="select_motel" onchange="changeMotel(this.value)">
                             <option value="1">SELECIONE O MOTEL</option>
                             {% for motel in moteislista %}
-                            <option value="{{ motel.id }}" {{ _session.busca_perfil_empresa == motel.id ? 'selected' }}>{{ motel.nome }}</option>
+                            <option value="{{ motel.id }}" {{ _session.busca_perfil_empresa == motel.id ? 'selected' }}>{{ motel.nome|upper }}</option>
                             {% endfor %}
                         </select>
                     </div>

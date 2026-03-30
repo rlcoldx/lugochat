@@ -12,7 +12,7 @@
                     {% for motel in moteis %}
                         <option value="{{ motel.id }}" 
                             {{ (token.id_motel == motel.id) or (motel_id_logado == motel.id) ? 'selected' : '' }}>
-                            {{ motel.nome }}
+                            {{ motel.nome|upper }}
                         </option>
                     {% endfor %}
                 </select>

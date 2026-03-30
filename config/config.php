@@ -7,9 +7,9 @@ define('PRODUCTION', FALSE);
 
 //// CONFIGURAÇÕES DO BANCO ########################
 define('HOST_MAIN', '177.234.145.178');
-define('USER_MAIN', 'rafael_lugochat');
-define('PASS_MAIN', 'wU$S2Fam]N~{V4Ffia');
-define('DBSA_MAIN', 'rafael_lugochat');
+define('USER_MAIN', 'rafael_lugoapp');
+define('PASS_MAIN', 'GKN7{dSx~tL}pO7UK1');
+define('DBSA_MAIN', 'rafael_lugoapp');
 
 // CONFIGURAÇÕES DO EMAIL ########################
 define('MAIL_ADMIN', 'rl.cold.dev@gmail.com');
