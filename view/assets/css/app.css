@@ -37078,7 +37078,9 @@ table.dataTable thead th {
   font-size: 18px;
   white-space: nowrap;
   font-weight: 600;
-  padding-right: 35px;
+}
+table.dataTable thead .sorting {
+  padding-right: 35px !important;
 }
 [data-theme-version="dark"] table.dataTable thead th {
   color: #fff;
