@@ -25,6 +25,20 @@ class Moteis extends Model
         return $read;
     }
 
+    public function getMoteisListPlanoRedes(): Read
+    {
+        $read = new Read();
+        $read->FullRead(
+            "SELECT id, nome 
+            FROM usuarios 
+            WHERE tipo = '2' 
+            AND `status` = 'Ativo' 
+            AND COALESCE(plano_redes, 0) = 1
+            ORDER BY nome ASC"
+        );
+        return $read;
+    }
+
     public function getMotel($id): Read
     {
     	$read = new Read();

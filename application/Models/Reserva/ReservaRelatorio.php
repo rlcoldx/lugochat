@@ -28,7 +28,7 @@ class ReservaRelatorio extends Model
     /**
      * Resumo geral no período (admin).
      */
-    public function getResumoGeral(string $dataInicio, string $dataFim, ?int $idMotel = null, ?string $cidade = null): array
+    public function getResumoGeral(string $dataInicio, string $dataFim, ?int $idMotel = null, ?string $cidade = null, ?int $planoRedes = null): array
     {
         $read = new Read();
         $params = "data_inicio={$dataInicio}&data_fim={$dataFim}";
@@ -41,6 +41,11 @@ class ReservaRelatorio extends Model
         if ($cidade !== null && $cidade !== '') {
             $filtroCidade = ' AND u.cidade = :cidade';
             $params .= '&cidade=' . rawurlencode($cidade);
+        }
+        $filtroPlanoRedes = '';
+        if ($planoRedes !== null) {
+            $filtroPlanoRedes = ' AND COALESCE(u.plano_redes, 0) = :plano_redes';
+            $params .= "&plano_redes={$planoRedes}";
         }
 
         $read->FullRead(
@@ -60,8 +65,10 @@ class ReservaRelatorio extends Model
                 WHERE DATE(r.date_create) BETWEEN :data_inicio AND :data_fim
                 AND p.pagamento_status = 'approved'
                 AND (p.id_user IS NULL OR p.id_user <> '1')
+                AND (r.id_user IS NULL OR r.id_user <> '1')
                 {$filtroMotel}
                 {$filtroCidade}
+                {$filtroPlanoRedes}
                 GROUP BY r.id
             ) sub",
             $params
@@ -76,7 +83,7 @@ class ReservaRelatorio extends Model
             ];
         }
 
-        $lucro = $this->calcularLucroPlataformaPeriodo($dataInicio, $dataFim, $idMotel, $cidade);
+        $lucro = $this->calcularLucroPlataformaPeriodo($dataInicio, $dataFim, $idMotel, $cidade, $planoRedes);
 
         return [
             'qtd_reservas' => (int) ($row['qtd_reservas'] ?? 0),
@@ -90,7 +97,7 @@ class ReservaRelatorio extends Model
     /**
      * Lucro da plataforma (percentual contrato sobre pagamentos aprovados), mesmo critério de Home::getLucroTotal.
      */
-    private function calcularLucroPlataformaPeriodo(string $dataInicio, string $dataFim, ?int $idMotel = null, ?string $cidade = null): float
+    private function calcularLucroPlataformaPeriodo(string $dataInicio, string $dataFim, ?int $idMotel = null, ?string $cidade = null, ?int $planoRedes = null): float
     {
         $read = new Read();
         $params = "data_inicio={$dataInicio}&data_fim={$dataFim}";
@@ -104,6 +111,11 @@ class ReservaRelatorio extends Model
             $filtroCidade = ' AND u.cidade = :cidade';
             $params .= '&cidade=' . rawurlencode($cidade);
         }
+        $filtroPlanoRedes = '';
+        if ($planoRedes !== null) {
+            $filtroPlanoRedes = ' AND COALESCE(u.plano_redes, 0) = :plano_redes';
+            $params .= "&plano_redes={$planoRedes}";
+        }
 
         $read->FullRead(
             "SELECT p.pagamento_valor, u.contrato
@@ -112,9 +124,11 @@ class ReservaRelatorio extends Model
             JOIN reservas r ON r.id = p.id_reserva
             WHERE p.pagamento_status = 'approved'
             AND (p.id_user IS NULL OR p.id_user <> '1')
+            AND (r.id_user IS NULL OR r.id_user <> '1')
             AND DATE(r.date_create) BETWEEN :data_inicio AND :data_fim
             {$filtroMotel}
-            {$filtroCidade}",
+            {$filtroCidade}
+            {$filtroPlanoRedes}",
             $params
         );
         $result = $read->getResult();
@@ -133,13 +147,18 @@ class ReservaRelatorio extends Model
      * Agregados por motel no período (uma linha por reserva no subselect, depois soma por motel).
      * total_valor_pago = soma dos pagamentos aprovados de todas as reservas daquele motel nos filtros.
      */
-    public function getAgregadoPorMotel(string $dataInicio, string $dataFim, ?string $cidade = null): array
+    public function getAgregadoPorMotel(string $dataInicio, string $dataFim, ?string $cidade = null, ?int $planoRedes = null): array
     {
         $params = "data_inicio={$dataInicio}&data_fim={$dataFim}";
         $filtroCidade = '';
         if ($cidade !== null && $cidade !== '') {
             $filtroCidade = ' AND u.cidade = :cidade';
             $params .= '&cidade=' . rawurlencode($cidade);
+        }
+        $filtroPlanoRedes = '';
+        if ($planoRedes !== null) {
+            $filtroPlanoRedes = ' AND COALESCE(u.plano_redes, 0) = :plano_redes';
+            $params .= "&plano_redes={$planoRedes}";
         }
 
         $read = new Read();
@@ -167,7 +186,9 @@ class ReservaRelatorio extends Model
                 WHERE DATE(r.date_create) BETWEEN :data_inicio AND :data_fim
                 AND p.pagamento_status = 'approved'
                 AND (p.id_user IS NULL OR p.id_user <> '1')
+                AND (r.id_user IS NULL OR r.id_user <> '1')
                 {$filtroCidade}
+                {$filtroPlanoRedes}
                 GROUP BY r.id, r.id_motel
             ) sub
             INNER JOIN usuarios u ON u.id = sub.id_motel
@@ -182,7 +203,7 @@ class ReservaRelatorio extends Model
     /**
      * Todas as reservas com pagamento aprovado no período (sucesso), ordenadas por ID decrescente.
      */
-    public function getReservasPagasSucesso(string $dataInicio, string $dataFim, ?int $idMotel = null, ?string $cidade = null): array
+    public function getReservasPagasSucesso(string $dataInicio, string $dataFim, ?int $idMotel = null, ?string $cidade = null, ?int $planoRedes = null): array
     {
         $read = new Read();
         $params = "data_inicio={$dataInicio}&data_fim={$dataFim}";
@@ -195,6 +216,11 @@ class ReservaRelatorio extends Model
         if ($cidade !== null && $cidade !== '') {
             $filtroCidade = ' AND u.cidade = :cidade';
             $params .= '&cidade=' . rawurlencode($cidade);
+        }
+        $filtroPlanoRedes = '';
+        if ($planoRedes !== null) {
+            $filtroPlanoRedes = ' AND COALESCE(u.plano_redes, 0) = :plano_redes';
+            $params .= "&plano_redes={$planoRedes}";
         }
 
         $read->FullRead(
@@ -219,9 +245,11 @@ class ReservaRelatorio extends Model
             INNER JOIN pagamentos p ON p.id_reserva = r.id
             WHERE p.pagamento_status = 'approved'
             AND (p.id_user IS NULL OR p.id_user <> '1')
+            AND (r.id_user IS NULL OR r.id_user <> '1')
             AND DATE(r.date_create) BETWEEN :data_inicio AND :data_fim
             {$filtroMotel}
             {$filtroCidade}
+            {$filtroPlanoRedes}
             GROUP BY r.id, r.nome, r.telefone, r.valor_reserva, r.status_reserva, r.date_create, r.data_reserva,
                 r.chegada_reserva, r.periodo_reserva, u.nome, u.cidade, s.nome
             ORDER BY r.id DESC",

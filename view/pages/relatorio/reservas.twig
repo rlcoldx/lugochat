@@ -39,6 +39,14 @@
                         </select>
                     </div>
                     <div class="col-md-3">
+                        <label class="form-label">Planos de Redes Sociais</label>
+                        <select name="plano_redes" class="form-control">
+                            <option value="" {{ filtro_plano_redes == '' ? 'selected' : '' }}>Todos</option>
+                            <option value="1" {{ filtro_plano_redes == '1' ? 'selected' : '' }}>Sim</option>
+                            <option value="0" {{ filtro_plano_redes == '0' ? 'selected' : '' }}>Não</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
                         <label class="form-label">Cidade do motel</label>
                         <select name="cidade" class="form-control">
                             <option value="">Todas as cidades</option>
@@ -47,7 +55,7 @@
                             {% endfor %}
                         </select>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-1">
                         <button type="submit" class="btn btn-primary w-100">Aplicar</button>
                     </div>
                 </form>

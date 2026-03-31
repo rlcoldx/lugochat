@@ -20,6 +20,7 @@ class RelatorioReservasController extends Controller
         $dataInicio = isset($_GET['data_inicio']) ? trim((string) $_GET['data_inicio']) : '';
         $dataFim = isset($_GET['data_fim']) ? trim((string) $_GET['data_fim']) : '';
         $idMotel = isset($_GET['id_motel']) ? (int) $_GET['id_motel'] : 0;
+        $planoRedes = isset($_GET['plano_redes']) ? trim((string) $_GET['plano_redes']) : '';
         $cidade = isset($_GET['cidade']) ? trim((string) $_GET['cidade']) : '';
 
         if ($dataInicio === '' || $dataFim === '') {
@@ -41,9 +42,15 @@ class RelatorioReservasController extends Controller
         $model = new ReservaRelatorio();
         $idMotelFiltro = $idMotel > 0 ? $idMotel : null;
         $cidadeFiltro = $cidade !== '' ? $cidade : null;
+        $planoRedesFiltro = null;
+        if ($planoRedes === '1') {
+            $planoRedesFiltro = 1;
+        } elseif ($planoRedes === '0') {
+            $planoRedesFiltro = 0;
+        }
 
-        $resumo = $model->getResumoGeral($dataInicio, $dataFim, $idMotelFiltro, $cidadeFiltro);
-        $porMotel = $model->getAgregadoPorMotel($dataInicio, $dataFim, $cidadeFiltro);
+        $resumo = $model->getResumoGeral($dataInicio, $dataFim, $idMotelFiltro, $cidadeFiltro, $planoRedesFiltro);
+        $porMotel = $model->getAgregadoPorMotel($dataInicio, $dataFim, $cidadeFiltro, $planoRedesFiltro);
         if ($idMotelFiltro !== null) {
             $porMotel = array_values(array_filter($porMotel, static function ($row) use ($idMotelFiltro) {
                 return (int) $row['id_motel'] === $idMotelFiltro;
@@ -67,6 +74,7 @@ class RelatorioReservasController extends Controller
             'filtro_data_inicio' => $dataInicio,
             'filtro_data_fim' => $dataFim,
             'filtro_id_motel' => $idMotel,
+            'filtro_plano_redes' => $planoRedes,
             'filtro_cidade' => $cidade,
         ]);
     }
