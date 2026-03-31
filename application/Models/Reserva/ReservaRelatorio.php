@@ -65,6 +65,7 @@ class ReservaRelatorio extends Model
                 WHERE DATE(r.date_create) BETWEEN :data_inicio AND :data_fim
                 AND p.pagamento_status = 'approved'
                 AND (p.id_user IS NULL OR p.id_user <> '1')
+                AND (r.id_usuario IS NULL OR r.id_usuario <> '1')
                 {$filtroMotel}
                 {$filtroCidade}
                 {$filtroPlanoRedes}
@@ -123,6 +124,7 @@ class ReservaRelatorio extends Model
             JOIN reservas r ON r.id = p.id_reserva
             WHERE p.pagamento_status = 'approved'
             AND (p.id_user IS NULL OR p.id_user <> '1')
+            AND (r.id_usuario IS NULL OR r.id_usuario <> '1')
             AND DATE(r.date_create) BETWEEN :data_inicio AND :data_fim
             {$filtroMotel}
             {$filtroCidade}
@@ -184,6 +186,7 @@ class ReservaRelatorio extends Model
                 WHERE DATE(r.date_create) BETWEEN :data_inicio AND :data_fim
                 AND p.pagamento_status = 'approved'
                 AND (p.id_user IS NULL OR p.id_user <> '1')
+                AND (r.id_usuario IS NULL OR r.id_usuario <> '1')
                 {$filtroCidade}
                 {$filtroPlanoRedes}
                 GROUP BY r.id, r.id_motel
@@ -242,6 +245,7 @@ class ReservaRelatorio extends Model
             INNER JOIN pagamentos p ON p.id_reserva = r.id
             WHERE p.pagamento_status = 'approved'
             AND (p.id_user IS NULL OR p.id_user <> '1')
+            AND (r.id_usuario IS NULL OR r.id_usuario <> '1')
             AND DATE(r.date_create) BETWEEN :data_inicio AND :data_fim
             {$filtroMotel}
             {$filtroCidade}
