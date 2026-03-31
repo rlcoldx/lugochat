@@ -49,7 +49,7 @@
                                     <div class="d-flex justify-content-start flex-wrap">
                                         <div data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Horário de Chegada"><i class="fa-solid fa-right-to-bracket"></i> {{ reserva.chegada_reserva }}</div>
                                         <span class="mx-2">---</span>
-                                        <div data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Período de Permanência"><i class="fa-solid fa-clock"></i> {{ reserva.periodo_reserva }}</div>
+                                        <div data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Período de Permanência"><i class="fa-solid fa-clock"></i> {{ reserva.periodo_pernoite == 1 ? 'Pernoite' : reserva.periodo_reserva }}</div>
                                     </div>
                                 </td>
                                 <td class="bg-{{ reserva.pagamento_status|payStatusColor }} border-right text-center text-uppercase fw-bold">

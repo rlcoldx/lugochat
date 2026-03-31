@@ -46,7 +46,7 @@
                             </li>
                             <li class="list-group-item py-2 px-0 d-flex justify-content-between align-items-center">
                                 Período de Permanência
-                                <div class="text-primary fw-bolder">{{ reserva.periodo_reserva }}</div>
+                                <div class="text-primary fw-bolder">{{ reserva.periodo_pernoite == 1 ? 'Pernoite' : reserva.periodo_reserva }}</div>
                             </li>
                         </ul>
 
