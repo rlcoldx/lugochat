@@ -29,7 +29,7 @@
                         <label class="form-label">Data final</label>
                         <input type="date" name="data_fim" class="form-control" value="{{ filtro_data_fim }}">
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <label class="form-label">Motel</label>
                         <select name="id_motel" class="form-control">
                             <option value="">Todos os motéis</option>
@@ -38,7 +38,7 @@
                             {% endfor %}
                         </select>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <label class="form-label">Planos de Redes Sociais</label>
                         <select name="plano_redes" class="form-control">
                             <option value="" {{ filtro_plano_redes == '' ? 'selected' : '' }}>Todos</option>
@@ -46,7 +46,7 @@
                             <option value="0" {{ filtro_plano_redes == '0' ? 'selected' : '' }}>Não</option>
                         </select>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <label class="form-label">Cidade do motel</label>
                         <select name="cidade" class="form-control">
                             <option value="">Todas as cidades</option>
