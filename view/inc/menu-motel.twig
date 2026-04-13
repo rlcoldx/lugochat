@@ -21,6 +21,21 @@
         </a>
     </li>
     {% endif %}
+
+    {% if 'suites_ver'|verifyPermission or 'config_ver'|verifyPermission %}
+    <li>
+        <a href="{{ DOMAIN }}/feriados" class="ai-icon" aria-expanded="false">
+            <i class="fa-solid fa-calendar-day"></i>
+            <span class="nav-text">Feriados</span>
+        </a>
+    </li>
+    <li>
+        <a href="{{ DOMAIN }}/intervalos-dia-semana" class="ai-icon" aria-expanded="false">
+            <i class="fa-solid fa-clock"></i>
+            <span class="nav-text">Intervalos</span>
+        </a>
+    </li>
+    {% endif %}
     
     <li class="d-none"><a class="ai-icon" href="{{ DOMAIN }}/chatbot">
             <i class="flaticon-381-controls-3"></i>

@@ -29438,7 +29438,6 @@ html[dir="rtl"]
 */
 [data-theme-version="dark"] {
   background: #1b1b1b;
-  color: var(--dark);
 }
 /* [data-theme-version="dark"] h1,
 [data-theme-version="dark"] h2,
@@ -41357,7 +41356,6 @@ html[dir="rtl"]
 */
 [data-theme-version="dark"] {
   background: #1b1b1b;
-  color: var(--dark);
 }
 /* [data-theme-version="dark"] h1,
 [data-theme-version="dark"] h2,

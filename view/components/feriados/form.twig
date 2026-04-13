@@ -1,0 +1,23 @@
+<div class="border-bottom px-3 py-3 mb-2">
+    <h4 class="mb-0">{{ item ? 'EDITAR FERIADO' : 'NOVO FERIADO' }}</h4>
+</div>
+<div class="px-3 py-2 pt-0">
+    <form action="javascript:void(0);" method="POST" id="salvar_feriado">
+        <input type="hidden" name="json_response" value="1">
+        {% if item %}
+        <input type="hidden" name="date_original" value="{{ item.date }}">
+        {% endif %}
+        <div class="mb-3">
+            <label class="form-label" for="feriado_data">Data</label>
+            <input type="date" id="feriado_data" name="date" class="form-control" required value="{{ item ? item.date : '' }}">
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="feriado_nome">Nome do feriado</label>
+            <input type="text" id="feriado_nome" name="feriado" class="form-control text-uppercase" required maxlength="50" value="{{ item ? item.feriado : '' }}" placeholder="Ex.: Aniversário da cidade">
+        </div>
+        <div class="d-flex justify-content-start gap-2 pt-2 border-top">
+            <button type="submit" class="btn btn-primary" id="feriado_btn_salvar">Salvar</button>
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+        </div>
+    </form>
+</div>

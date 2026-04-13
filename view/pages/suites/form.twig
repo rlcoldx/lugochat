@@ -67,8 +67,8 @@
 														<option value="Pernoite">Pernoite</option>
 													</select>
 												</div>
-												<div class="mx-2 pernoite-field" style="display: none;">
-													<input type="text" name="pernoite_chegada" class="form-control form-control-sm hour" placeholder="Inicio da Pernoite" value="">													
+												<div class="mx-2 pernoite-field" style="display: none;max-width: 60px;">
+													<input type="text" name="pernoite_chegada" class="form-control form-control-sm hour" placeholder="00:00" title="Inicio da Pernoite" value="">													
 												</div>
 
 												<div class="dias-semana-container">
@@ -100,6 +100,10 @@
 														<label class="dia-checkbox" title="Domingo">
 															<input type="checkbox" class="price_chance" name="dias" value="dom" autocomplete="off" onclick="toggleCheckbox(this)">
 															<span class="dia-label">DOM</span>
+														</label>
+														<label class="dia-checkbox" title="Feriado">
+															<input type="checkbox" class="price_chance" name="dias" value="feriado" autocomplete="off" onclick="toggleCheckbox(this)">
+															<span class="dia-label">Feriado</span>
 														</label>
 													</div>
 												</div>
@@ -133,8 +137,8 @@
 													</select>
 												</div>
 
-												<div class="mx-2 pernoite-field" style="display: none;">
-													<input type="text" name="pernoite_chegada" class="form-control form-control-sm hour" placeholder="Inicio da Pernoite" value="{{ preco.pernoite_chegada }}">													
+												<div class="mx-2 pernoite-field" style="display: none;max-width: 60px;">
+													<input type="text" name="pernoite_chegada" class="form-control form-control-sm hour" placeholder="00:00" title="Inicio da Pernoite" value="{{ preco.pernoite_chegada }}">													
 												</div>
 
 												<div class="dias-semana-container">
@@ -166,6 +170,10 @@
 														<label class="dia-checkbox {{ 'dom' in preco.dias ? 'checked' }}" title="Domingo">
 															<input type="checkbox" class="price_chance" {{ 'dom' in preco.dias ? 'checked' }} name="dias" value="dom" autocomplete="off" onclick="toggleCheckbox(this)">
 															<span class="dia-label">DOM</span>
+														</label>
+														<label class="dia-checkbox {{ 'feriado' in preco.dias ? 'checked' }}" title="Feriado">
+															<input type="checkbox" class="price_chance" {{ 'feriado' in preco.dias ? 'checked' }} name="dias" value="feriado" autocomplete="off" onclick="toggleCheckbox(this)">
+															<span class="dia-label">Feriado</span>
 														</label>
 													</div>
 												</div>

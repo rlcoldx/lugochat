@@ -20,7 +20,9 @@ $('body').on('click', '[data-bs-toggle="modal-remote"]', function(){
 	$(".modal-body").empty();
 	var link = $(this).data("remote");
 	var target = $(this).attr('data-bs-target');
-	$(target+' .modal-body').load(link);
+	$(target+' .modal-body').load(link, function () {
+		$(document).trigger('modalRemoteLoaded', [target]);
+	});
 	$(target).modal('show');
 });
 

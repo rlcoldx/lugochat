@@ -1,0 +1,107 @@
+{% extends "layout/layoutMaster.twig" %}
+
+{% block title %}Feriados{% endblock %}
+
+{% block body %}
+
+<div class="content-body">
+    <div class="container-fluid">
+        <div class="page-titles">
+            <div class="d-flex flex-wrap align-items-center justify-content-between">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ DOMAIN }}">Home</a></li>
+                    <li class="breadcrumb-item active"><a href="javascript:void(0)">Feriados</a></li>
+                </ol>
+            </div>
+        </div>
+
+        {% if _get.ok is defined %}
+        <div class="alert alert-success">Feriado salvo com sucesso.</div>
+        {% endif %}
+        {% if _get.erro is defined %}
+            {% if _get.erro == 'duplicado' %}
+            <div class="alert alert-warning">Já existe um feriado seu nesta data.</div>
+            {% elseif _get.erro == 'validacao' %}
+            <div class="alert alert-warning">Preencha data e nome do feriado corretamente.</div>
+            {% else %}
+            <div class="alert alert-danger">Não foi possível concluir a operação.</div>
+            {% endif %}
+        {% endif %}
+
+        <div class="d-flex justify-content-between align-items-center">
+            <h3 class="content-title card-title mb-0 text-white">Feriados</h3>
+            <a href="javascript:void(0)" data-bs-toggle="modal-remote" data-remote="{{ DOMAIN }}/feriados/add" data-bs-target="#feriadomodal" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> Novo feriado</a>
+        </div>
+
+        <p class="mb-3 text-white">Feriados <strong class="text-primary">nacionais</strong> são carregados pela plataforma e não podem ser alterados. Você pode cadastrar <strong class="text-primary">feriados próprios</strong> do seu motel (uma data específica).</p>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0" id="datatable_feriados">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Descrição</th>
+                                <th>Tipo</th>
+                                <th class="text-end" width="120">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for f in feriados %}
+                            <tr>
+                                <td>{{ f.date|date('d/m/Y') }}</td>
+                                <td class="text-uppercase">{{ f.feriado }}</td>
+                                <td>
+                                    {% if f.id_motel == 0 or f.id_motel == '0' %}
+                                    <span class="badge bg-secondary">Nacional</span>
+                                    {% else %}
+                                    <span class="badge bg-primary">Próprio</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-end">
+                                    {% if f.id_motel == 0 or f.id_motel == '0' %}
+                                    <span class="small">—</span>
+                                    {% else %}
+                                    <a href="javascript:void(0)" data-bs-toggle="modal-remote" data-remote="{{ DOMAIN }}/feriados/edit/{{ f.date }}" data-bs-target="#feriadomodal" class="btn btn-sm btn-primary me-1" title="Editar"><i class="fa fa-pencil"></i></a>
+                                    <button type="button" class="btn btn-sm btn-danger btn-excluir-feriado" data-date="{{ f.date }}" title="Excluir"><i class="fa fa-trash"></i></button>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="4">Nenhum feriado cadastrado.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="feriadomodal" tabindex="-1" role="dialog" aria-labelledby="feriadomodalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-body"></div>
+        </div>
+    </div>
+</div>
+
+<script src="{{ DOMAIN }}/view/assets/vendor/datatables/js/jquery.dataTables.min.js"></script>
+<script src="{{ DOMAIN }}/view/assets/js/pages/feriados-motel.js"></script>
+<script>
+(function ($) {
+    'use strict';
+    if ($('#datatable_feriados tbody tr').length && $('#datatable_feriados tbody td[colspan]').length === 0) {
+        $('#datatable_feriados').DataTable({
+            order: [[0, 'asc']],
+            pageLength: 25,
+            language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json' }
+        });
+    }
+})(jQuery);
+</script>
+
+{% endblock %}

@@ -1,0 +1,56 @@
+<div class="border-bottom px-3 py-3 mb-2">
+    <h4 class="mb-0">{{ regra ? 'EDITAR INTERVALO' : 'NOVO INTERVALO' }}</h4>
+</div>
+<div class="px-3 py-2 pt-0">
+    <form action="javascript:void(0);" method="POST" id="salvar_intervalo_dia_semana">
+        <input type="hidden" name="json_response" value="1">
+        {% if regra %}
+        <input type="hidden" name="regra_id" value="{{ regra.id }}">
+        {% endif %}
+        <div class="mb-3">
+            <label class="form-label" for="intervalo_nome">Nome / observação <span class="small">(opcional)</span></label>
+            <input type="text" id="intervalo_nome" name="nome" class="form-control text-uppercase" maxlength="50" value="{{ regra ? regra.nome : '' }}" placeholder="Ex.: Período para Eventos">
+        </div>
+        <p class="small mb-3">Dia da semana e hora de início e fim (pode atravessar para o dia seguinte, ex.: Segunda 08:00 até Terça 16:00).</p>
+        <div class="row g-2">
+            <div class="col-md-6">
+                <label class="form-label small mb-0">Dia início</label>
+                <select name="dia_semana_inicio" class="form-control form-select-sm" required>
+                    <option value="" {% if inv.dia_semana_inicio < 1 %}selected{% endif %} disabled>Selecione</option>
+                    <option value="1" {% if inv.dia_semana_inicio == 1 %}selected{% endif %}>Segunda</option>
+                    <option value="2" {% if inv.dia_semana_inicio == 2 %}selected{% endif %}>Terça</option>
+                    <option value="3" {% if inv.dia_semana_inicio == 3 %}selected{% endif %}>Quarta</option>
+                    <option value="4" {% if inv.dia_semana_inicio == 4 %}selected{% endif %}>Quinta</option>
+                    <option value="5" {% if inv.dia_semana_inicio == 5 %}selected{% endif %}>Sexta</option>
+                    <option value="6" {% if inv.dia_semana_inicio == 6 %}selected{% endif %}>Sábado</option>
+                    <option value="7" {% if inv.dia_semana_inicio == 7 %}selected{% endif %}>Domingo</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label small mb-0">Hora início</label>
+                <input type="time" name="hora_inicio" class="form-control form-control-sm" required value="{{ inv.hora_inicio }}">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label small mb-0">Dia fim</label>
+                <select name="dia_semana_fim" class="form-control form-select-sm" required>
+                    <option value="" {% if inv.dia_semana_fim < 1 %}selected{% endif %} disabled>Selecione</option>
+                    <option value="1" {% if inv.dia_semana_fim == 1 %}selected{% endif %}>Segunda</option>
+                    <option value="2" {% if inv.dia_semana_fim == 2 %}selected{% endif %}>Terça</option>
+                    <option value="3" {% if inv.dia_semana_fim == 3 %}selected{% endif %}>Quarta</option>
+                    <option value="4" {% if inv.dia_semana_fim == 4 %}selected{% endif %}>Quinta</option>
+                    <option value="5" {% if inv.dia_semana_fim == 5 %}selected{% endif %}>Sexta</option>
+                    <option value="6" {% if inv.dia_semana_fim == 6 %}selected{% endif %}>Sábado</option>
+                    <option value="7" {% if inv.dia_semana_fim == 7 %}selected{% endif %}>Domingo</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label small mb-0">Hora fim</label>
+                <input type="time" name="hora_fim" class="form-control form-control-sm" required value="{{ inv.hora_fim }}">
+            </div>
+        </div>
+        <div class="d-flex justify-content-start gap-2 pt-3 border-top mt-3">
+            <button type="submit" class="btn btn-primary" id="intervalo_dia_semana_btn_salvar">Salvar</button>
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+        </div>
+    </form>
+</div>
