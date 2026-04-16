@@ -44,8 +44,8 @@ class IntervaloDiaSemanaController extends Controller
         $this->render('components/intervalo-dia-semana/form.twig', [
             'regra' => null,
             'inv' => [
-                'dia_semana_inicio' => 0,
-                'dia_semana_fim' => 0,
+                'dia_semana_inicio' => '',
+                'dia_semana_fim' => '',
                 'hora_inicio' => '',
                 'hora_fim' => '',
             ],
@@ -87,8 +87,8 @@ class IntervaloDiaSemanaController extends Controller
         $this->render('components/intervalo-dia-semana/form.twig', [
             'regra' => $row,
             'inv' => [
-                'dia_semana_inicio' => (int) ($row['dia_semana_inicio'] ?? 0),
-                'dia_semana_fim' => (int) ($row['dia_semana_fim'] ?? 0),
+                'dia_semana_inicio' => MotelIntervaloDiaSemana::normalizarDiaAbrev($row['dia_semana_inicio'] ?? ''),
+                'dia_semana_fim' => MotelIntervaloDiaSemana::normalizarDiaAbrev($row['dia_semana_fim'] ?? ''),
                 'hora_inicio' => $hi ?: '',
                 'hora_fim' => $hf ?: '',
             ],
@@ -164,13 +164,13 @@ class IntervaloDiaSemanaController extends Controller
     }
 
     /**
-     * @return array{dia_semana_inicio: int, hora_inicio: string, dia_semana_fim: int, hora_fim: string}|null
+     * @return array{dia_semana_inicio: string, hora_inicio: string, dia_semana_fim: string, hora_fim: string}|null
      */
     private function parseIntervaloPost(): ?array
     {
-        $di = isset($_POST['dia_semana_inicio']) ? (int) $_POST['dia_semana_inicio'] : 0;
-        $df = isset($_POST['dia_semana_fim']) ? (int) $_POST['dia_semana_fim'] : 0;
-        if ($di < 1 || $di > 7 || $df < 1 || $df > 7) {
+        $di = MotelIntervaloDiaSemana::normalizarDiaAbrev($_POST['dia_semana_inicio'] ?? null);
+        $df = MotelIntervaloDiaSemana::normalizarDiaAbrev($_POST['dia_semana_fim'] ?? null);
+        if ($di === '' || $df === '') {
             return null;
         }
         $hi = isset($_POST['hora_inicio']) ? trim((string) $_POST['hora_inicio']) : '';

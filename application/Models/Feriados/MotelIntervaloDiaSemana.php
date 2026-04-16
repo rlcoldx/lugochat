@@ -10,6 +10,28 @@ use Agencia\Close\Models\Model;
 
 class MotelIntervaloDiaSemana extends Model
 {
+    /** Ordem na semana: seg=1 … dom=7 (ISO, segunda primeiro). */
+    private const ORDEM = [
+        'seg' => 1,
+        'ter' => 2,
+        'qua' => 3,
+        'qui' => 4,
+        'sex' => 5,
+        'sab' => 6,
+        'dom' => 7,
+    ];
+
+    /** Nome completo para exibição na listagem. */
+    private const NOME_COMPLETO = [
+        'seg' => 'Segunda',
+        'ter' => 'Terça',
+        'qua' => 'Quarta',
+        'qui' => 'Quinta',
+        'sex' => 'Sexta',
+        'sab' => 'Sábado',
+        'dom' => 'Domingo',
+    ];
+
     private function truncarNome(string $text, int $max): string
     {
         if (function_exists('mb_substr')) {
@@ -18,18 +40,30 @@ class MotelIntervaloDiaSemana extends Model
         return substr($text, 0, $max);
     }
 
-    public static function nomeDiaPt(int $d): string
+    /**
+     * Normaliza entrada (form ou legado numérico 1–7) para abreviatura seg|ter|…|dom.
+     * Retorna string vazia se inválido.
+     */
+    public static function normalizarDiaAbrev($raw): string
     {
-        $map = [
-            1 => 'Segunda',
-            2 => 'Terça',
-            3 => 'Quarta',
-            4 => 'Quinta',
-            5 => 'Sexta',
-            6 => 'Sábado',
-            7 => 'Domingo',
-        ];
-        return $map[$d] ?? '';
+        if ($raw === null) {
+            return '';
+        }
+        $s = strtolower(trim((string) $raw));
+        if ($s === '') {
+            return '';
+        }
+        $deNumero = ['1' => 'seg', '2' => 'ter', '3' => 'qua', '4' => 'qui', '5' => 'sex', '6' => 'sab', '7' => 'dom'];
+        if (isset($deNumero[$s])) {
+            $s = $deNumero[$s];
+        }
+        return isset(self::ORDEM[$s]) ? $s : '';
+    }
+
+    public static function nomeDiaCompletoPorAbrev(string $abrev): string
+    {
+        $a = self::normalizarDiaAbrev($abrev);
+        return $a !== '' ? (self::NOME_COMPLETO[$a] ?? '') : '';
     }
 
     public function listarPorMotel(int $idMotel): array
@@ -39,10 +73,10 @@ class MotelIntervaloDiaSemana extends Model
         }
         $read = new Read();
         $read->FullRead(
-            'SELECT id, id_motel, nome, dia_semana_inicio, hora_inicio, dia_semana_fim, hora_fim, date_create, date_update
+            "SELECT id, id_motel, nome, dia_semana_inicio, hora_inicio, dia_semana_fim, hora_fim, date_create, date_update
             FROM motel_intervalo_dia_semana
             WHERE id_motel = :mid
-            ORDER BY dia_semana_inicio ASC, hora_inicio ASC, id ASC',
+            ORDER BY FIELD(dia_semana_inicio, 'seg','ter','qua','qui','sex','sab','dom'), hora_inicio ASC, id ASC",
             'mid=' . $idMotel
         );
         return $read->getResult() ?: [];
@@ -66,7 +100,7 @@ class MotelIntervaloDiaSemana extends Model
     }
 
     /**
-     * @param array<int, array{dia_semana_inicio: int, hora_inicio: string, dia_semana_fim: int, hora_fim: string}> $linhas
+     * @param array<int, array{dia_semana_inicio: string, hora_inicio: string, dia_semana_fim: string, hora_fim: string}> $linhas
      */
     public function inserirLote(int $idMotel, string $nome, array $linhas): bool
     {
@@ -83,7 +117,7 @@ class MotelIntervaloDiaSemana extends Model
     }
 
     /**
-     * @param array{dia_semana_inicio: int, hora_inicio: string, dia_semana_fim: int, hora_fim: string} $row
+     * @param array{dia_semana_inicio: string, hora_inicio: string, dia_semana_fim: string, hora_fim: string} $row
      */
     public function atualizar(int $idMotel, int $id, string $nome, array $row): bool
     {
@@ -91,6 +125,8 @@ class MotelIntervaloDiaSemana extends Model
             return false;
         }
         $nome = $this->truncarNome($nome, 50);
+        $di = self::normalizarDiaAbrev($row['dia_semana_inicio'] ?? '');
+        $df = self::normalizarDiaAbrev($row['dia_semana_fim'] ?? '');
         $hi = $this->normalizarHora($row['hora_inicio']);
         $hf = $this->normalizarHora($row['hora_fim']);
         $update = new Update();
@@ -98,9 +134,9 @@ class MotelIntervaloDiaSemana extends Model
             'motel_intervalo_dia_semana',
             [
                 'nome' => $nome,
-                'dia_semana_inicio' => $row['dia_semana_inicio'],
+                'dia_semana_inicio' => $di,
                 'hora_inicio' => $hi,
-                'dia_semana_fim' => $row['dia_semana_fim'],
+                'dia_semana_fim' => $df,
                 'hora_fim' => $hf,
             ],
             'WHERE id = :id AND id_motel = :mid',
@@ -121,21 +157,23 @@ class MotelIntervaloDiaSemana extends Model
 
     public function textoPeriodo(array $row): string
     {
-        $di = (int) ($row['dia_semana_inicio'] ?? 0);
-        $df = (int) ($row['dia_semana_fim'] ?? 0);
+        $di = self::normalizarDiaAbrev($row['dia_semana_inicio'] ?? '');
+        $df = self::normalizarDiaAbrev($row['dia_semana_fim'] ?? '');
         $hi = $this->formatarHoraExibicao($row['hora_inicio'] ?? '');
         $hf = $this->formatarHoraExibicao($row['hora_fim'] ?? '');
-        return self::nomeDiaPt($di) . ' ' . $hi . ' – ' . self::nomeDiaPt($df) . ' ' . $hf;
+        $ni = self::nomeDiaCompletoPorAbrev($di);
+        $nf = self::nomeDiaCompletoPorAbrev($df);
+        return $ni . ' ' . $hi . ' – ' . $nf . ' ' . $hf;
     }
 
     /**
-     * @param array{dia_semana_inicio: int, hora_inicio: string, dia_semana_fim: int, hora_fim: string} $row
+     * @param array{dia_semana_inicio: string, hora_inicio: string, dia_semana_fim: string, hora_fim: string} $row
      */
     private function validarLinha(array $row): bool
     {
-        $di = (int) ($row['dia_semana_inicio'] ?? 0);
-        $df = (int) ($row['dia_semana_fim'] ?? 0);
-        if ($di < 1 || $di > 7 || $df < 1 || $df > 7) {
+        $di = self::normalizarDiaAbrev($row['dia_semana_inicio'] ?? '');
+        $df = self::normalizarDiaAbrev($row['dia_semana_fim'] ?? '');
+        if ($di === '' || $df === '') {
             return false;
         }
         $hi = isset($row['hora_inicio']) ? trim((string) $row['hora_inicio']) : '';
@@ -145,12 +183,14 @@ class MotelIntervaloDiaSemana extends Model
         }
         $hiN = $this->normalizarHora($hi);
         $hfN = $this->normalizarHora($hf);
-        $start = $this->minutosDesdeSegundaZero($di, $hiN);
-        $end = $this->minutosDesdeSegundaZero($df, $hfN);
-        if ($di === $df) {
+        $oDi = self::ORDEM[$di];
+        $oDf = self::ORDEM[$df];
+        $start = $this->minutosDesdeSegundaZero($oDi, $hiN);
+        $end = $this->minutosDesdeSegundaZero($oDf, $hfN);
+        if ($oDi === $oDf) {
             return $end > $start;
         }
-        if ($df > $di) {
+        if ($oDf > $oDi) {
             return $end > $start;
         }
         $end += 7 * 24 * 60;
@@ -158,32 +198,34 @@ class MotelIntervaloDiaSemana extends Model
     }
 
     /**
-     * @param array{dia_semana_inicio: int, hora_inicio: string, dia_semana_fim: int, hora_fim: string} $row
+     * @param array{dia_semana_inicio: string, hora_inicio: string, dia_semana_fim: string, hora_fim: string} $row
      */
     private function inserirUm(int $idMotel, string $nome, array $row): bool
     {
+        $di = self::normalizarDiaAbrev($row['dia_semana_inicio'] ?? '');
+        $df = self::normalizarDiaAbrev($row['dia_semana_fim'] ?? '');
         $hi = $this->normalizarHora($row['hora_inicio']);
         $hf = $this->normalizarHora($row['hora_fim']);
         $create = new Create();
         $create->ExeCreate('motel_intervalo_dia_semana', [
             'id_motel' => $idMotel,
             'nome' => $nome,
-            'dia_semana_inicio' => $row['dia_semana_inicio'],
+            'dia_semana_inicio' => $di,
             'hora_inicio' => $hi,
-            'dia_semana_fim' => $row['dia_semana_fim'],
+            'dia_semana_fim' => $df,
             'hora_fim' => $hf,
         ]);
         $id = $create->getResult();
         return $id !== null && $id !== '' && (int) $id > 0;
     }
 
-    private function minutosDesdeSegundaZero(int $diaIso, string $horaHi): int
+    private function minutosDesdeSegundaZero(int $ordem1a7, string $horaHi): int
     {
-        $diaIso = max(1, min(7, $diaIso));
+        $ordem1a7 = max(1, min(7, $ordem1a7));
         $h = substr($horaHi, 0, 5);
         $p = explode(':', $h);
         $hm = ((int) ($p[0] ?? 0)) * 60 + ((int) ($p[1] ?? 0));
-        return ($diaIso - 1) * 24 * 60 + $hm;
+        return ($ordem1a7 - 1) * 24 * 60 + $hm;
     }
 
     private function normalizarHora(string $h): string

@@ -1,5 +1,6 @@
 /vendor
 /uploads
+/app
 config/config.php
 config/db.php
 node_modules/

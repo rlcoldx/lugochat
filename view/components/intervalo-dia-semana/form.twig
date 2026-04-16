@@ -16,14 +16,14 @@
             <div class="col-md-6">
                 <label class="form-label small mb-0">Dia início</label>
                 <select name="dia_semana_inicio" class="form-control form-select-sm" required>
-                    <option value="" {% if inv.dia_semana_inicio < 1 %}selected{% endif %} disabled>Selecione</option>
-                    <option value="1" {% if inv.dia_semana_inicio == 1 %}selected{% endif %}>Segunda</option>
-                    <option value="2" {% if inv.dia_semana_inicio == 2 %}selected{% endif %}>Terça</option>
-                    <option value="3" {% if inv.dia_semana_inicio == 3 %}selected{% endif %}>Quarta</option>
-                    <option value="4" {% if inv.dia_semana_inicio == 4 %}selected{% endif %}>Quinta</option>
-                    <option value="5" {% if inv.dia_semana_inicio == 5 %}selected{% endif %}>Sexta</option>
-                    <option value="6" {% if inv.dia_semana_inicio == 6 %}selected{% endif %}>Sábado</option>
-                    <option value="7" {% if inv.dia_semana_inicio == 7 %}selected{% endif %}>Domingo</option>
+                    <option value="" {% if inv.dia_semana_inicio is empty %}selected{% endif %} disabled>Selecione</option>
+                    <option value="seg" {% if inv.dia_semana_inicio == 'seg' %}selected{% endif %}>Segunda</option>
+                    <option value="ter" {% if inv.dia_semana_inicio == 'ter' %}selected{% endif %}>Terça</option>
+                    <option value="qua" {% if inv.dia_semana_inicio == 'qua' %}selected{% endif %}>Quarta</option>
+                    <option value="qui" {% if inv.dia_semana_inicio == 'qui' %}selected{% endif %}>Quinta</option>
+                    <option value="sex" {% if inv.dia_semana_inicio == 'sex' %}selected{% endif %}>Sexta</option>
+                    <option value="sab" {% if inv.dia_semana_inicio == 'sab' %}selected{% endif %}>Sábado</option>
+                    <option value="dom" {% if inv.dia_semana_inicio == 'dom' %}selected{% endif %}>Domingo</option>
                 </select>
             </div>
             <div class="col-md-6">
@@ -33,14 +33,14 @@
             <div class="col-md-6">
                 <label class="form-label small mb-0">Dia fim</label>
                 <select name="dia_semana_fim" class="form-control form-select-sm" required>
-                    <option value="" {% if inv.dia_semana_fim < 1 %}selected{% endif %} disabled>Selecione</option>
-                    <option value="1" {% if inv.dia_semana_fim == 1 %}selected{% endif %}>Segunda</option>
-                    <option value="2" {% if inv.dia_semana_fim == 2 %}selected{% endif %}>Terça</option>
-                    <option value="3" {% if inv.dia_semana_fim == 3 %}selected{% endif %}>Quarta</option>
-                    <option value="4" {% if inv.dia_semana_fim == 4 %}selected{% endif %}>Quinta</option>
-                    <option value="5" {% if inv.dia_semana_fim == 5 %}selected{% endif %}>Sexta</option>
-                    <option value="6" {% if inv.dia_semana_fim == 6 %}selected{% endif %}>Sábado</option>
-                    <option value="7" {% if inv.dia_semana_fim == 7 %}selected{% endif %}>Domingo</option>
+                    <option value="" {% if inv.dia_semana_fim is empty %}selected{% endif %} disabled>Selecione</option>
+                    <option value="seg" {% if inv.dia_semana_fim == 'seg' %}selected{% endif %}>Segunda</option>
+                    <option value="ter" {% if inv.dia_semana_fim == 'ter' %}selected{% endif %}>Terça</option>
+                    <option value="qua" {% if inv.dia_semana_fim == 'qua' %}selected{% endif %}>Quarta</option>
+                    <option value="qui" {% if inv.dia_semana_fim == 'qui' %}selected{% endif %}>Quinta</option>
+                    <option value="sex" {% if inv.dia_semana_fim == 'sex' %}selected{% endif %}>Sexta</option>
+                    <option value="sab" {% if inv.dia_semana_fim == 'sab' %}selected{% endif %}>Sábado</option>
+                    <option value="dom" {% if inv.dia_semana_fim == 'dom' %}selected{% endif %}>Domingo</option>
                 </select>
             </div>
             <div class="col-md-6">
