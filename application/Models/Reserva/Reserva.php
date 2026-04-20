@@ -118,7 +118,7 @@ class Reserva extends Model
         
         // Busca por código ou nome
         if (!empty($filters['search'])) {
-            $sql .= " AND (r.codigo LIKE :search OR r.nome LIKE :search)";
+            $sql .= " AND (r.codigo_reserva LIKE :search OR r.nome LIKE :search)";
             $search = "%{$filters['search']}%";
             $params[] = "search={$search}";
         }
@@ -170,7 +170,7 @@ class Reserva extends Model
         
         // Busca por código ou nome
         if (!empty($filters['search'])) {
-            $sql .= " AND (r.codigo LIKE :search OR r.nome LIKE :search)";
+            $sql .= " AND (r.codigo_reserva LIKE :search OR r.nome LIKE :search)";
             $search = "%{$filters['search']}%";
             $params[] = "search={$search}";
         }

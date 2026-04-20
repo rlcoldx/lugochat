@@ -10,6 +10,18 @@ use Agencia\Close\Models\Model;
 
 class Moteis extends Model
 {
+    private function upper(string $text): string
+    {
+        $text = trim($text);
+        if ($text === '') {
+            return '';
+        }
+        if (function_exists('mb_strtoupper')) {
+            return mb_strtoupper($text, 'UTF-8');
+        }
+        return strtoupper($text);
+    }
+
 
     public function getMoteis(): Read
     {
@@ -39,6 +51,20 @@ class Moteis extends Model
         return $read;
     }
 
+    public function getProprietariosList(): Read
+    {
+        $read = new Read();
+        $read->FullRead(
+            "SELECT DISTINCT TRIM(proprietario) AS proprietario
+            FROM usuarios
+            WHERE tipo = '2'
+            AND proprietario IS NOT NULL
+            AND TRIM(proprietario) <> ''
+            ORDER BY proprietario ASC"
+        );
+        return $read;
+    }
+
     public function getMotel($id): Read
     {
     	$read = new Read();
@@ -55,6 +81,10 @@ class Moteis extends Model
         $params['cargo'] = 'Motel';
         $params['senha'] = sha1($params['senha']);
 
+        if (isset($params['proprietario'])) {
+            $params['proprietario'] = $this->upper((string) $params['proprietario']);
+        }
+
         unset($params['possuem']);
         unset($params['categories_id']);
 
@@ -68,6 +98,10 @@ class Moteis extends Model
         $update = new Update();
         $id = $params['id'];
         $params['empresa'] = $params['id'];
+
+        if (isset($params['proprietario'])) {
+            $params['proprietario'] = $this->upper((string) $params['proprietario']);
+        }
 
         if(isset($params['categories_id'])){
             $dados_categorias = $this->saveCategory($id, $params['categories_id']);

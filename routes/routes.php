@@ -24,6 +24,7 @@ require  __DIR__ . '/pages/api-integracao.php';
 require  __DIR__ . '/pages/relatorio.php';
 require  __DIR__ . '/pages/feriados.php';
 require  __DIR__ . '/pages/intervalo-dia-semana.php';
+require  __DIR__ . '/pages/paginas.php';
 
 //WIDGET
 require  __DIR__ . '/chatbot/inicio.php';

@@ -27,8 +27,10 @@ class MoteisController extends Controller
     $this->setParams($params);
 
     $categorias_lista = $this->getCategoryList();
+    $moteis = new Moteis();
+    $proprietarios = array_values(array_filter(array_column($moteis->getProprietariosList()->getResult() ?: [], 'proprietario')));
 
-    $this->render('pages/moteis/form.twig', ['menu' => 'moteis', 'categorias' => $categorias_lista]);
+    $this->render('pages/moteis/form.twig', ['menu' => 'moteis', 'categorias' => $categorias_lista, 'proprietarios' => $proprietarios]);
   }
 
   public function editar($params)
@@ -40,8 +42,9 @@ class MoteisController extends Controller
     $motel = $motel->getResult()[0];
 
     $categorias_lista = $this->getCategoryList();
+    $proprietarios = array_values(array_filter(array_column((new Moteis())->getProprietariosList()->getResult() ?: [], 'proprietario')));
 
-    $this->render('pages/moteis/form.twig', ['menu' => 'moteis', 'motel' => $motel, 'categorias' => $categorias_lista]);
+    $this->render('pages/moteis/form.twig', ['menu' => 'moteis', 'motel' => $motel, 'categorias' => $categorias_lista, 'proprietarios' => $proprietarios]);
 
   }
 

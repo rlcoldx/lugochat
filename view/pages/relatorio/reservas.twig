@@ -39,11 +39,12 @@
                         </select>
                     </div>
                     <div class="col-md-2">
-                        <label class="form-label">Planos de Redes Sociais</label>
-                        <select name="plano_redes" class="form-control">
-                            <option value="" {{ filtro_plano_redes == '' ? 'selected' : '' }}>Todos</option>
-                            <option value="1" {{ filtro_plano_redes == '1' ? 'selected' : '' }}>Sim</option>
-                            <option value="0" {{ filtro_plano_redes == '0' ? 'selected' : '' }}>Não</option>
+                        <label class="form-label">Proprietário</label>
+                        <select name="proprietario" class="form-control">
+                            <option value="" {{ filtro_proprietario == '' ? 'selected' : '' }}>Todos</option>
+                            {% for p in lista_proprietarios %}
+                            <option value="{{ p }}" {{ filtro_proprietario == p ? 'selected' : '' }}>{{ p }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                     <div class="col-md-2">
@@ -57,6 +58,13 @@
                     </div>
                     <div class="col-md-1">
                         <button type="submit" class="btn btn-primary w-100">Aplicar</button>
+                    </div>
+                    <div class="col-md-1">
+                        <a
+                            class="btn btn-outline-success w-100"
+                            href="{{ DOMAIN }}/admin/relatorio/reservas?export=1&data_inicio={{ filtro_data_inicio }}&data_fim={{ filtro_data_fim }}{% if filtro_id_motel %}&id_motel={{ filtro_id_motel }}{% endif %}{% if filtro_proprietario %}&proprietario={{ filtro_proprietario }}{% endif %}{% if filtro_cidade %}&cidade={{ filtro_cidade }}{% endif %}"
+                            title="Exportar Excel (CSV)"
+                        >Excel</a>
                     </div>
                 </form>
             </div>
@@ -82,8 +90,8 @@
             <div class="col-xl-3 col-lg-6 col-sm-6 mb-3">
                 <div class="card mb-2 mb-lg-0">
                     <div class="card-body">
-                        <p class="fs-14 mb-1">Total pago (gateway)</p>
-                        <h3 class="font-w600">R$ {{ resumo.total_valor_pago|number_format(2, ',', '.') }}</h3>
+                        <p class="fs-14 mb-1">Total repasse (motéis)</p>
+                        <h3 class="font-w600">R$ {{ resumo.total_repasse_motel|number_format(2, ',', '.') }}</h3>
                     </div>
                 </div>
             </div>
@@ -109,6 +117,7 @@
                                 <th>Motel</th>
                                 <th class="text-end">Qtd</th>
                                 <th class="text-end">Total pago (aprovado)</th>
+                                <th class="text-end">Repasse motel</th>
                                 <th class="text-end">Lucro plataforma</th>
                             </tr>
                         </thead>
@@ -118,11 +127,12 @@
                                 <td>{{ linha.motel_nome|upper }}</td>
                                 <td class="text-end">{{ linha.qtd_reservas }}</td>
                                 <td class="text-end">R$ {{ linha.total_valor_pago|number_format(2, ',', '.') }}</td>
+                                <td class="text-end">R$ {{ (linha.total_valor_pago - linha.lucro_plataforma)|number_format(2, ',', '.') }}</td>
                                 <td class="text-end">R$ {{ linha.lucro_plataforma|number_format(2, ',', '.') }}</td>
                             </tr>
                             {% else %}
                             <tr>
-                                <td colspan="4">Nenhum registro no período.</td>
+                                <td colspan="5">Nenhum registro no período.</td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -130,6 +140,7 @@
                 </div>
             </div>
         </div>
+
     </div>
 </div>
 

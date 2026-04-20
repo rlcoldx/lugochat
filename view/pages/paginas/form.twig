@@ -1,0 +1,110 @@
+{% extends "layout/layoutMaster.twig" %}
+
+{% block title %} {{ (pagina.id == '') ? 'Criar Página' : 'Editar Página' }} {% endblock %}
+
+{% block body %}
+
+	<link rel="stylesheet" href="{{ DOMAIN }}/view/assets/vendor/froala/css/froala_editor.min.css">
+
+	<div class="content-body">
+		<div class="container-fluid">
+			
+			<section class="content-main mb-5">
+
+				<div class="content-header">
+					<div>
+						<h3 class="content-title card-title">{{ (pagina.id == '') ? 'Criar Página' : 'Editar Página' }}
+						</h3>
+					</div>
+				</div>
+
+				<form action="javascript:void(0)" id="cadastrar_pagina" method="POST" autocomplete="off">
+					<div
+						class="row">
+
+						{# COLUNA PRINCIPAL #}
+						<div class="col-sm-12 col-md-6 col-lg-6 col-xl-8 col-xxl-8">
+
+							<div class="card">
+								<div class="card-body">
+									<input value="{{ pagina.titulo }}" type="text" id="titulo" class="form-control text-uppercase {{ (pagina.id == '') ? 'novo_pagina' : 'editar_pagina' }}" name="titulo" placeholder="NOME DA PÁGINA" required="required" onfocusout="format_slug($(this).val(), 'slug_link')">
+									<input type="hidden" name="slug" id="slug" value="{{ pagina.slug }}">
+								</div>
+							</div>
+
+							<div class="card">
+								<div class="card-body">
+									<textarea name="conteudo" class="form-control" id="texto">{{ pagina.conteudo }}</textarea>
+								</div>
+							</div>
+
+						</div>
+
+
+						{# COLUNA LATERAL #}
+						<div class="col-sm-12 col-md-6 col-lg-6 col-xl-4 col-xxl-4">
+
+							<div class="card">
+								<div class="card-header py-2">
+									<div class="d-flex justify-content-between align-items-center w-100">
+										<div>AÇÃO</div>
+										<div>
+											<input type="hidden" name="id" id="id_pagina" value="{{ pagina.id }}">
+											<button type="submit" id="salvar" class="btn btn-primary btn-sm px-4">{{ pagina.id == '' ? 'PUBLICAR' : 'SALVAR' }}</button>
+										</div>
+									</div>
+								</div>
+								<div class="card-body">
+
+									<div class="w-100 mb-10 d-flex justify-content-between">
+										<div>
+											<i class="fa-regular fa-key-skeleton me-1"></i>Status:
+											<b>{{ (pagina.status) ? pagina.status : 'Rascunho' }}</b>
+										</div>
+										<div>
+											<a class="text-primary" data-bs-toggle="collapse" href="#paginaStatus" role="button" aria-expanded="false" aria-controls="paginaStatus">Editar</a>
+										</div>
+									</div>
+									<div class="collapse {{ (pagina.status == 'Rascunho') ? 'show' }}" id="paginaStatus">
+										<select name="status" class="form-control">
+											<option value="Publicado" {{ (pagina.status == 'Publicado') ? 'selected' }}>Publicado</option>
+											<option value="Rascunho" {{ (pagina.status == 'Rascunho') ? 'selected' }}>Rascunho</option>
+										</select>
+									</div>
+									<div class="w-100 d-flex justify-content-between mt-1">
+										{% if (pagina.date_create) %}
+											<div>
+												<i class="fa-duotone fa-calendar-days me-1"></i>Publicado:
+												<b>{{ pagina.date_create|date("d-m-Y \\a\\s H:i", "America/Sao_Paulo") }}</b>
+											</div>
+										{% else %}
+											<div>
+												<i class="fa-duotone fa-calendar-days me-1"></i>Publicar:
+												<b>Imediatamente</b>
+											</div>
+										{% endif %}
+										<div>
+											<a class="text-primary" data-bs-toggle="collapse" href="#paginaData" role="button" aria-expanded="false" aria-controls="paginaData">Editar</a>
+										</div>
+									</div>
+									<div class="collapse mt-1" id="paginaData">
+										<input class="form-control" type="datetime-local" name="date_create" value="{{ (pagina.date_create) ? pagina.date_create|date("Y-m-d\\TH:i", "America/Sao_Paulo") : "now"|date("Y-m-d\\TH:i", "America/Sao_Paulo") }}">
+									</div>
+
+								</div>
+							</div>
+
+						</div>
+
+					</div>
+				</form>
+			</section>
+
+		</div>
+	</div>
+
+	<script src="{{ DOMAIN }}/view/assets/vendor/froala/js/froala_editor.pkgd.min.js"></script>
+	<script src='{{ DOMAIN }}/view/assets/vendor/froala/js/languages/pt_br.js'></script>
+	<script src="{{ DOMAIN }}/view/assets/js/pages/paginas.js"></script>
+
+{% endblock %}

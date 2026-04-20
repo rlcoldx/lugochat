@@ -189,10 +189,9 @@
 										</div>
 									</div>
 									
-									<input type="hidden" name="plano_redes" value="0">
-									<div class="form-check mb-3">
-										<input class="form-check-input" type="checkbox" id="plano_redes" name="plano_redes" value="1" {{ motel.plano_redes|default('0') in ['1', 1, 'on', 'true', true, 'Ativo'] ? 'checked' }}>
-										<label class="form-check-label" for="plano_redes">Ativar Planos de Redes Sociais</label>
+									<div class="mb-0">
+										<label class="form-label">Nome do Proprietário</label>
+										<input type="text" class="form-control text-uppercase" name="proprietario" value="{{ motel.proprietario }}" placeholder="Ex. Fulado de Tal" oninput="this.value = (this.value || '').toUpperCase()">
 									</div>
 								</div>
 							</div>
@@ -297,5 +296,4 @@
 	<script src="{{ DOMAIN }}/view/assets/vendor/froala/js/froala_editor.pkgd.min.js"></script>
 	<script src='{{ DOMAIN }}/view/assets/vendor/froala/js/languages/pt_br.js'></script>
 	<script src="{{ DOMAIN }}/view/assets/js/pages/moteis.js"></script>
-
 {% endblock %}

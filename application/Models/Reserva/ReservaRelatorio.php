@@ -7,6 +7,21 @@ use Agencia\Close\Models\Model;
 
 class ReservaRelatorio extends Model
 {
+    public function getProprietariosMotels(): array
+    {
+        $read = new Read();
+        $read->FullRead(
+            "SELECT DISTINCT TRIM(u.proprietario) AS proprietario
+            FROM usuarios u
+            WHERE u.tipo = '2'
+            AND u.proprietario IS NOT NULL
+            AND TRIM(u.proprietario) <> ''
+            ORDER BY proprietario ASC"
+        );
+        $rows = $read->getResult() ?: [];
+        return array_values(array_filter(array_column($rows, 'proprietario')));
+    }
+
     /**
      * Cidades distintas dos motéis (para filtro do relatório).
      */
@@ -28,7 +43,7 @@ class ReservaRelatorio extends Model
     /**
      * Resumo geral no período (admin).
      */
-    public function getResumoGeral(string $dataInicio, string $dataFim, ?int $idMotel = null, ?string $cidade = null, ?int $planoRedes = null): array
+    public function getResumoGeral(string $dataInicio, string $dataFim, ?int $idMotel = null, ?string $cidade = null, ?string $proprietario = null): array
     {
         $read = new Read();
         $params = "data_inicio={$dataInicio}&data_fim={$dataFim}";
@@ -42,10 +57,10 @@ class ReservaRelatorio extends Model
             $filtroCidade = ' AND u.cidade = :cidade';
             $params .= '&cidade=' . rawurlencode($cidade);
         }
-        $filtroPlanoRedes = '';
-        if ($planoRedes !== null) {
-            $filtroPlanoRedes = ' AND COALESCE(u.plano_redes, 0) = :plano_redes';
-            $params .= "&plano_redes={$planoRedes}";
+        $filtroProprietario = '';
+        if ($proprietario !== null && $proprietario !== '') {
+            $filtroProprietario = ' AND u.proprietario = :proprietario';
+            $params .= '&proprietario=' . rawurlencode($proprietario);
         }
 
         $read->FullRead(
@@ -68,7 +83,7 @@ class ReservaRelatorio extends Model
                 AND (r.id_usuario IS NULL OR r.id_usuario <> '1')
                 {$filtroMotel}
                 {$filtroCidade}
-                {$filtroPlanoRedes}
+                {$filtroProprietario}
                 GROUP BY r.id
             ) sub",
             $params
@@ -83,7 +98,7 @@ class ReservaRelatorio extends Model
             ];
         }
 
-        $lucro = $this->calcularLucroPlataformaPeriodo($dataInicio, $dataFim, $idMotel, $cidade, $planoRedes);
+        $lucro = $this->calcularLucroPlataformaPeriodo($dataInicio, $dataFim, $idMotel, $cidade, $proprietario);
 
         return [
             'qtd_reservas' => (int) ($row['qtd_reservas'] ?? 0),
@@ -97,7 +112,7 @@ class ReservaRelatorio extends Model
     /**
      * Lucro da plataforma (percentual contrato sobre pagamentos aprovados), mesmo critério de Home::getLucroTotal.
      */
-    private function calcularLucroPlataformaPeriodo(string $dataInicio, string $dataFim, ?int $idMotel = null, ?string $cidade = null, ?int $planoRedes = null): float
+    private function calcularLucroPlataformaPeriodo(string $dataInicio, string $dataFim, ?int $idMotel = null, ?string $cidade = null, ?string $proprietario = null): float
     {
         $read = new Read();
         $params = "data_inicio={$dataInicio}&data_fim={$dataFim}";
@@ -111,10 +126,10 @@ class ReservaRelatorio extends Model
             $filtroCidade = ' AND u.cidade = :cidade';
             $params .= '&cidade=' . rawurlencode($cidade);
         }
-        $filtroPlanoRedes = '';
-        if ($planoRedes !== null) {
-            $filtroPlanoRedes = ' AND COALESCE(u.plano_redes, 0) = :plano_redes';
-            $params .= "&plano_redes={$planoRedes}";
+        $filtroProprietario = '';
+        if ($proprietario !== null && $proprietario !== '') {
+            $filtroProprietario = ' AND u.proprietario = :proprietario';
+            $params .= '&proprietario=' . rawurlencode($proprietario);
         }
 
         $read->FullRead(
@@ -128,7 +143,7 @@ class ReservaRelatorio extends Model
             AND DATE(r.date_create) BETWEEN :data_inicio AND :data_fim
             {$filtroMotel}
             {$filtroCidade}
-            {$filtroPlanoRedes}",
+            {$filtroProprietario}",
             $params
         );
         $result = $read->getResult();
@@ -147,7 +162,7 @@ class ReservaRelatorio extends Model
      * Agregados por motel no período (uma linha por reserva no subselect, depois soma por motel).
      * total_valor_pago = soma dos pagamentos aprovados de todas as reservas daquele motel nos filtros.
      */
-    public function getAgregadoPorMotel(string $dataInicio, string $dataFim, ?string $cidade = null, ?int $planoRedes = null): array
+    public function getAgregadoPorMotel(string $dataInicio, string $dataFim, ?string $cidade = null, ?string $proprietario = null): array
     {
         $params = "data_inicio={$dataInicio}&data_fim={$dataFim}";
         $filtroCidade = '';
@@ -155,10 +170,10 @@ class ReservaRelatorio extends Model
             $filtroCidade = ' AND u.cidade = :cidade';
             $params .= '&cidade=' . rawurlencode($cidade);
         }
-        $filtroPlanoRedes = '';
-        if ($planoRedes !== null) {
-            $filtroPlanoRedes = ' AND COALESCE(u.plano_redes, 0) = :plano_redes';
-            $params .= "&plano_redes={$planoRedes}";
+        $filtroProprietario = '';
+        if ($proprietario !== null && $proprietario !== '') {
+            $filtroProprietario = ' AND u.proprietario = :proprietario';
+            $params .= '&proprietario=' . rawurlencode($proprietario);
         }
 
         $read = new Read();
@@ -188,7 +203,7 @@ class ReservaRelatorio extends Model
                 AND (p.id_user IS NULL OR p.id_user <> '1')
                 AND (r.id_usuario IS NULL OR r.id_usuario <> '1')
                 {$filtroCidade}
-                {$filtroPlanoRedes}
+                {$filtroProprietario}
                 GROUP BY r.id, r.id_motel
             ) sub
             INNER JOIN usuarios u ON u.id = sub.id_motel
@@ -203,7 +218,7 @@ class ReservaRelatorio extends Model
     /**
      * Todas as reservas com pagamento aprovado no período (sucesso), ordenadas por ID decrescente.
      */
-    public function getReservasPagasSucesso(string $dataInicio, string $dataFim, ?int $idMotel = null, ?string $cidade = null, ?int $planoRedes = null): array
+    public function getReservasPagasSucesso(string $dataInicio, string $dataFim, ?int $idMotel = null, ?string $cidade = null, ?string $proprietario = null): array
     {
         $read = new Read();
         $params = "data_inicio={$dataInicio}&data_fim={$dataFim}";
@@ -217,15 +232,16 @@ class ReservaRelatorio extends Model
             $filtroCidade = ' AND u.cidade = :cidade';
             $params .= '&cidade=' . rawurlencode($cidade);
         }
-        $filtroPlanoRedes = '';
-        if ($planoRedes !== null) {
-            $filtroPlanoRedes = ' AND COALESCE(u.plano_redes, 0) = :plano_redes';
-            $params .= "&plano_redes={$planoRedes}";
+        $filtroProprietario = '';
+        if ($proprietario !== null && $proprietario !== '') {
+            $filtroProprietario = ' AND u.proprietario = :proprietario';
+            $params .= '&proprietario=' . rawurlencode($proprietario);
         }
 
         $read->FullRead(
             "SELECT 
                 r.id,
+                r.codigo_reserva,
                 r.nome,
                 r.telefone,
                 r.valor_reserva,
@@ -236,6 +252,7 @@ class ReservaRelatorio extends Model
                 r.periodo_reserva,
                 u.nome AS motel_nome,
                 u.cidade AS cidade_motel,
+                u.contrato,
                 s.nome AS suite_nome,
                 SUM(CAST(p.pagamento_valor AS DECIMAL(12,2))) AS pagamento_valor,
                 MAX(p.date_create) AS data_pagamento
@@ -249,9 +266,9 @@ class ReservaRelatorio extends Model
             AND DATE(r.date_create) BETWEEN :data_inicio AND :data_fim
             {$filtroMotel}
             {$filtroCidade}
-            {$filtroPlanoRedes}
-            GROUP BY r.id, r.nome, r.telefone, r.valor_reserva, r.status_reserva, r.date_create, r.data_reserva,
-                r.chegada_reserva, r.periodo_reserva, u.nome, u.cidade, s.nome
+            {$filtroProprietario}
+            GROUP BY r.id, r.codigo_reserva, r.nome, r.telefone, r.valor_reserva, r.status_reserva, r.date_create, r.data_reserva,
+                r.chegada_reserva, r.periodo_reserva, u.nome, u.cidade, u.contrato, s.nome
             ORDER BY r.id DESC",
             $params
         );
