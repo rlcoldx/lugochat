@@ -14,7 +14,7 @@ class WidgetController extends Controller
 
     //VERIFICA A EMPRESA PARA INICIAR O CHAT
     $empresa = new Widget();
-    $empresa = $empresa->getEmpresaByCode($_GET['cc'])->getResult()[0];
+    $empresa = $empresa->getEmpresaByCode($_GET['cc'])->getResultSingle();
     $_SESSION['lugo_widget_empresa'] = $empresa['id'];
     
     $this->render('pages/widget/chat.twig', ['titulo' => 'Widget', 'empresa' => $empresa]);
