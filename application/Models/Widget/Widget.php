@@ -18,6 +18,13 @@ class Widget extends Model
         return $this->read;
     }
 
+    public function findUsuarioAtivoById(int $id): Read
+    {
+        $this->read = new Read();
+        $this->read->FullRead("SELECT id FROM `usuarios` WHERE id = :id AND `status` = 'Ativo' LIMIT 1", "id={$id}");
+        return $this->read;
+    }
+
     public function checkHistorico($id_motel, $userID): Read
     {
     	$this->read = new Read();

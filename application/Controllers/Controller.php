@@ -10,6 +10,7 @@ use Agencia\Close\Models\Company;
 use Agencia\Close\Helpers\Result;
 use Agencia\Close\Conn\Read;
 use Agencia\Close\Models\Moteis\Moteis;
+use Agencia\Close\Models\Widget\Widget;
 use CoffeeCode\Router\Router;
 
 class Controller
@@ -130,6 +131,35 @@ class Controller
             echo 'você não tem permissão para acessar esse serviço!';
            die(); 
         }
+    }
+
+    /**
+     * ID do motel no contexto do widget: sessão definida em /widget ou id_motel no POST (usuário ativo).
+     */
+    protected function widgetMotelId(): ?int
+    {
+        if (!empty($_SESSION['lugo_widget_empresa'])) {
+            return (int) $_SESSION['lugo_widget_empresa'];
+        }
+
+        $raw = $_POST['id_motel'] ?? '';
+        if ($raw === '' || !is_numeric($raw)) {
+            return null;
+        }
+
+        $id = (int) $raw;
+        if ($id <= 0) {
+            return null;
+        }
+
+        $widget = new Widget();
+        $rows = $widget->findUsuarioAtivoById($id)->getResult();
+        if (empty($rows[0]['id'])) {
+            return null;
+        }
+
+        $_SESSION['lugo_widget_empresa'] = (int) $rows[0]['id'];
+        return (int) $rows[0]['id'];
     }
 
 }

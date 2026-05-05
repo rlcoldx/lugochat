@@ -23,22 +23,28 @@ class SuitesWidgetController extends Controller
 	public function suites_detalhes($params)
   	{
 		$this->setParams($params);
+
+		$motelId = $this->widgetMotelId();
+		if ($motelId === null) {
+			echo '';
+			return;
+		}
 	
 		$suite = new SuitesWidget();
-		$result = $suite->getSuite($this->params['id'], $_SESSION['lugo_widget_empresa']);
+		$result = $suite->getSuite($this->params['id'], $motelId);
 		$suite = $result->getResult()[0];
 
 		// Obtém o dia da semana abreviado (seg, ter, qua, qui, sex, sáb, dom)
 		$diaDaSemana = $this->diaSemana(date('Y-m-d'));
 
 		$precosall = new SuitesWidget();
-		$precosall = $precosall->getSuitePrecosAll($this->params['id'], $_SESSION['lugo_widget_empresa'])->getResult();
+		$precosall = $precosall->getSuitePrecosAll($this->params['id'], $motelId)->getResult();
 	
 		$precos = new SuitesWidget();
-		$precos = $precos->getSuitePrecos($this->params['id'], $_SESSION['lugo_widget_empresa'], $diaDaSemana)->getResult();
+		$precos = $precos->getSuitePrecos($this->params['id'], $motelId, $diaDaSemana)->getResult();
 	
 		$imagens = new SuitesWidget();
-		$imagem = $imagens->getSuiteImages($this->params['id'], $_SESSION['lugo_widget_empresa'])->getResult();
+		$imagem = $imagens->getSuiteImages($this->params['id'], $motelId)->getResult();
 
 		$listaHoras = $this->listarHorasRestantesDoDia(time());
 

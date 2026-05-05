@@ -25,13 +25,19 @@ class WidgetController extends Controller
   {
     $this->setParams($params);
 
+    $motelId = $this->widgetMotelId();
+    if ($motelId === null) {
+      $this->render('pages/widget/historico.twig', ['historicos' => [], 'inical' => 'N']);
+      return;
+    }
+
     $historico = new Widget();
-    $historico = $historico->checkHistorico($_SESSION['lugo_widget_empresa'], $params['userID'])->getResult();
+    $historico = $historico->checkHistorico($motelId, $params['userID'])->getResult();
     $inical = 'N';
     
     if($historico == null) {
       $historico = new Widget();
-      $historico = $historico->loadPrimeira($_SESSION['lugo_widget_empresa'])->getResult();
+      $historico = $historico->loadPrimeira($motelId)->getResult();
       $inical = 'S';
     }
 
@@ -55,10 +61,15 @@ class WidgetController extends Controller
   {
     $this->setParams($params);
 
+    $motelId = $this->widgetMotelId();
+    if ($motelId === null) {
+      return;
+    }
+
     // PERGUNTA
     if($params['inicial'] == 'S'){
       $pergunta = new Widget();
-      $pergunta = $pergunta->getPergunta($_SESSION['lugo_widget_empresa'], $params['id_pergunta'])->getResult();
+      $pergunta = $pergunta->getPergunta($motelId, $params['id_pergunta'])->getResult();
       
       foreach ($pergunta as $salvar){
         $save = new Widget();
@@ -68,21 +79,21 @@ class WidgetController extends Controller
 
     // RESPOSTA
     $resposta = new Widget();
-    $resposta = $resposta->getResposta($_SESSION['lugo_widget_empresa'], $params['id_resposta'])->getResult()[0];
+    $resposta = $resposta->getResposta($motelId, $params['id_resposta'])->getResult()[0];
 
     $save = new Widget();
     $save = $save->saveHistorico($resposta, $params['userID'], 'resposta');
 
     // PROXIMA PERGUNTA
     $proximaPergunta = new Widget();
-    $proximaPergunta = $proximaPergunta->getProximaPergunta($_SESSION['lugo_widget_empresa'], $params['id_resposta'])->getResult()[0];
+    $proximaPergunta = $proximaPergunta->getProximaPergunta($motelId, $params['id_resposta'])->getResult()[0];
 
     $save = new Widget();
     $save = $save->saveHistorico($proximaPergunta, $params['userID']);
   
     // PROXIMA RESPOSTA
     $proximaResposta = new Widget();
-    $proximaResposta = $proximaResposta->getProximaResposta($_SESSION['lugo_widget_empresa'], $proximaPergunta['id'])->getResult();
+    $proximaResposta = $proximaResposta->getProximaResposta($motelId, $proximaPergunta['id'])->getResult();
 
     foreach ($proximaResposta as $salvar){
       $save = new Widget();

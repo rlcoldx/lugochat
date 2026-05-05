@@ -12,7 +12,7 @@ $(document).ready(function(){
 
     $.ajax({
         type: "POST",
-        data: {'userID': userID},
+        data: {'userID': userID, 'id_motel': $('#widget_start').attr('data-empresa')},
         url: DOMAIN + '/chat/historico',
         success: function(data) {
         	$("#chat_content").scrollTop($("#chat_content")[0].scrollHeight);
@@ -42,6 +42,7 @@ $(document).ready(function(){
 
 		let data = {
 			'userID': userID,
+			'id_motel': $('#widget_start').attr('data-empresa'),
 			'id_pergunta': id_pergunta,
 			'id_resposta': id_resposta,
 			'inicial': inicial
@@ -54,7 +55,7 @@ $(document).ready(function(){
 			success: function(data) {
 				$.ajax({
 					type: "POST",
-					data: {'userID': userID},
+					data: {'userID': userID, 'id_motel': $('#widget_start').attr('data-empresa')},
 					url: DOMAIN + '/chat/historico',
 					success: function(data) {
 						$("#chat_content").scrollTop($("#chat_content")[0].scrollHeight);
@@ -161,12 +162,13 @@ var openChat = function() {
 var openDetalhes = function(suite) {
 
 	let DOMAIN = $('body').attr('data-domain');
+	let EMPRESA = $('#widget_start').attr('data-empresa');
 
 	$('.content-suites').html('<div class="chat-load"><i class="fa-solid fa-circle-notch fa-spin"></i></div>');
 
 	$.ajax({
 		type: "POST",
-		data: {'id' : suite},
+		data: {'id' : suite, 'id_motel': EMPRESA},
 		url: DOMAIN + '/chat/suites/detalhes',
 		success: function(data) {
 
