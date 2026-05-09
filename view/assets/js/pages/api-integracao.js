@@ -20,16 +20,25 @@ $(document).ready(function () {
                 if (!data || !data.tokens) {
                     return;
                 }
+                var $table = $('#datatable');
+                if (!$table.length) {
+                    return;
+                }
                 data.tokens.forEach(function (t) {
-                    var $tr = $('.token-' + t.id);
+                    var id = String(t.id);
+                    var $tr = $table.find('tbody tr[data-token-id="' + id + '"]');
+                    if (!$tr.length) {
+                        $tr = $table.find('tbody tr.token-' + id);
+                    }
                     if (!$tr.length) {
                         return;
                     }
+                    var acessos = typeof t.acessos !== 'undefined' && t.acessos !== null ? Number(t.acessos) : 0;
                     var badge = t.online
                         ? '<span class="badge bg-success">Online</span>'
                         : '<span class="badge bg-danger">Offline</span>';
-                    $tr.find('td.api-col-status').html(badge);
-                    $tr.find('td.api-col-acessos').html('<span class="fs-5 fw-bold">' + t.acessos + '</span>');
+                    $tr.find('td.api-col-status').first().html(badge);
+                    $tr.find('td.api-col-acessos').first().html('<span class="fs-5 fw-bold">' + acessos + '</span>');
                 });
             },
             error: function () {
