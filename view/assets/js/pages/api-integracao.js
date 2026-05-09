@@ -6,7 +6,8 @@ $(document).ready(function () {
         if (!$wrap.length) {
             return;
         }
-        var url = $wrap.data('api-tokens-refresh');
+        // .attr() é necessário: jQuery .data('api-tokens-refresh') não lê data-api-tokens-refresh do HTML
+        var url = $wrap.attr('data-api-tokens-refresh');
         if (!url) {
             return;
         }
@@ -30,11 +31,15 @@ $(document).ready(function () {
                     $tr.find('td.api-col-status').html(badge);
                     $tr.find('td.api-col-acessos').html('<span class="fs-5 fw-bold">' + t.acessos + '</span>');
                 });
+            },
+            error: function () {
+                // resposta não-JSON (ex.: redirect para login) ou erro de rede
             }
         });
     }
 
     if ($('.table-responsive[data-api-tokens-refresh]').length) {
+        refreshApiTokensTable();
         setInterval(refreshApiTokensTable, 10000);
     }
 
