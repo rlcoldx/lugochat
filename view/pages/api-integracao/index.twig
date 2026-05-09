@@ -24,9 +24,9 @@
                         <thead>
                             <tr role="row">
                                 <th>Motel</th>
+                                <th>Status</th>
                                 <th>Sistema</th>
                                 <th>Token</th>
-                                <th>Status</th>
                                 <th>Acessos</th>
                                 <th>Criado em</th>
                                 <th width="150">Ação</th>
@@ -36,6 +36,13 @@
                             {% for token in tokens %}
                             <tr class="token-{{ token.id }}">
                                 <td class="align-middle fw-bold text-uppercase">{{ token.nome_motel|upper }}</td>
+                                <td class="align-middle api-col-status">
+                                    {% if token.api_online %}
+                                        <span class="badge bg-success">Online</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">Offline</span>
+                                    {% endif %}
+                                </td>
                                 <td class="align-middle fw-bold">{{ token.sistema }}</td>
                                 <td class="align-middle">
                                     <div class="d-flex align-items-center">
@@ -44,13 +51,6 @@
                                             <i class="fa fa-copy"></i>
                                         </button>
                                     </div>
-                                </td>
-                                <td class="align-middle api-col-status">
-                                    {% if token.api_online %}
-                                        <span class="badge bg-success">Online</span>
-                                    {% else %}
-                                        <span class="badge bg-danger">Offline</span>
-                                    {% endif %}
                                 </td>
                                 <td class="align-middle api-col-acessos"><span class="fs-5 fw-bold">{{ token.acessos }}</span></td>
                                 <td class="align-middle">{{ token.date_create|date("d/m/Y H:i") }}</td>
