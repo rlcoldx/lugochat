@@ -35,6 +35,7 @@ class LoginCheckMiddleware extends Middleware
             '/widget',
             '/chat/',
             '/chatbot/',
+            '/api/widget',
             '/view/assets/',
             '/view/widget/',
         ];

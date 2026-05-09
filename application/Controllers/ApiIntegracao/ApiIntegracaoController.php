@@ -14,17 +14,78 @@ class ApiIntegracaoController extends Controller
             : null;
     }
 
+    /**
+     * Online se date_update está a até 10s da hora atual; senão Offline.
+     * Sem date_update válido considera Offline.
+     */
+    private static function tokenIsOnline(?string $dateUpdate): bool
+    {
+        if ($dateUpdate === null || trim($dateUpdate) === '') {
+            return false;
+        }
+        $ts = strtotime($dateUpdate);
+        if ($ts === false) {
+            return false;
+        }
+        $diff = time() - $ts;
+        if ($diff < 0) {
+            return true;
+        }
+        return $diff <= 10;
+    }
+
+    /**
+     * @param array<int, array<string, mixed>>|null $tokens
+     * @return array<int, array<string, mixed>>
+     */
+    private function enrichTokensWithStatus(?array $tokens): array
+    {
+        if ($tokens === null || $tokens === []) {
+            return [];
+        }
+        foreach ($tokens as &$t) {
+            $ref = $t['date_update'] ?? null;
+            $t['api_online'] = self::tokenIsOnline(is_string($ref) ? $ref : null);
+        }
+        unset($t);
+        return $tokens;
+    }
+
     public function index($params)
     {
         $this->setParams($params);
         
         $model = new ApiIntegracao();
         $tokens = $model->getTokens($this->getMotelId())->getResult();
+        $tokens = $this->enrichTokensWithStatus($tokens);
         
         $this->render('pages/api-integracao/index.twig', [
             'titulo' => 'Integração API - Tokens',
             'tokens' => $tokens
         ]);
+    }
+
+    public function tokensRefresh($params)
+    {
+        $this->setParams($params);
+
+        $model = new ApiIntegracao();
+        $tokens = $model->getTokens($this->getMotelId())->getResult();
+        $tokens = $this->enrichTokensWithStatus($tokens);
+
+        $out = [];
+        foreach ($tokens as $t) {
+            $online = !empty($t['api_online']);
+            $out[] = [
+                'id' => (int) ($t['id'] ?? 0),
+                'acessos' => (int) ($t['acessos'] ?? 0),
+                'online' => $online,
+                'label' => $online ? 'Online' : 'Offline',
+            ];
+        }
+
+        header('Content-Type: application/json; charset=UTF-8');
+        echo json_encode(['tokens' => $out], JSON_UNESCAPED_UNICODE);
     }
 
     public function criar()

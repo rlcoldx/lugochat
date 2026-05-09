@@ -1,6 +1,43 @@
 $(document).ready(function () {
     var DOMAIN = $('body').data('domain');
 
+    function refreshApiTokensTable() {
+        var $wrap = $('.table-responsive[data-api-tokens-refresh]');
+        if (!$wrap.length) {
+            return;
+        }
+        var url = $wrap.data('api-tokens-refresh');
+        if (!url) {
+            return;
+        }
+        $.ajax({
+            url: url,
+            type: 'GET',
+            dataType: 'json',
+            cache: false,
+            success: function (data) {
+                if (!data || !data.tokens) {
+                    return;
+                }
+                data.tokens.forEach(function (t) {
+                    var $tr = $('.token-' + t.id);
+                    if (!$tr.length) {
+                        return;
+                    }
+                    var badge = t.online
+                        ? '<span class="badge bg-success">Online</span>'
+                        : '<span class="badge bg-danger">Offline</span>';
+                    $tr.find('td.api-col-status').html(badge);
+                    $tr.find('td.api-col-acessos').html('<span class="fs-5 fw-bold">' + t.acessos + '</span>');
+                });
+            }
+        });
+    }
+
+    if ($('.table-responsive[data-api-tokens-refresh]').length) {
+        setInterval(refreshApiTokensTable, 10000);
+    }
+
     // Inicializa select2 quando o modal é aberto
     $('#tokenmodal').on('shown.bs.modal', function () {
         $('.select2').select2({

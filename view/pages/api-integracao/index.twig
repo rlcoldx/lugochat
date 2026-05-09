@@ -19,13 +19,14 @@
     
         <div class="card">
             <div class="card-body">
-                <div class="table-responsive">
+                <div class="table-responsive" data-api-tokens-refresh="{{ DOMAIN }}/api/integracao/tokens-refresh">
                     <table id="datatable" class="table dataTable">
                         <thead>
                             <tr role="row">
                                 <th>Motel</th>
                                 <th>Sistema</th>
                                 <th>Token</th>
+                                <th>Status</th>
                                 <th>Acessos</th>
                                 <th>Criado em</th>
                                 <th width="150">Ação</th>
@@ -44,7 +45,14 @@
                                         </button>
                                     </div>
                                 </td>
-                                <td class="align-middle"><span class="fs-5 fw-bold">{{ token.acessos }}</span></td>
+                                <td class="align-middle api-col-status">
+                                    {% if token.api_online %}
+                                        <span class="badge bg-success">Online</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">Offline</span>
+                                    {% endif %}
+                                </td>
+                                <td class="align-middle api-col-acessos"><span class="fs-5 fw-bold">{{ token.acessos }}</span></td>
                                 <td class="align-middle">{{ token.date_create|date("d/m/Y H:i") }}</td>
                                 <td class="align-middle">
                                     <div class="d-flex justify-content-end align-items-center">

@@ -35,6 +35,7 @@ require  __DIR__ . '/chatbot/agendamento.php';
 require  __DIR__ . '/API/rubens.php';
 require  __DIR__ . '/API/api.php';
 require  __DIR__ . '/API/sis.php';
+require  __DIR__ . '/API/widget.php';
 
 // ERROR
 $router->group("error")->namespace("Agencia\Close\Controllers\Error");
