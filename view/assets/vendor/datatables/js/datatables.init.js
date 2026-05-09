@@ -1,6 +1,10 @@
 (function($) {
     "use strict"
 
+    if (!$('#datatable').length) {
+        return;
+    }
+
     var table = $('#datatable').DataTable({
         lengthMenu: [[25, 50, -1], [25, 50, "Todos"]],
         language: {
@@ -29,6 +33,10 @@
 
 (function($) {
     "use strict";
+
+    if (!$('#datatable_nosort').length) {
+        return;
+    }
 
     var table = $('#datatable_nosort').DataTable({ 
         lengthMenu: [[25, 50, -1], [25, 50, "Todos"]],

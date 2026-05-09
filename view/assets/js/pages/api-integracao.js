@@ -1,56 +1,96 @@
 $(document).ready(function () {
     var DOMAIN = $('body').data('domain');
 
-    function refreshApiTokensTable() {
-        var $wrap = $('.table-responsive[data-api-tokens-refresh]');
-        if (!$wrap.length) {
+    /**
+     * Atualiza Status e Acessos usando a API do DataTables (.rows().every),
+     * porque linhas em outras páginas não aparecem no tbody do DOM.
+     */
+    function applyTokensPayload(data) {
+        if (!data || !data.tokens || !data.tokens.length) {
             return;
         }
-        // .attr() é necessário: jQuery .data('api-tokens-refresh') não lê data-api-tokens-refresh do HTML
-        var url = $wrap.attr('data-api-tokens-refresh');
-        if (!url) {
+
+        function patchRow($tr, t) {
+            if (!$tr || !$tr.length) {
+                return;
+            }
+            var acessos = typeof t.acessos !== 'undefined' && t.acessos !== null ? Number(t.acessos) : 0;
+            var badge = t.online
+                ? '<span class="badge bg-success">Online</span>'
+                : '<span class="badge bg-danger">Offline</span>';
+            $tr.find('td.api-col-status').first().html(badge);
+            $tr.find('td.api-col-acessos').first().html('<span class="fs-5 fw-bold">' + acessos + '</span>');
+        }
+
+        var map = {};
+        data.tokens.forEach(function (t) {
+            map[String(t.id)] = t;
+        });
+
+        if (typeof $.fn.DataTable !== 'undefined' && $.fn.DataTable.isDataTable('#datatable')) {
+            $('#datatable').DataTable().rows().every(function () {
+                var $tr = $(this.node());
+                var id = $tr.attr('data-token-id');
+                if (id && map[id]) {
+                    patchRow($tr, map[id]);
+                }
+            });
             return;
         }
-        $.ajax({
-            url: url,
-            type: 'GET',
-            dataType: 'json',
-            cache: false,
-            success: function (data) {
-                if (!data || !data.tokens) {
-                    return;
-                }
-                var $table = $('#datatable');
-                if (!$table.length) {
-                    return;
-                }
-                data.tokens.forEach(function (t) {
-                    var id = String(t.id);
-                    var $tr = $table.find('tbody tr[data-token-id="' + id + '"]');
-                    if (!$tr.length) {
-                        $tr = $table.find('tbody tr.token-' + id);
-                    }
-                    if (!$tr.length) {
-                        return;
-                    }
-                    var acessos = typeof t.acessos !== 'undefined' && t.acessos !== null ? Number(t.acessos) : 0;
-                    var badge = t.online
-                        ? '<span class="badge bg-success">Online</span>'
-                        : '<span class="badge bg-danger">Offline</span>';
-                    $tr.find('td.api-col-status').first().html(badge);
-                    $tr.find('td.api-col-acessos').first().html('<span class="fs-5 fw-bold">' + acessos + '</span>');
-                });
-            },
-            error: function () {
-                // resposta não-JSON (ex.: redirect para login) ou erro de rede
+
+        $('#datatable tbody tr[data-token-id]').each(function () {
+            var $tr = $(this);
+            var id = $tr.attr('data-token-id');
+            if (id && map[id]) {
+                patchRow($tr, map[id]);
             }
         });
     }
 
-    if ($('.table-responsive[data-api-tokens-refresh]').length) {
+    function getTokensRefreshUrl() {
+        if (typeof window.BDM_API_INTEGRACAO_REFRESH_URL === 'string' && window.BDM_API_INTEGRACAO_REFRESH_URL.length) {
+            return window.BDM_API_INTEGRACAO_REFRESH_URL;
+        }
+        var $wrap = $('.table-responsive[data-api-tokens-refresh]');
+        return $wrap.length ? $wrap.attr('data-api-tokens-refresh') : '';
+    }
+
+    function refreshApiTokensTable() {
+        var url = getTokensRefreshUrl();
+        if (!url) {
+            return;
+        }
+        var sep = url.indexOf('?') >= 0 ? '&' : '?';
+        $.ajax({
+            url: url + sep + '_=' + Date.now(),
+            type: 'GET',
+            dataType: 'json',
+            cache: false,
+            success: function (data) {
+                applyTokensPayload(data);
+            }
+        });
+    }
+
+    var apiTokensPollingStarted = false;
+
+    function startApiTokensAutoRefresh() {
+        if (apiTokensPollingStarted) {
+            return;
+        }
+        if (!document.getElementById('datatable') || !getTokensRefreshUrl()) {
+            return;
+        }
+        apiTokensPollingStarted = true;
         refreshApiTokensTable();
         setInterval(refreshApiTokensTable, 10000);
     }
+
+    // DataTables é inicializado no script anterior (sync); um tick evita corrida com o layout
+    setTimeout(startApiTokensAutoRefresh, 250);
+    $(window).on('load', function () {
+        startApiTokensAutoRefresh();
+    });
 
     // Inicializa select2 quando o modal é aberto
     $('#tokenmodal').on('shown.bs.modal', function () {

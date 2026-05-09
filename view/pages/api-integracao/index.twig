@@ -83,6 +83,9 @@
     </div>
 </div>
 
+<script>
+window.BDM_API_INTEGRACAO_REFRESH_URL = {{ (DOMAIN ~ '/api/integracao/tokens-refresh')|json_encode|raw }};
+</script>
 <script src="{{ DOMAIN }}/view/assets/vendor/datatables/js/jquery.dataTables.min.js"></script>
 <script src="{{ DOMAIN }}/view/assets/vendor/datatables/js/datatables.init.js"></script>
 <script src="{{ DOMAIN }}/view/assets/js/pages/api-integracao.js"></script>
