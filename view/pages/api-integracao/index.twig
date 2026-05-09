@@ -89,6 +89,97 @@ window.BDM_API_INTEGRACAO_REFRESH_URL = {{ (DOMAIN ~ '/api/integracao/tokens-ref
 <script src="{{ DOMAIN }}/view/assets/vendor/datatables/js/jquery.dataTables.min.js"></script>
 <script src="{{ DOMAIN }}/view/assets/vendor/datatables/js/datatables.init.js"></script>
 <script src="{{ DOMAIN }}/view/assets/js/pages/api-integracao.js"></script>
+{# Polling roda aqui (sync), fora do $(document).ready) do arquivo principal — garante GET no Network #}
+<script>
+(function ($) {
+    'use strict';
+
+    function resolveRefreshUrl() {
+        var u = (typeof window.BDM_API_INTEGRACAO_REFRESH_URL === 'string')
+            ? window.BDM_API_INTEGRACAO_REFRESH_URL.trim()
+            : '';
+        if (u) {
+            return u;
+        }
+        var wrap = document.querySelector('.table-responsive[data-api-tokens-refresh]');
+        if (wrap) {
+            var v = (wrap.getAttribute('data-api-tokens-refresh') || '').trim();
+            if (v) {
+                return v;
+            }
+        }
+        var path = window.location.pathname.replace(/\/list\/?$/i, '/tokens-refresh');
+        if (path !== window.location.pathname) {
+            return window.location.origin + path;
+        }
+        return '';
+    }
+
+    function applyTokensPayload(data) {
+        if (!data || !data.tokens || !data.tokens.length) {
+            return;
+        }
+
+        function patchRow($tr, t) {
+            if (!$tr || !$tr.length) {
+                return;
+            }
+            var acessos = (typeof t.acessos !== 'undefined' && t.acessos !== null) ? Number(t.acessos) : 0;
+            var badge = t.online
+                ? '<span class="badge bg-success">Online</span>'
+                : '<span class="badge bg-danger">Offline</span>';
+            $tr.find('td.api-col-status').first().html(badge);
+            $tr.find('td.api-col-acessos').first().html('<span class="fs-5 fw-bold">' + acessos + '</span>');
+        }
+
+        var map = {};
+        data.tokens.forEach(function (t) {
+            map[String(t.id)] = t;
+        });
+
+        if (typeof $.fn.DataTable !== 'undefined' && $.fn.DataTable.isDataTable('#datatable')) {
+            $('#datatable').DataTable().rows().every(function () {
+                var $tr = $(this.node());
+                var id = $tr.attr('data-token-id');
+                if (id && map[id]) {
+                    patchRow($tr, map[id]);
+                }
+            });
+            return;
+        }
+
+        $('#datatable tbody tr[data-token-id]').each(function () {
+            var $tr = $(this);
+            var id = $tr.attr('data-token-id');
+            if (id && map[id]) {
+                patchRow($tr, map[id]);
+            }
+        });
+    }
+
+    function refreshTokensRow() {
+        var url = resolveRefreshUrl();
+        if (!url || !document.getElementById('datatable')) {
+            return;
+        }
+        var sep = url.indexOf('?') >= 0 ? '&' : '?';
+        $.ajax({
+            url: url + sep + '_=' + Date.now(),
+            type: 'GET',
+            dataType: 'json',
+            cache: false,
+            success: applyTokensPayload
+        });
+    }
+
+    if (typeof $ === 'undefined' || typeof $.ajax !== 'function') {
+        return;
+    }
+
+    refreshTokensRow();
+    setInterval(refreshTokensRow, 10000);
+})(jQuery);
+</script>
 
 {% endblock %}
 
