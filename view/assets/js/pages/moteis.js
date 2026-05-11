@@ -219,3 +219,21 @@ function limpa_formulário_cep() {
     $("#estado").val('');
     $("#numero").val('');
 }
+
+function gerarCodigoWordpress() {
+    var codigo = '';
+    if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+        var bytes = new Uint8Array(20);
+        crypto.getRandomValues(bytes);
+        for (var i = 0; i < bytes.length; i++) {
+            codigo += ('0' + bytes[i].toString(16)).slice(-2);
+        }
+        codigo = codigo.toUpperCase();
+    } else {
+        var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        for (var j = 0; j < 40; j++) {
+            codigo += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+    }
+    $('#codigo_wordpress').val(codigo);
+}
