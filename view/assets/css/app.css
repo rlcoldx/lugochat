@@ -42043,3 +42043,10 @@ span.tag.label.label-info {
     color: #fe634e;
     font-weight: 500;
 }
+#fechamento_moteis_tags {
+  gap: 2px;
+}
+#fechamento_moteis_tags .badge {
+  text-transform: lowercase;
+  padding: 0 10px;
+}

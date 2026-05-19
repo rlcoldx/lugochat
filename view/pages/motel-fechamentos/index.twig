@@ -1,0 +1,101 @@
+{% extends "layout/layoutMaster.twig" %}
+
+{% block title %}Fechamentos de Motéis{% endblock %}
+
+{% block body %}
+
+<div class="content-body">
+    <div class="container-fluid">
+        <div class="page-titles">
+            <div class="d-flex flex-wrap align-items-center justify-content-between">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ DOMAIN }}">Home</a></li>
+                    <li class="breadcrumb-item active"><a href="javascript:void(0)">Fechamentos de Motéis</a></li>
+                </ol>
+            </div>
+        </div>
+
+        {% if _get.ok is defined %}
+        <div class="alert alert-success">Fechamento salvo com sucesso.</div>
+        {% endif %}
+        {% if _get.erro is defined %}
+            {% if _get.erro == 'duplicado' %}
+            <div class="alert alert-warning">Um ou mais motéis já estão marcados como fechados nesta data.</div>
+            {% elseif _get.erro == 'validacao' %}
+            <div class="alert alert-warning">Preencha data, proprietário e selecione ao menos um motel.</div>
+            {% elseif _get.erro == 'motel_invalido' %}
+            <div class="alert alert-warning">Motéis inválidos para o proprietário selecionado.</div>
+            {% else %}
+            <div class="alert alert-danger">Não foi possível concluir a operação.</div>
+            {% endif %}
+        {% endif %}
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="content-title card-title mb-0 text-white">Fechamentos de Motéis</h3>
+            <a href="javascript:void(0)" data-bs-toggle="modal-remote" data-remote="{{ DOMAIN }}/admin/motel-fechamentos/add" data-bs-target="#fechamentomodal" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> Nova data de fechamento</a>
+        </div>
+
+        <p class="mb-3 text-white">Cadastre datas em que determinados motéis ficarão <strong class="text-primary">fechados</strong>. Selecione o proprietário e os estabelecimentos; será gravado um registro por motel na data escolhida.</p>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0" id="datatable_fechamentos">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Proprietário</th>
+                                <th>Motéis</th>
+                                <th>Qtd.</th>
+                                <th class="text-end" width="120">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for g in grupos %}
+                            <tr>
+                                <td>{{ g.date_fechamento|date('d/m/Y') }}</td>
+                                <td><span class="badge bg-primary">{{ g.proprietario }}</span></td>
+                                <td><span class="small text-lowercase">{{ g.moteis_nomes }}</span></td>
+                                <td><span class="badge bg-primary">{{ g.qtd_moteis }}</span></td>
+                                <td class="text-end">
+                                    <a href="javascript:void(0)" data-bs-toggle="modal-remote" data-remote="{{ DOMAIN }}/admin/motel-fechamentos/edit/{{ g.id_grupo }}" data-bs-target="#fechamentomodal" class="btn btn-sm btn-primary me-1" title="Editar"><i class="fa fa-pencil"></i></a>
+                                    <button type="button" class="btn btn-sm btn-danger btn-excluir-fechamento" data-id-grupo="{{ g.id_grupo }}" title="Excluir"><i class="fa fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="5">Nenhum fechamento cadastrado.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="fechamentomodal" tabindex="-1" role="dialog" aria-labelledby="fechamentomodalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-body"></div>
+        </div>
+    </div>
+</div>
+
+<script src="{{ DOMAIN }}/view/assets/vendor/datatables/js/jquery.dataTables.min.js"></script>
+<script src="{{ DOMAIN }}/view/assets/js/pages/motel-fechamentos.js"></script>
+<script>
+(function ($) {
+    'use strict';
+    if ($('#datatable_fechamentos tbody tr').length && $('#datatable_fechamentos tbody td[colspan]').length === 0) {
+        $('#datatable_fechamentos').DataTable({
+            order: [[0, 'desc']],
+            pageLength: 25,
+            language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json' }
+        });
+    }
+})(jQuery);
+</script>
+
+{% endblock %}

@@ -1,6 +1,7 @@
 /vendor
 /uploads
 /app
+/docs
 /buscademoteis-chat
 config/config.php
 config/db.php

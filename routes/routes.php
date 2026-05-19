@@ -25,6 +25,7 @@ require  __DIR__ . '/pages/relatorio.php';
 require  __DIR__ . '/pages/feriados.php';
 require  __DIR__ . '/pages/intervalo-dia-semana.php';
 require  __DIR__ . '/pages/paginas.php';
+require  __DIR__ . '/pages/motel-fechamentos.php';
 
 //WIDGET
 require  __DIR__ . '/chatbot/inicio.php';
