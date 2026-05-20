@@ -42,7 +42,7 @@
                                 </td>
                                 <td>
                                     <div class="fw-bold fs-6">{{ reserva.suite_nome }}</div>
-                                    <div>R$ {{ reserva.valor_reserva|number_format(2, ',', '.') }}</div>
+                                    <div>R$ {{ reserva.valor_reserva|number_format(2, ',', '.') }} - <span class="badge badge-sm light badge-{{ reserva.origem == 'app' ? 'success' : 'info' }} text-capitalize">{{ reserva.origem }}</span></div>
                                 </td>
                                 <td>
                                     <div class="fw-bold fs-6">{{ reserva.data_reserva|date("d/m/Y") }}</div>

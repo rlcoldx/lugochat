@@ -129,7 +129,8 @@
                                         {% for reserva in reservas %}
                                         <tr>
                                             <td class="align-middle">
-                                                <span class="badge badge-sm light badge-warning">#{{ reserva.codigo_reserva }}</span>
+                                                <span class="badge badge-sm light badge-{{ reserva.origem == 'app' ? 'success' : 'info' }} text-capitalize">{{ reserva.origem }}</span>
+                                                <span class="badge badge-sm light badge-warning">{{ reserva.codigo_reserva }}</span>
                                             </td>
                                             <td class="align-middle">
                                                 <div class="fw-bold fs-6">{{ reserva.nome }}</div>

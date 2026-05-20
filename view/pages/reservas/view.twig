@@ -25,7 +25,10 @@
 
                         <div class="w-100 border-bottom d-flex justify-content-between">
                             <h4 class="card-title">Reserva</h4>
+                            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <h4 class="badge light badge-{{ reserva.origem == 'app' ? 'success' : 'info' }} text-capitalize">{{ reserva.origem }}</h4>
                             <h4 class="badge bg-{{ reserva.pagamento_status|payStatusColor }} text-black">{{ reserva.codigo_reserva }}</h4>
+                            </div>
                         </div>
 
                         <ul class="list-group list-group-flush mt-3">

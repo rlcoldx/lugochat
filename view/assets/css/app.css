@@ -33533,12 +33533,12 @@ html:not([dir="rtl"]) .noUi-horizontal .noUi-handle {
 [data-theme-version="dark"] .light.badge-success {
   background-color: rgba(43, 193, 85, 0.1);
 }
+[data-theme-version="dark"] .light.badge-info {
+  background-color: rgb(30 193 255 / 10%);
+}
 .light.badge-info {
   background-color: #d0cff8;
-  color: #2421da;
-}
-[data-theme-version="dark"] .light.badge-info {
-  background-color: rgba(36, 33, 218, 0.1);
+  color: #00b6ff;
 }
 .light.badge-primary {
   background-color: #ffd3cd;
