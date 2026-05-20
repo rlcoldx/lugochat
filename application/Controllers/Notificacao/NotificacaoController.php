@@ -40,7 +40,7 @@ class NotificacaoController extends Controller
             }
 
             if (!empty($codes)) {
-                $oneSignal->send($codes, $params['titulo'], $params['mensagem']);
+                $oneSignal->send($codes, $params['titulo'] ?? '', $params['mensagem'] ?? '');
             }
 
             $offset += $limit;

@@ -111,11 +111,11 @@ class ReservaPushNotificationService
                 $this->urlReserva($idReserva)
             );
 
-            if ($apiResponse === null) {
+            if (!$apiResponse['ok']) {
                 return [
                     'enviado' => false,
-                    'message' => 'Falha ao enviar via OneSignal API.',
-                    'destinatarios' => 0,
+                    'message' => $apiResponse['message'],
+                    'destinatarios' => count($keys),
                 ];
             }
 
