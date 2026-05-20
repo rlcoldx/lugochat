@@ -54,12 +54,11 @@
             swRelative = '/' + swRelative;
         }
         var swScope = basePath ? basePath + '/' : '/';
-        var swAbsolute = window.location.origin + swRelative;
 
         var initOpts = {
             appId: appId,
             notifyButton: { enable: false },
-            serviceWorkerPath: swAbsolute,
+            serviceWorkerPath: swRelative,
             serviceWorkerParam: { scope: swScope },
         };
 
@@ -72,7 +71,7 @@
             initOpts.allowLocalhostAsSecureOrigin = true;
         }
 
-        return { initOpts: initOpts, swAbsolute: swAbsolute };
+        return { initOpts: initOpts, swPath: swRelative };
     }
 
     OneSignalDeferred.push(async function (OneSignal) {
@@ -85,7 +84,7 @@
 
             await OneSignal.init(built.initOpts);
             window.OneSignalPushAvailable = true;
-            window.__onesignalSwPath = built.swAbsolute;
+            window.__onesignalSwPath = built.swPath;
         } catch (e) {
             window.OneSignalPushAvailable = false;
             console.warn('OneSignal:', e && e.message ? e.message : e);
