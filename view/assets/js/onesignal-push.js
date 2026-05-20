@@ -5,6 +5,7 @@
     var baseUrl = (document.body && document.body.getAttribute('data-path'))
         || (document.body && document.body.getAttribute('data-domain'));
     var btnItem = document.getElementById('onesignal-push-item');
+    var btnRemoverItem = document.getElementById('onesignal-remover-item');
     var btnAtivar = document.getElementById('btn-ativar-notificacoes');
     var btnRemover = document.getElementById('btn-remover-push-key');
     var oneSignalRef = null;
@@ -86,15 +87,20 @@
         }
     }
 
-    function setBotaoVisivel(visivel) {
-        if (!btnItem) {
+    function setItemVisivel(elemento, visivel) {
+        if (!elemento) {
             return;
         }
         if (visivel) {
-            btnItem.classList.remove('d-none');
+            elemento.classList.remove('d-none');
         } else {
-            btnItem.classList.add('d-none');
+            elemento.classList.add('d-none');
         }
+    }
+
+    function setNotificacaoAtiva(ativa) {
+        setItemVisivel(btnItem, !ativa);
+        setItemVisivel(btnRemoverItem, ativa);
     }
 
     function alertaPermissaoNegada() {
@@ -126,7 +132,7 @@
         if (typeof Swal !== 'undefined') {
             Swal.fire({
                 icon: 'success',
-                title: 'Vínculo removido',
+                title: 'Notificação removida',
                 text: 'Clique em "Ativar notificações" para cadastrar este navegador de novo.',
                 confirmButtonText: 'Entendi'
             });
@@ -135,25 +141,25 @@
 
     async function sincronizarPushKey(OneSignal, mostrarConfirmacao) {
         if (!syncAutomaticoAtivo || sessionStorage.getItem('onesignal_push_skip_sync') === '1') {
-            setBotaoVisivel(true);
+            setNotificacaoAtiva(false);
             return;
         }
 
         var permission = OneSignal.Notifications.permissionNative;
         if (permission !== 'granted') {
-            setBotaoVisivel(true);
+            setNotificacaoAtiva(false);
             return;
         }
 
         var subscriptionId = await obterSubscriptionId(OneSignal);
         if (!subscriptionId) {
-            setBotaoVisivel(true);
+            setNotificacaoAtiva(false);
             return;
         }
 
         var jaSalvo = sessionStorage.getItem('onesignal_push_key') === subscriptionId;
         var salvou = await salvarSubscriptionId(subscriptionId);
-        setBotaoVisivel(!salvou);
+        setNotificacaoAtiva(salvou);
 
         if (salvou && mostrarConfirmacao && !jaSalvo) {
             alertaSalvo();
@@ -190,13 +196,13 @@
 
     function confirmarRemocao() {
         if (typeof Swal === 'undefined') {
-            return Promise.resolve(window.confirm('Remover o vínculo de notificações desta conta neste dispositivo?'));
+            return Promise.resolve(window.confirm('Remover as notificações desta conta neste dispositivo?'));
         }
 
         return Swal.fire({
             icon: 'warning',
-            title: 'Remover vínculo?',
-            text: 'Você deixará de receber push nesta conta até clicar em "Ativar notificações" de novo.',
+            title: 'Remover Notificação?',
+            text: 'Você deixará de receber alertas nesta conta até clicar em "Ativar notificações" de novo.',
             showCancelButton: true,
             confirmButtonText: 'Remover',
             cancelButtonText: 'Cancelar',
@@ -228,7 +234,7 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Erro',
-                        text: (data && data.message) ? data.message : 'Não foi possível remover o vínculo.'
+                        text: (data && data.message) ? data.message : 'Não foi possível remover a notificação.'
                     });
                 }
                 return;
@@ -242,12 +248,12 @@
                 await optOutOneSignal(oneSignalRef);
             }
 
-            setBotaoVisivel(true);
+            setNotificacaoAtiva(false);
             alertaRemovido();
         } catch (e) {
             console.warn('Remover pushKey:', e);
             if (typeof Swal !== 'undefined') {
-                Swal.fire({ icon: 'error', title: 'Erro', text: 'Falha de rede ao remover o vínculo.' });
+                Swal.fire({ icon: 'error', title: 'Erro', text: 'Falha de rede ao remover a notificação.' });
             }
         } finally {
             if (btnRemover) {
@@ -272,7 +278,7 @@
         }
 
         if (window.OneSignalPushAvailable === false) {
-            setBotaoVisivel(true);
+            setNotificacaoAtiva(false);
             if (btnAtivar) {
                 btnAtivar.title = 'Configure Web Push no OneSignal com a URL: ' + baseUrl;
             }
@@ -294,7 +300,7 @@
                 if (id) {
                     salvarSubscriptionId(id).then(function (ok) {
                         if (ok) {
-                            setBotaoVisivel(false);
+                            setNotificacaoAtiva(true);
                         }
                     });
                 }
@@ -303,7 +309,7 @@
             if (OneSignal.Notifications.addEventListener) {
                 OneSignal.Notifications.addEventListener('permissionChange', function () {
                     if (sessionStorage.getItem('onesignal_push_skip_sync') === '1') {
-                        setBotaoVisivel(true);
+                        setNotificacaoAtiva(false);
                         return;
                     }
                     sincronizarPushKey(OneSignal, false);
@@ -313,11 +319,11 @@
             if (OneSignal.Notifications.permissionNative === 'granted') {
                 await sincronizarPushKey(OneSignal, false);
             } else {
-                setBotaoVisivel(true);
+                setNotificacaoAtiva(false);
             }
         } catch (e) {
             console.warn('OneSignal:', e);
-            setBotaoVisivel(true);
+            setNotificacaoAtiva(false);
         }
     });
 })();

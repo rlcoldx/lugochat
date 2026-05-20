@@ -62,51 +62,6 @@ $(document).on('click', '[data-bs-remote="modal"]', function(e) {
 	}
 });
 
-function testarPushUltimaReserva() {
-    var baseUrl = ($('body').data('path') || $('body').data('domain') || '').replace(/\/$/, '');
-    var $btn = $('#btn-testar-push-reserva');
-    if ($btn.length) {
-        $btn.prop('disabled', true);
-    }
-
-    $.ajax({
-        url: baseUrl + '/notificacao/testar-push-reserva',
-        type: 'POST',
-        dataType: 'json',
-        success: function (data) {
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({
-                    icon: data.status === 'success' ? 'success' : 'error',
-                    title: data.status === 'success' ? 'Push enviado' : 'Não enviado',
-                    text: data.message || ''
-                });
-            } else {
-                alert(data.message || '');
-            }
-        },
-        error: function (xhr) {
-            var msg = 'Erro ao testar push.';
-            if (xhr.responseJSON && xhr.responseJSON.message) {
-                msg = xhr.responseJSON.message;
-            }
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({ icon: 'error', title: 'Erro', text: msg });
-            } else {
-                alert(msg);
-            }
-        },
-        complete: function () {
-            if ($btn.length) {
-                $btn.prop('disabled', false);
-            }
-        }
-    });
-}
-
-$(document).on('click', '#btn-testar-push-reserva', function () {
-    testarPushUltimaReserva();
-});
-
 // Função para verificar novos agendamentos
 function changeMotel(motel) {
 	console.log(motel);

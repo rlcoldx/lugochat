@@ -26,47 +26,6 @@ class ReservaPushNotificationService
     }
 
     /**
-     * Teste provisório: notifica a última reserva com pagamento approved.
-     *
-     * @return array{status: string, message: string, id_reserva?: int, codigo_reserva?: string, destinatarios?: int}
-     */
-    public function testarUltimaReservaPaga(): array
-    {
-        $reserva = $this->notificacaoModel->getUltimaReservaPaga();
-        if (!$reserva) {
-            return [
-                'status' => 'error',
-                'message' => 'Nenhuma reserva com pagamento aprovado encontrada.',
-            ];
-        }
-
-        $idReserva = (int) $reserva['id'];
-        $resultado = $this->enviarNotificacaoPagamento($idReserva);
-
-        if (!$resultado['enviado']) {
-            return [
-                'status' => 'error',
-                'message' => $resultado['message'],
-                'id_reserva' => $idReserva,
-                'codigo_reserva' => $reserva['codigo_reserva'] ?? null,
-            ];
-        }
-
-        return [
-            'status' => 'success',
-            'message' => sprintf(
-                'Push enviado para %d dispositivo(s). Reserva %s (#%d).',
-                $resultado['destinatarios'],
-                $reserva['codigo_reserva'] ?? $idReserva,
-                $idReserva
-            ),
-            'id_reserva' => $idReserva,
-            'codigo_reserva' => $reserva['codigo_reserva'] ?? null,
-            'destinatarios' => $resultado['destinatarios'],
-        ];
-    }
-
-    /**
      * @return array{enviado: bool, message: string, destinatarios: int}
      */
     private function enviarNotificacaoPagamento(int $idReserva): array
