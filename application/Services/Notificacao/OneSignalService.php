@@ -57,6 +57,17 @@ class OneSignalService
             ];
         }
 
+        $apiKey = trim(ONESIGNAL_REST_API_KEY);
+        if ($apiKey === '') {
+            return [
+                'ok' => false,
+                'message' => 'ONESIGNAL_REST_API_KEY vazio no config.php.',
+                'http_code' => 0,
+                'notification_id' => null,
+                'errors' => [],
+            ];
+        }
+
         $curl = curl_init();
         curl_setopt_array($curl, [
             CURLOPT_URL => 'https://api.onesignal.com/notifications',
@@ -66,7 +77,7 @@ class OneSignalService
             CURLOPT_POSTFIELDS => $jsonData,
             CURLOPT_HTTPHEADER => [
                 'Content-Type: application/json; charset=utf-8',
-                'Authorization: Key ' . ONESIGNAL_REST_API_KEY,
+                'Authorization: key ' . $apiKey,
             ],
         ]);
 
