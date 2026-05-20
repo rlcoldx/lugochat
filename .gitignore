@@ -3,6 +3,7 @@
 /app
 /docs
 /buscademoteis-chat
+config.php
 config/config.php
 config/db.php
 node_modules/
