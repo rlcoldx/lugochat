@@ -11,9 +11,10 @@
    #RewriteCond %{HTTPS} off
    #RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
-   # OneSignal service workers (arquivos estáticos na raiz do projeto)
-   RewriteRule ^OneSignalSDKWorker\.js$ - [L]
-   RewriteRule ^OneSignalSDKUpdaterWorker\.js$ - [L]
+   # OneSignal — servir workers como arquivo estático (evita redirect para index.php)
+   RewriteCond %{REQUEST_URI} OneSignalSDKWorker\.js [NC,OR]
+   RewriteCond %{REQUEST_URI} OneSignalSDKUpdaterWorker\.js [NC]
+   RewriteRule . - [L]
 
    # ROUTER URL Rewrite
    RewriteCond %{SCRIPT_FILENAME} !-f
