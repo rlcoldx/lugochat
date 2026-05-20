@@ -3,9 +3,6 @@
 /app
 /docs
 /buscademoteis-chat
-config.php
-config/config.php
-config/db.php
 node_modules/
 composer.lock
 .idea
@@ -14,4 +11,8 @@ backup
 view/assets/dist
 log_error
 error_log
-config/config.php
+
+# Config local (nunca versionar — use config/config.exemple.php)
+/config/config.php
+/config/db.php
+config.php
