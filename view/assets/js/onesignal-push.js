@@ -105,7 +105,7 @@
         }
     }
 
-    async function sincronizarPushKey(OneSignal) {
+    async function sincronizarPushKey(OneSignal, mostrarConfirmacao) {
         var permission = OneSignal.Notifications.permissionNative;
         if (permission !== 'granted') {
             setBotaoVisivel(true);
@@ -118,9 +118,11 @@
             return;
         }
 
+        var jaSalvo = sessionStorage.getItem('onesignal_push_key') === subscriptionId;
         var salvou = await salvarSubscriptionId(subscriptionId);
         setBotaoVisivel(!salvou);
-        if (salvou) {
+
+        if (salvou && mostrarConfirmacao && !jaSalvo) {
             alertaSalvo();
         }
     }
@@ -140,7 +142,7 @@
                 return;
             }
 
-            await sincronizarPushKey(OneSignal);
+            await sincronizarPushKey(OneSignal, true);
         } catch (e) {
             console.warn('OneSignal:', e);
         } finally {
@@ -185,12 +187,12 @@
 
             if (OneSignal.Notifications.addEventListener) {
                 OneSignal.Notifications.addEventListener('permissionChange', function () {
-                    sincronizarPushKey(OneSignal);
+                    sincronizarPushKey(OneSignal, false);
                 });
             }
 
             if (OneSignal.Notifications.permissionNative === 'granted') {
-                await sincronizarPushKey(OneSignal);
+                await sincronizarPushKey(OneSignal, false);
             } else {
                 setBotaoVisivel(true);
             }
