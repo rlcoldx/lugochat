@@ -15,23 +15,16 @@ class OneSignalService
         }));
 
         if (empty($subscriptionIds)) {
-            return [
-                'ok' => false,
-                'message' => 'Nenhum subscription ID informado.',
-                'http_code' => 0,
-                'notification_id' => null,
-                'errors' => [],
-            ];
+            return $this->falha('Nenhum subscription ID informado.');
         }
 
         if (!defined('ONESIGNAL_APP_ID') || !defined('ONESIGNAL_REST_API_KEY')) {
-            return [
-                'ok' => false,
-                'message' => 'Credenciais OneSignal não configuradas.',
-                'http_code' => 0,
-                'notification_id' => null,
-                'errors' => [],
-            ];
+            return $this->falha('Credenciais OneSignal não configuradas.');
+        }
+
+        $apiKey = trim(ONESIGNAL_REST_API_KEY);
+        if ($apiKey === '') {
+            return $this->falha('ONESIGNAL_REST_API_KEY vazio no config.php do servidor.');
         }
 
         $payload = [
@@ -48,26 +41,45 @@ class OneSignalService
 
         $jsonData = json_encode($payload, JSON_UNESCAPED_UNICODE);
         if ($jsonData === false) {
-            return [
-                'ok' => false,
-                'message' => 'Erro ao montar JSON da notificação.',
-                'http_code' => 0,
-                'notification_id' => null,
-                'errors' => [],
-            ];
+            return $this->falha('Erro ao montar JSON da notificação.');
         }
 
-        $apiKey = trim(ONESIGNAL_REST_API_KEY);
-        if ($apiKey === '') {
-            return [
-                'ok' => false,
-                'message' => 'ONESIGNAL_REST_API_KEY vazio no config.php.',
-                'http_code' => 0,
-                'notification_id' => null,
-                'errors' => [],
-            ];
+        $authHeaders = $this->montarHeadersAutenticacao($apiKey);
+        $ultimaResposta = null;
+
+        foreach ($authHeaders as $authHeader) {
+            $ultimaResposta = $this->executarRequest($jsonData, $authHeader);
+            if ($ultimaResposta['auth_ok']) {
+                break;
+            }
         }
 
+        if ($ultimaResposta === null) {
+            return $this->falha('Não foi possível contactar a API OneSignal.');
+        }
+
+        return $this->interpretarResposta($ultimaResposta);
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function montarHeadersAutenticacao(string $apiKey): array
+    {
+        $headers = [
+            'key ' . $apiKey,
+            'Key ' . $apiKey,
+            'Basic ' . base64_encode($apiKey . ':'),
+        ];
+
+        return array_values(array_unique($headers));
+    }
+
+    /**
+     * @return array{auth_ok: bool, http_code: int, body: string, curl_error: string}
+     */
+    private function executarRequest(string $jsonData, string $authorizationValue): array
+    {
         $curl = curl_init();
         curl_setopt_array($curl, [
             CURLOPT_URL => 'https://api.onesignal.com/notifications',
@@ -77,45 +89,67 @@ class OneSignalService
             CURLOPT_POSTFIELDS => $jsonData,
             CURLOPT_HTTPHEADER => [
                 'Content-Type: application/json; charset=utf-8',
-                'Authorization: key ' . $apiKey,
+                'Authorization: ' . $authorizationValue,
             ],
         ]);
 
-        $response = curl_exec($curl);
+        $body = curl_exec($curl);
         $curlError = curl_error($curl);
         $httpCode = (int) curl_getinfo($curl, CURLINFO_HTTP_CODE);
         curl_close($curl);
 
-        if ($response === false) {
+        if ($body === false) {
             error_log('OneSignal cURL: ' . $curlError);
             return [
-                'ok' => false,
-                'message' => 'Erro de conexão com OneSignal: ' . $curlError,
+                'auth_ok' => false,
                 'http_code' => $httpCode,
-                'notification_id' => null,
-                'errors' => [],
+                'body' => '',
+                'curl_error' => $curlError,
             ];
         }
 
-        $decoded = json_decode($response, true);
+        $authOk = $httpCode < 400 && stripos($body, 'Access denied') === false;
+
+        return [
+            'auth_ok' => $authOk,
+            'http_code' => $httpCode,
+            'body' => (string) $body,
+            'curl_error' => $curlError,
+        ];
+    }
+
+    /**
+     * @param array{auth_ok: bool, http_code: int, body: string, curl_error: string} $resposta
+     * @return array{ok: bool, message: string, http_code: int, notification_id: ?string, errors: array}
+     */
+    private function interpretarResposta(array $resposta): array
+    {
+        if ($resposta['body'] === '' && $resposta['http_code'] === 0) {
+            return $this->falha(
+                'Erro de conexão com OneSignal: ' . ($resposta['curl_error'] ?: 'sem resposta'),
+                $resposta['http_code']
+            );
+        }
+
+        $decoded = json_decode($resposta['body'], true);
         if (!is_array($decoded)) {
-            error_log('OneSignal HTTP ' . $httpCode . ' (resposta inválida): ' . $response);
-            return [
-                'ok' => false,
-                'message' => 'Resposta inválida da OneSignal (HTTP ' . $httpCode . ').',
-                'http_code' => $httpCode,
-                'notification_id' => null,
-                'errors' => [],
-            ];
+            error_log('OneSignal HTTP ' . $resposta['http_code'] . ' (resposta inválida): ' . $resposta['body']);
+            return $this->falha(
+                'Resposta inválida da OneSignal (HTTP ' . $resposta['http_code'] . ').',
+                $resposta['http_code']
+            );
         }
 
-        if ($httpCode >= 400) {
-            $message = $this->formatarErrosApi($decoded) ?: ('HTTP ' . $httpCode);
-            error_log('OneSignal HTTP ' . $httpCode . ': ' . $response);
+        if ($resposta['http_code'] >= 400 || stripos($resposta['body'], 'Access denied') !== false) {
+            $message = $this->formatarErrosApi($decoded) ?: ('HTTP ' . $resposta['http_code']);
+            if (stripos($message, 'Access denied') !== false || stripos($message, 'API key') !== false) {
+                $message .= ' Gere uma nova App API Key em OneSignal → Settings → Keys & IDs e atualize ONESIGNAL_REST_API_KEY no config.php do servidor.';
+            }
+            error_log('OneSignal HTTP ' . $resposta['http_code'] . ': ' . $resposta['body']);
             return [
                 'ok' => false,
                 'message' => $message,
-                'http_code' => $httpCode,
+                'http_code' => $resposta['http_code'],
                 'notification_id' => null,
                 'errors' => $decoded['errors'] ?? [],
             ];
@@ -125,7 +159,7 @@ class OneSignalService
             return [
                 'ok' => true,
                 'message' => 'Notificação criada.',
-                'http_code' => $httpCode,
+                'http_code' => $resposta['http_code'],
                 'notification_id' => (string) $decoded['id'],
                 'errors' => [],
             ];
@@ -134,17 +168,31 @@ class OneSignalService
         $message = $this->formatarErrosApi($decoded);
         if ($message === '') {
             $message = 'OneSignal não criou a mensagem: nenhum pushKey válido/inscrito. '
-                . 'Abra o painel, clique em "Ativar notificações" e tente de novo.';
+                . 'Clique em "Ativar notificações" no painel e teste de novo.';
         }
 
-        error_log('OneSignal sem id (HTTP ' . $httpCode . '): ' . $response);
+        error_log('OneSignal sem id (HTTP ' . $resposta['http_code'] . '): ' . $resposta['body']);
 
+        return [
+            'ok' => false,
+            'message' => $message,
+            'http_code' => $resposta['http_code'],
+            'notification_id' => null,
+            'errors' => $decoded['errors'] ?? [],
+        ];
+    }
+
+    /**
+     * @return array{ok: bool, message: string, http_code: int, notification_id: ?string, errors: array}
+     */
+    private function falha(string $message, int $httpCode = 0): array
+    {
         return [
             'ok' => false,
             'message' => $message,
             'http_code' => $httpCode,
             'notification_id' => null,
-            'errors' => $decoded['errors'] ?? [],
+            'errors' => [],
         ];
     }
 
