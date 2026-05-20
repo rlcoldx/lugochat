@@ -53,6 +53,8 @@ class TemplateAdapter
         $this->twig->addGlobal('ONESIGNAL_SAFARI_WEB_ID', defined('ONESIGNAL_SAFARI_WEB_ID') ? ONESIGNAL_SAFARI_WEB_ID : '');
         $this->twig->addGlobal('ONESIGNAL_WEB_ENABLED', defined('ONESIGNAL_WEB_ENABLED') && ONESIGNAL_WEB_ENABLED);
         $this->twig->addGlobal('ONESIGNAL_SITE_PATH', defined('ONESIGNAL_SITE_PATH') ? ONESIGNAL_SITE_PATH : '');
+        $this->twig->addGlobal('ONESIGNAL_SW_PATH', defined('ONESIGNAL_SW_PATH') ? ONESIGNAL_SW_PATH : '/OneSignalSDKWorker.js');
+        $this->twig->addGlobal('ONESIGNAL_SW_SCOPE', defined('ONESIGNAL_SW_SCOPE') ? ONESIGNAL_SW_SCOPE : '/');
         $this->twig->addGlobal('_session', $_SESSION);
         $this->twig->addGlobal('_post', $_POST);
         $this->twig->addGlobal('_get', $_GET);

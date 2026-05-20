@@ -33,8 +33,33 @@ define('ONESIGNAL_APP_ID', '05596de6-efb1-4699-8019-66c627701617');
 define('ONESIGNAL_SAFARI_WEB_ID', 'web.onesignal.auto.4ed285de-faf5-4c6c-a346-3ff91e5aded6');
 define('ONESIGNAL_REST_API_KEY', 'os_v2_app_avmw3zxpwfdjtaazm3dco4awc4g7dfgo4csuoz5uky7y3q4vznurhdj73ewvtmv6tuggthhnokz7qrgjizkmcuvv7ohkxvu535qgwyq');
 define('ONESIGNAL_WEB_ENABLED', true);
-$_onesignalSitePath = parse_url(DOMAIN, PHP_URL_PATH);
-define('ONESIGNAL_SITE_PATH', $_onesignalSitePath ? rtrim($_onesignalSitePath, '/') : '');
+
+/**
+ * Caminho da app no domínio (ex.: /painel). Produção: PATH = https://buscademoteis.com.br/painel
+ */
+function lc_web_base_path(): string
+{
+    foreach ([PATH, DOMAIN] as $url) {
+        if (!is_string($url) || $url === '') {
+            continue;
+        }
+        $parsed = parse_url($url);
+        if (!is_array($parsed) || empty($parsed['path'])) {
+            continue;
+        }
+        $path = rtrim((string) $parsed['path'], '/');
+        if ($path === '' || strpos($path, '://') !== false) {
+            continue;
+        }
+        return $path[0] === '/' ? $path : '/' . $path;
+    }
+
+    return '';
+}
+
+define('ONESIGNAL_SITE_PATH', lc_web_base_path());
+define('ONESIGNAL_SW_PATH', (ONESIGNAL_SITE_PATH === '' ? '' : ONESIGNAL_SITE_PATH) . '/OneSignalSDKWorker.js');
+define('ONESIGNAL_SW_SCOPE', ONESIGNAL_SITE_PATH === '' ? '/' : ONESIGNAL_SITE_PATH . '/');
 
 @session_start();
 try {

@@ -14,3 +14,4 @@ backup
 view/assets/dist
 log_error
 error_log
+config/config.php
