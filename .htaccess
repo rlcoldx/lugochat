@@ -11,6 +11,10 @@
    #RewriteCond %{HTTPS} off
    #RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
+   # OneSignal service workers (arquivos estáticos na raiz do projeto)
+   RewriteRule ^OneSignalSDKWorker\.js$ - [L]
+   RewriteRule ^OneSignalSDKUpdaterWorker\.js$ - [L]
+
    # ROUTER URL Rewrite
    RewriteCond %{SCRIPT_FILENAME} !-f
    RewriteCond %{SCRIPT_FILENAME} !-d

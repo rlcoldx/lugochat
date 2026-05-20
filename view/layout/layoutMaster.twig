@@ -25,22 +25,56 @@
     <script>
     window.OneSignalDeferred = window.OneSignalDeferred || [];
     window.OneSignalPushAvailable = null;
+
+    function resolveOnesignalBasePath() {
+        var fromPhp = (document.body.getAttribute('data-onesignal-base') || '').trim().replace(/\/$/, '');
+        if (fromPhp) {
+            return fromPhp.charAt(0) === '/' ? fromPhp : '/' + fromPhp;
+        }
+        var dataPath = document.body.getAttribute('data-path');
+        if (dataPath) {
+            try {
+                var parsed = new URL(dataPath, window.location.origin).pathname.replace(/\/$/, '');
+                if (parsed) {
+                    return parsed;
+                }
+            } catch (e) {}
+        }
+        var pn = window.location.pathname || '';
+        if (pn.indexOf('/painel') === 0) {
+            return '/painel';
+        }
+        if (pn.indexOf('/lugochat') === 0) {
+            return '/lugochat';
+        }
+        return '';
+    }
+
     OneSignalDeferred.push(async function(OneSignal) {
         try {
+            var basePath = resolveOnesignalBasePath();
+            var swPath = (basePath || '') + '/OneSignalSDKWorker.js';
+            if (swPath.charAt(0) !== '/') {
+                swPath = '/' + swPath;
+            }
+            var swScope = basePath ? basePath + '/' : '/';
+
             var initOpts = {
                 appId: "{{ ONESIGNAL_APP_ID }}",
                 {% if ONESIGNAL_SAFARI_WEB_ID %}
                 safari_web_id: "{{ ONESIGNAL_SAFARI_WEB_ID }}",
                 {% endif %}
                 notifyButton: { enable: false },
+                serviceWorkerPath: swPath,
+                serviceWorkerParam: { scope: swScope },
                 {% if not PRODUCTION %}
                 allowLocalhostAsSecureOrigin: true,
                 {% endif %}
             };
-            initOpts.serviceWorkerPath = "{{ ONESIGNAL_SW_PATH }}";
-            initOpts.serviceWorkerParam = { scope: "{{ ONESIGNAL_SW_SCOPE }}" };
+
             await OneSignal.init(initOpts);
             window.OneSignalPushAvailable = true;
+            window.__onesignalSwPath = swPath;
         } catch (e) {
             window.OneSignalPushAvailable = false;
             console.warn('OneSignal:', e && e.message ? e.message : e);
@@ -52,7 +86,7 @@
     {# <script src="{{ PATH }}/view/widget/chat.js?cc=0NfEBa8i0X9l"></script> #}
 
 </head>
-<body data-domain="{{ DOMAIN }}" data-path="{{ PATH }}" data-typography="poppins" data-theme-version="dark" data-layout="vertical" data-sidebar-style="full" data-sidebar-position="fixed" data-header-position="fixed" data-container="wide" direction="ltr">
+<body data-domain="{{ DOMAIN }}" data-path="{{ PATH }}" data-onesignal-base="{{ ONESIGNAL_SITE_PATH }}" data-typography="poppins" data-theme-version="dark" data-layout="vertical" data-sidebar-style="full" data-sidebar-position="fixed" data-header-position="fixed" data-container="wide" direction="ltr">
 
     <div id="preloader">
         <div class="sk-three-bounce">
@@ -87,7 +121,7 @@
     {% endif %}
     <script src="{{ PATH }}/view/assets/js/global.js"></script>
     {% if ONESIGNAL_WEB_ENABLED and ONESIGNAL_APP_ID and _session.busca_perfil_id is defined %}
-    <script src="{{ PATH }}/view/assets/js/onesignal-push.js?v=1.0.6"></script>
+    <script src="{{ PATH }}/view/assets/js/onesignal-push.js?v=1.0.7"></script>
     {% endif %}
     {# {{ include('inc/script.twig') }} #}
 
