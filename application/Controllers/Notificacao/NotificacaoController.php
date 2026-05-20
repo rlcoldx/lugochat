@@ -90,6 +90,36 @@ class NotificacaoController extends Controller
     }
 
     /**
+     * Remove pushKey do usuário logado (permite vincular de novo com "Ativar notificações").
+     */
+    public function removerPush($params)
+    {
+        $this->setParams($params);
+
+        $loginSession = new LoginSession();
+        if (!$loginSession->userIsLogged()) {
+            http_response_code(401);
+            $this->responseJson(['status' => 'error', 'message' => 'Não autenticado.']);
+            return;
+        }
+
+        $userId = (int) $loginSession->getUserId();
+        $model = new NotificacaoModel();
+        $ok = $model->limparPushKey($userId);
+
+        if (!$ok) {
+            http_response_code(500);
+        }
+
+        $this->responseJson([
+            'status' => $ok ? 'success' : 'error',
+            'message' => $ok
+                ? 'Vínculo de notificações removido. Clique em "Ativar notificações" para cadastrar este dispositivo de novo.'
+                : 'Não foi possível remover o vínculo.',
+        ]);
+    }
+
+    /**
      * Teste provisório — apenas administrador (tipo 0).
      */
     public function testarPushUltimaReservaPaga($params)

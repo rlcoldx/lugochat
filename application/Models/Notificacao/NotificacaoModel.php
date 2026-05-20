@@ -113,6 +113,29 @@ class NotificacaoModel extends Model
         return array_values(array_unique($keys));
     }
 
+    public function limparPushKey(int $userId): bool
+    {
+        if ($userId <= 0) {
+            return false;
+        }
+
+        $read = new Read();
+        $read->ExeRead('usuarios', 'WHERE id = :id', "id={$userId}");
+        if (!$read->getResultSingle()) {
+            return false;
+        }
+
+        $update = new Update();
+        $update->ExeUpdate(
+            'usuarios',
+            ['pushKey' => null],
+            'WHERE id = :id',
+            "id={$userId}"
+        );
+
+        return (bool) $update->getResult();
+    }
+
     public function salvarPushKey(int $userId, string $pushKey): bool
     {
         $pushKey = trim($pushKey);
