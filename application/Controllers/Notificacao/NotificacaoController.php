@@ -4,22 +4,23 @@ namespace Agencia\Close\Controllers\Notificacao;
 
 use Agencia\Close\Controllers\Controller;
 use Agencia\Close\Models\Notificacao\NotificacaoModel;
+use Agencia\Close\Services\Login\LoginSession;
+use Agencia\Close\Services\Notificacao\OneSignalService;
 
 class NotificacaoController extends Controller
 {
-
     public function index($params)
     {
         $this->setParams($params);
         $this->render('components/notificacao/criar.twig', []);
     }
 
-
     public function enviarNotificacao($params)
     {
         $this->setParams($params);
 
         $model = new NotificacaoModel();
+        $oneSignal = new OneSignalService();
         $offset = 0;
         $limit = 10000;
 
@@ -30,58 +31,53 @@ class NotificacaoController extends Controller
                 break;
             }
 
-            $codes = array();
+            $codes = [];
             foreach ($usuarios as $usuario) {
-                $codes[] = $usuario['pushKey'];
+                if (!empty($usuario['pushKey'])) {
+                    $codes[] = $usuario['pushKey'];
+                }
             }
 
             if (!empty($codes)) {
-                $this->sendNotificacao($codes, $params['titulo'], $params['mensagem']);
+                $oneSignal->send($codes, $params['titulo'], $params['mensagem']);
             }
 
             $offset += $limit;
         } while (count($usuarios) === $limit);
 
-        echo json_encode([
+        $this->responseJson([
             'status' => 'success',
-            'message' => 'Notificações enviadas com sucesso!'
+            'message' => 'Notificações enviadas com sucesso!',
         ]);
     }
 
-    public function sendNotificacao($codes, $titulo, $mensagem){
+    /**
+     * Salva o subscription ID (OneSignal) do usuário logado no painel.
+     */
+    public function salvarPush($params)
+    {
+        $this->setParams($params);
 
-        $data = [
-            "app_id" => "05596de6-efb1-4699-8019-66c627701617",
-            "contents" => ["en" => $mensagem],
-            "headings" => ["en" => $titulo],
-            "include_subscription_ids" => $codes
-        ];
-        $jsonData = json_encode($data);
+        $loginSession = new LoginSession();
+        if (!$loginSession->userIsLogged()) {
+            http_response_code(401);
+            $this->responseJson(['status' => 'error', 'message' => 'Não autenticado.']);
+            return;
+        }
 
+        $subscriptionId = trim($_POST['subscription_id'] ?? $_POST['pushKey'] ?? '');
+        if ($subscriptionId === '') {
+            http_response_code(400);
+            $this->responseJson(['status' => 'error', 'message' => 'Subscription ID inválido.']);
+            return;
+        }
 
-        $curl = curl_init();
-        
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://api.onesignal.com/notifications',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => $jsonData,
-            CURLOPT_HTTPHEADER => array(
-                'Content-Type: application/json; charset=utf-8',
-                'Authorization: Key os_v2_app_avmw3zxpwfdjtaazm3dco4awc4g7dfgo4csuoz5uky7y3q4vznurhdj73ewvtmv6tuggthhnokz7qrgjizkmcuvv7ohkxvu535qgwyq'
-            ),
-        ));
-        
-        $response = curl_exec($curl);
-        
-        curl_close($curl);
-        return $response;
+        $model = new NotificacaoModel();
+        $ok = $model->salvarPushKey((int) $loginSession->getUserId(), $subscriptionId);
 
+        $this->responseJson([
+            'status' => $ok ? 'success' : 'error',
+            'message' => $ok ? 'Notificações ativadas.' : 'Não foi possível salvar.',
+        ]);
     }
-
 }

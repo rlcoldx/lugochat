@@ -4,7 +4,7 @@
 <div class="deznav">
     <div class="deznav-scroll">
 
-        {% if _session.busca_perfil_empresa == 1 %}
+        {% if _session.busca_perfil_master == '1' and _session.busca_perfil_tipo == '0' %}
             {{ include('inc/menu-admin.twig') }}
         {% else %}
 		    {{ include('inc/menu-motel.twig') }}

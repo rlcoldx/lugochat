@@ -17,6 +17,14 @@
                 </div>
 
                 <ul class="navbar-nav header-right">
+                    {% if ONESIGNAL_WEB_ENABLED and ONESIGNAL_APP_ID and _session.busca_perfil_id is defined %}
+                    <li class="nav-item align-self-center d-none" id="onesignal-push-item">
+                        <button type="button" class="btn btn-outline-primary btn-sm ms-2" id="btn-ativar-notificacoes" title="Receber alertas de reservas no computador">
+                            <i class="fa-solid fa-bell"></i>
+                            <span class="d-none d-md-inline">Ativar notificações</span>
+                        </button>
+                    </li>
+                    {% endif %}
                     {% if _session.busca_perfil_master == '1' %}
 					<li class="nav-item dropdown notification_dropdown">
                         <a class="nav-link bell bell-link p-3" href="javascript:void(0)" data-bs-toggle="modal-remote" data-remote="{{ DOMAIN }}/notificacao/criar" data-bs-target="#notificacao">

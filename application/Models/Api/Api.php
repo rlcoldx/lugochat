@@ -2,6 +2,7 @@
 
 namespace Agencia\Close\Models\Api;
 
+use Agencia\Close\Services\Notificacao\ReservaPushNotificationService;
 use Agencia\Close\Conn\Read;
 use Agencia\Close\Conn\Update;
 use Agencia\Close\Conn\Create;
@@ -255,8 +256,13 @@ class Api extends Model
             "id_reserva={$id_reserva}"
         );
 
-        // Verifica se pelo menos uma das atualizações afetou linhas
-        return $updatePagamento->getRowCount() > 0 || $updateReserva->getRowCount() > 0;
+        $ok = $updatePagamento->getRowCount() > 0 || $updateReserva->getRowCount() > 0;
+
+        if ($ok) {
+            (new ReservaPushNotificationService())->notificarPagamentoAprovado((int) $id_reserva);
+        }
+
+        return $ok;
     }
 
     /**

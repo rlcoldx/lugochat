@@ -6,6 +6,10 @@
 	let draw = Chart.controllers.line.__super__.draw; //draw shadow
 	var screenWidth = $(window).width();
 	var donutChart = function(){
+		var el = document.querySelector("#donutChart");
+		if (!el) {
+			return;
+		}
 		var options = {
           series: [45, 30, 25],
           chart: {
@@ -53,7 +57,7 @@
         }] */
         };
 
-        var chart = new ApexCharts(document.querySelector("#donutChart"), options);
+        var chart = new ApexCharts(el, options);
         chart.render();
 	}
 	
@@ -336,6 +340,14 @@
 			
 			
 			load:function(){
+				var hasCharts = document.querySelector("#donutChart")
+					|| document.querySelector("#widgetChart1")
+					|| document.getElementById("revenue")
+					|| document.getElementById("chart_widget_2")
+					|| document.querySelector("span.donut");
+				if (!hasCharts) {
+					return;
+				}
 				donutChart();
 				donutChart1();
 				widgetChart1();

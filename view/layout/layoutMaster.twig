@@ -20,6 +20,37 @@
     <script src="{{ PATH }}/view/assets/vendor/select2/js/select2.full.min.js"></script>
     <script src="{{ PATH }}/view/assets/vendor/sweetalert/sweetalert2.min.js"></script>
 
+    {% if ONESIGNAL_WEB_ENABLED and ONESIGNAL_APP_ID and _session.busca_perfil_id is defined %}
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    <script>
+    window.OneSignalDeferred = window.OneSignalDeferred || [];
+    window.OneSignalPushAvailable = null;
+    OneSignalDeferred.push(async function(OneSignal) {
+        try {
+            var initOpts = {
+                appId: "{{ ONESIGNAL_APP_ID }}",
+                {% if ONESIGNAL_SAFARI_WEB_ID %}
+                safari_web_id: "{{ ONESIGNAL_SAFARI_WEB_ID }}",
+                {% endif %}
+                notifyButton: { enable: false },
+                {% if not PRODUCTION %}
+                allowLocalhostAsSecureOrigin: true,
+                {% endif %}
+            };
+            {% if ONESIGNAL_SITE_PATH %}
+            initOpts.serviceWorkerPath = "{{ ONESIGNAL_SITE_PATH }}/OneSignalSDKWorker.js";
+            initOpts.serviceWorkerParam = { scope: "{{ ONESIGNAL_SITE_PATH }}/" };
+            {% endif %}
+            await OneSignal.init(initOpts);
+            window.OneSignalPushAvailable = true;
+        } catch (e) {
+            window.OneSignalPushAvailable = false;
+            console.warn('OneSignal:', e && e.message ? e.message : e);
+        }
+    });
+    </script>
+    {% endif %}
+
     {# <script src="{{ PATH }}/view/widget/chat.js?cc=0NfEBa8i0X9l"></script> #}
 
 </head>
@@ -57,6 +88,9 @@
         <script src="{{ PATH }}/view/assets/js/dashboard/dashboard-1.js"></script>
     {% endif %}
     <script src="{{ PATH }}/view/assets/js/global.js"></script>
+    {% if ONESIGNAL_WEB_ENABLED and ONESIGNAL_APP_ID and _session.busca_perfil_id is defined %}
+    <script src="{{ PATH }}/view/assets/js/onesignal-push.js?v=1.0.4"></script>
+    {% endif %}
     {# {{ include('inc/script.twig') }} #}
 
 </body>
