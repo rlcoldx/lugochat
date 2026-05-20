@@ -6,6 +6,7 @@ use Agencia\Close\Controllers\Controller;
 use Agencia\Close\Models\Notificacao\NotificacaoModel;
 use Agencia\Close\Services\Login\LoginSession;
 use Agencia\Close\Services\Notificacao\OneSignalService;
+use Agencia\Close\Services\Notificacao\ReservaPushNotificationService;
 
 class NotificacaoController extends Controller
 {
@@ -86,5 +87,28 @@ class NotificacaoController extends Controller
                 ? 'pushKey salvo para o usuário #' . $userId . '.'
                 : 'Não foi possível salvar o pushKey.',
         ]);
+    }
+
+    /**
+     * Teste provisório — apenas administrador (tipo 0).
+     */
+    public function testarPushUltimaReservaPaga($params)
+    {
+        $this->setParams($params);
+
+        if (!isset($_SESSION['busca_perfil_tipo']) || (int) $_SESSION['busca_perfil_tipo'] !== 0) {
+            http_response_code(403);
+            $this->responseJson(['status' => 'error', 'message' => 'Acesso negado.']);
+            return;
+        }
+
+        $service = new ReservaPushNotificationService();
+        $resultado = $service->testarUltimaReservaPaga();
+
+        if ($resultado['status'] !== 'success') {
+            http_response_code(400);
+        }
+
+        $this->responseJson($resultado);
     }
 }

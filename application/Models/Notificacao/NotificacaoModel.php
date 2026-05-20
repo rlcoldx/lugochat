@@ -76,6 +76,28 @@ class NotificacaoModel extends Model
     }
 
     /**
+     * Última reserva com pagamento aprovado (maior id).
+     *
+     * @return array<string, mixed>|null
+     */
+    public function getUltimaReservaPaga(): ?array
+    {
+        $read = new Read();
+        $read->FullRead(
+            "SELECT r.id, r.codigo_reserva, r.id_motel, r.nome AS cliente_nome, u.nome AS motel_nome
+             FROM reservas AS r
+             INNER JOIN pagamentos AS p ON p.id_reserva = r.id
+             LEFT JOIN usuarios AS u ON u.id = r.id_motel AND u.tipo = '2'
+             WHERE p.pagamento_status = 'approved'
+             ORDER BY r.id DESC
+             LIMIT 1"
+        );
+
+        $row = $read->getResultSingle();
+        return $row ?: null;
+    }
+
+    /**
      * @param array<int, array<string, mixed>> $rows
      * @return array<int, string>
      */
