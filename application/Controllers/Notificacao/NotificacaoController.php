@@ -72,12 +72,19 @@ class NotificacaoController extends Controller
             return;
         }
 
+        $userId = (int) $loginSession->getUserId();
         $model = new NotificacaoModel();
-        $ok = $model->salvarPushKey((int) $loginSession->getUserId(), $subscriptionId);
+        $ok = $model->salvarPushKey($userId, $subscriptionId);
+
+        if (!$ok) {
+            http_response_code(500);
+        }
 
         $this->responseJson([
             'status' => $ok ? 'success' : 'error',
-            'message' => $ok ? 'Notificações ativadas.' : 'Não foi possível salvar.',
+            'message' => $ok
+                ? 'pushKey salvo para o usuário #' . $userId . '.'
+                : 'Não foi possível salvar o pushKey.',
         ]);
     }
 }

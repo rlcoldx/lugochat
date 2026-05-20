@@ -52,7 +52,7 @@
     {# <script src="{{ PATH }}/view/widget/chat.js?cc=0NfEBa8i0X9l"></script> #}
 
 </head>
-<body data-domain="{{ DOMAIN }}" data-typography="poppins" data-theme-version="dark" data-layout="vertical" data-sidebar-style="full" data-sidebar-position="fixed" data-header-position="fixed" data-container="wide" direction="ltr">
+<body data-domain="{{ DOMAIN }}" data-path="{{ PATH }}" data-typography="poppins" data-theme-version="dark" data-layout="vertical" data-sidebar-style="full" data-sidebar-position="fixed" data-header-position="fixed" data-container="wide" direction="ltr">
 
     <div id="preloader">
         <div class="sk-three-bounce">
@@ -87,7 +87,7 @@
     {% endif %}
     <script src="{{ PATH }}/view/assets/js/global.js"></script>
     {% if ONESIGNAL_WEB_ENABLED and ONESIGNAL_APP_ID and _session.busca_perfil_id is defined %}
-    <script src="{{ PATH }}/view/assets/js/onesignal-push.js?v=1.0.5"></script>
+    <script src="{{ PATH }}/view/assets/js/onesignal-push.js?v=1.0.6"></script>
     {% endif %}
     {# {{ include('inc/script.twig') }} #}
 

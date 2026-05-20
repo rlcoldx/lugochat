@@ -99,6 +99,18 @@ class NotificacaoModel extends Model
         }
 
         $update = new Update();
+        $read = new Read();
+        $read->ExeRead('usuarios', 'WHERE id = :id', "id={$userId}");
+        $usuario = $read->getResultSingle();
+        if (!$usuario) {
+            return false;
+        }
+
+        if (($usuario['pushKey'] ?? '') === $pushKey) {
+            return true;
+        }
+
+        $update = new Update();
         $update->ExeUpdate(
             'usuarios',
             ['pushKey' => $pushKey],
@@ -106,6 +118,6 @@ class NotificacaoModel extends Model
             "id={$userId}"
         );
 
-        return $update->getResult();
+        return $update->getResult() && $update->getRowCount() > 0;
     }
 }

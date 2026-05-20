@@ -1,41 +1,72 @@
 /**
- * OneSignal Web Push — botão no header e salvamento do subscription ID.
+ * OneSignal Web Push — salva pushKey (subscription ID) do usuário logado em usuarios.pushKey
  */
 (function () {
-    var domain = document.body && document.body.getAttribute('data-domain');
+    var baseUrl = (document.body && document.body.getAttribute('data-path'))
+        || (document.body && document.body.getAttribute('data-domain'));
     var btnItem = document.getElementById('onesignal-push-item');
     var btnAtivar = document.getElementById('btn-ativar-notificacoes');
 
-    if (!domain || typeof OneSignalDeferred === 'undefined') {
+    if (!baseUrl || typeof OneSignalDeferred === 'undefined') {
         return;
     }
 
+    baseUrl = baseUrl.replace(/\/$/, '');
+
     function salvarSubscriptionId(subscriptionId) {
-        if (!subscriptionId || subscriptionId.length < 10) {
-            return;
+        if (!subscriptionId || String(subscriptionId).length < 10) {
+            return Promise.resolve(false);
         }
 
+        var idStr = String(subscriptionId);
         var ultimo = sessionStorage.getItem('onesignal_push_key');
-        if (ultimo === subscriptionId) {
-            return;
+        if (ultimo === idStr) {
+            return Promise.resolve(true);
         }
 
         var body = new URLSearchParams();
-        body.append('subscription_id', subscriptionId);
+        body.append('subscription_id', idStr);
 
-        fetch(domain + '/notificacao/salvar-push', {
+        return fetch(baseUrl + '/notificacao/salvar-push', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             credentials: 'same-origin',
             body: body.toString()
         })
-            .then(function (r) { return r.json(); })
-            .then(function (data) {
-                if (data && data.status === 'success') {
-                    sessionStorage.setItem('onesignal_push_key', subscriptionId);
+            .then(function (r) { return r.json().then(function (data) { return { ok: r.ok, data: data }; }); })
+            .then(function (res) {
+                if (res.ok && res.data && res.data.status === 'success') {
+                    sessionStorage.setItem('onesignal_push_key', idStr);
+                    return true;
                 }
+                console.warn('Salvar pushKey:', res.data);
+                return false;
             })
-            .catch(function () {});
+            .catch(function (err) {
+                console.warn('Salvar pushKey (rede):', err);
+                return false;
+            });
+    }
+
+    async function obterSubscriptionId(OneSignal) {
+        try {
+            if (OneSignal.User.PushSubscription.optIn) {
+                await OneSignal.User.PushSubscription.optIn();
+            }
+        } catch (e) {}
+
+        for (var i = 0; i < 15; i++) {
+            var id = OneSignal.User.PushSubscription.id;
+            if (id && typeof id.then === 'function') {
+                id = await id;
+            }
+            if (id) {
+                return String(id);
+            }
+            await new Promise(function (resolve) { setTimeout(resolve, 400); });
+        }
+
+        return null;
     }
 
     function setBotaoVisivel(visivel) {
@@ -51,26 +82,46 @@
 
     function alertaPermissaoNegada() {
         if (typeof Swal === 'undefined') {
-            alert('As notificações estão bloqueadas. Abra as configurações do site no navegador e permita notificações.');
+            alert('As notificações estão bloqueadas. Permita notificações nas configurações do navegador para este site.');
             return;
         }
         Swal.fire({
             icon: 'info',
             title: 'Notificações bloqueadas',
-            html: 'Para receber alertas de reservas, permita notificações nas configurações do navegador para este site.<br><br>No Chrome/Edge: ícone do cadeado na barra de endereço → Notificações → Permitir.',
+            html: 'Para receber alertas de reservas, permita notificações nas configurações do navegador.<br><br>Chrome/Edge: cadeado na barra de endereço → Notificações → Permitir.',
             confirmButtonText: 'Entendi'
         });
     }
 
-    async function atualizarUI(OneSignal) {
+    function alertaSalvo() {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'success',
+                title: 'Notificações ativas',
+                text: 'Este dispositivo está vinculado à sua conta.',
+                timer: 2500,
+                showConfirmButton: false
+            });
+        }
+    }
+
+    async function sincronizarPushKey(OneSignal) {
         var permission = OneSignal.Notifications.permissionNative;
-        var subscriptionId = OneSignal.User.PushSubscription.id;
-        var ativo = permission === 'granted' && subscriptionId;
+        if (permission !== 'granted') {
+            setBotaoVisivel(true);
+            return;
+        }
 
-        setBotaoVisivel(!ativo);
+        var subscriptionId = await obterSubscriptionId(OneSignal);
+        if (!subscriptionId) {
+            setBotaoVisivel(true);
+            return;
+        }
 
-        if (ativo) {
-            salvarSubscriptionId(subscriptionId);
+        var salvou = await salvarSubscriptionId(subscriptionId);
+        setBotaoVisivel(!salvou);
+        if (salvou) {
+            alertaSalvo();
         }
     }
 
@@ -80,29 +131,16 @@
         }
 
         try {
-            var permissionAntes = OneSignal.Notifications.permissionNative;
-
-            if (permissionAntes !== 'granted') {
+            if (OneSignal.Notifications.permissionNative !== 'granted') {
                 await OneSignal.Notifications.requestPermission();
             }
 
-            await atualizarUI(OneSignal);
-
-            var permissionDepois = OneSignal.Notifications.permissionNative;
-
-            if (permissionDepois === 'denied') {
+            if (OneSignal.Notifications.permissionNative === 'denied') {
                 alertaPermissaoNegada();
-            } else if (permissionDepois === 'granted' && !OneSignal.User.PushSubscription.id) {
-                if (typeof Swal !== 'undefined') {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Quase lá',
-                        text: 'Permissão concedida. Se o alerta não sumir, recarregue a página.',
-                        timer: 3000,
-                        showConfirmButton: false
-                    });
-                }
+                return;
             }
+
+            await sincronizarPushKey(OneSignal);
         } catch (e) {
             console.warn('OneSignal:', e);
         } finally {
@@ -113,17 +151,21 @@
     }
 
     OneSignalDeferred.push(async function (OneSignal) {
+        var espera = 0;
+        while (window.OneSignalPushAvailable === null && espera < 60) {
+            await new Promise(function (r) { setTimeout(r, 100); });
+            espera++;
+        }
+
         if (window.OneSignalPushAvailable === false) {
             setBotaoVisivel(true);
             if (btnAtivar) {
-                btnAtivar.title = 'Web Push não configurado no OneSignal. Em onesignal.com → seu app → Web → adicione a URL: ' + domain;
+                btnAtivar.title = 'Configure Web Push no OneSignal com a URL: ' + baseUrl;
             }
             return;
         }
 
         try {
-            await atualizarUI(OneSignal);
-
             if (btnAtivar) {
                 btnAtivar.addEventListener('click', function () {
                     ativarNotificacoes(OneSignal);
@@ -133,15 +175,24 @@
             OneSignal.User.PushSubscription.addEventListener('change', function (event) {
                 var id = event && event.current && event.current.id;
                 if (id) {
-                    salvarSubscriptionId(id);
-                    setBotaoVisivel(false);
+                    salvarSubscriptionId(id).then(function (ok) {
+                        if (ok) {
+                            setBotaoVisivel(false);
+                        }
+                    });
                 }
             });
 
             if (OneSignal.Notifications.addEventListener) {
                 OneSignal.Notifications.addEventListener('permissionChange', function () {
-                    atualizarUI(OneSignal);
+                    sincronizarPushKey(OneSignal);
                 });
+            }
+
+            if (OneSignal.Notifications.permissionNative === 'granted') {
+                await sincronizarPushKey(OneSignal);
+            } else {
+                setBotaoVisivel(true);
             }
         } catch (e) {
             console.warn('OneSignal:', e);
