@@ -122,8 +122,23 @@ function verificarNovosAgendamentos() {
     });
 
 }
+function verificarPagamentoAprovado() {
+    let DOMAIN = $('body').data('domain');
+    if (!DOMAIN) {
+        return;
+    }
+    $.ajax({
+        url: DOMAIN + '/reservas/check/pagamento',
+        type: 'GET',
+        async: true
+    });
+}
+
 verificarNovosAgendamentos();
 setInterval(verificarNovosAgendamentos, 60000);
+
+verificarPagamentoAprovado();
+setInterval(verificarPagamentoAprovado, 60000);
 
 var originalTitle = document.title;
 var blinkInterval;

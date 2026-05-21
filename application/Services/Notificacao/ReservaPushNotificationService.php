@@ -4,6 +4,7 @@ namespace Agencia\Close\Services\Notificacao;
 
 use Agencia\Close\Conn\Read;
 use Agencia\Close\Models\Notificacao\NotificacaoModel;
+use Agencia\Close\Models\Reserva\Reserva;
 
 class ReservaPushNotificationService
 {
@@ -20,9 +21,28 @@ class ReservaPushNotificationService
      * Notifica apenas quando o pagamento estiver approved.
      * Admin (tipo 0): qualquer motel. Motel (tipo 2) e equipe (tipo 3): só o id_motel da reserva.
      */
-    public function notificarPagamentoAprovado(int $idReserva): void
+    /**
+     * Processa fila: pagamento approved + notificao = no → push → notificao = yes.
+     */
+    public function processarReservasPagasPendentes(): int
     {
-        $this->enviarNotificacaoPagamento($idReserva);
+        $reservaModel = new Reserva();
+        $rows = $reservaModel->getReservasPagasSemNotificacao()->getResult() ?: [];
+        $enviadas = 0;
+
+        foreach ($rows as $row) {
+            $idReserva = (int) ($row['id'] ?? 0);
+            if ($idReserva <= 0) {
+                continue;
+            }
+
+            $resultado = $this->enviarNotificacaoPagamento($idReserva);
+            if ($resultado['enviado'] && $reservaModel->marcarNotificaoEnviada($idReserva)) {
+                $enviadas++;
+            }
+        }
+
+        return $enviadas;
     }
 
     /**

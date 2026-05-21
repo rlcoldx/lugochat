@@ -16,6 +16,57 @@ class Reserva extends Model
         return $this->read;
     }
 
+    /**
+     * Reservas com pagamento aprovado e push ainda não enviado (notificao = no).
+     */
+    public function getReservasPagasSemNotificacao(): Read
+    {
+        $read = new Read();
+        $read->FullRead(
+            "SELECT r.id
+             FROM reservas AS r
+             INNER JOIN pagamentos AS p ON p.id_reserva = r.id
+             WHERE p.pagamento_status = 'approved'
+             AND r.notificao = 'no'
+             ORDER BY r.id ASC"
+        );
+
+        return $read;
+    }
+
+    public function marcarNotificaoEnviada(int $idReserva): bool
+    {
+        if ($idReserva <= 0) {
+            return false;
+        }
+
+        $update = new Update();
+        $update->ExeUpdate(
+            'reservas',
+            ['notificao' => 'yes'],
+            'WHERE id = :id AND notificao <> :yes',
+            "id={$idReserva}&yes=yes"
+        );
+
+        return (bool) $update->getResult() && $update->getRowCount() > 0;
+    }
+
+    /**
+     * Cancelada/recusada: marca notificao como yes para não disparar push de pagamento.
+     *
+     * @param array<string, mixed> $campos
+     * @return array<string, mixed>
+     */
+    public static function comNotificaoEncerrada(array $campos): array
+    {
+        $status = $campos['status_reserva'] ?? '';
+        if (in_array($status, ['Cancelado', 'Recusado'], true)) {
+            $campos['notificao'] = 'yes';
+        }
+
+        return $campos;
+    }
+
     public function checkReservasExpiradas(): array
     {
         // Busca reservas que não estão recusadas/canceladas, pagamento não aprovado e passaram de 10 minutos
@@ -35,7 +86,12 @@ class Reserva extends Model
             foreach ($reservasExpiradas as $reserva) {
                 // Atualiza o status para Cancelado
                 $update = new Update();
-                $update->ExeUpdate('reservas', ['status_reserva' => 'Cancelado'], 'WHERE id = :id',  "id={$reserva['id']}");
+                $update->ExeUpdate(
+                    'reservas',
+                    self::comNotificaoEncerrada(['status_reserva' => 'Cancelado']),
+                    'WHERE id = :id',
+                    "id={$reserva['id']}"
+                );
 
                 if ($reserva['integracao'] == 'api') {
                     $update->ExeUpdate('reservas', ['fase_api' => 0, 'processado_api' => 'N', 'cancelada_api' => 'S'], 'WHERE id = :id',  "id={$reserva['id']}");
@@ -196,6 +252,7 @@ class Reserva extends Model
     {
         $id = $params['id'];
         unset($params['id']);
+        $params = self::comNotificaoEncerrada($params);
         $update = new Update();
         $update->ExeUpdate('reservas', $params, 'WHERE `id` = :id', "id={$id}");
         return $update;

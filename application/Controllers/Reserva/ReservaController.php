@@ -1,9 +1,10 @@
 <?php
 namespace Agencia\Close\Controllers\Reserva;
 
-use Agencia\Close\Models\Home\Home;
 use Agencia\Close\Controllers\Controller;
 use Agencia\Close\Models\Reserva\Reserva;
+use Agencia\Close\Services\Login\LoginSession;
+use Agencia\Close\Services\Notificacao\ReservaPushNotificationService;
 
 class ReservaController extends Controller
 {
@@ -26,6 +27,23 @@ class ReservaController extends Controller
 		$this->setParams($params);
 		$check = new Reserva();
 		$check->checkReservasExpiradas();
+	}
+
+	/**
+	 * Verifica reservas pagas sem push enviado (notificao = no) e dispara notificação.
+	 */
+	public function check_reservas_pagamento($params)
+	{
+		$this->setParams($params);
+
+		$loginSession = new LoginSession();
+		if (!$loginSession->userIsLogged()) {
+			echo 0;
+			return;
+		}
+
+		$service = new ReservaPushNotificationService();
+		echo (int) $service->processarReservasPagasPendentes();
 	}
 
 	public function get_reservas($params)

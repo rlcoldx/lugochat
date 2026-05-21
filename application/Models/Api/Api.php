@@ -2,11 +2,11 @@
 
 namespace Agencia\Close\Models\Api;
 
-use Agencia\Close\Services\Notificacao\ReservaPushNotificationService;
 use Agencia\Close\Conn\Read;
 use Agencia\Close\Conn\Update;
 use Agencia\Close\Conn\Create;
 use Agencia\Close\Models\Model;
+use Agencia\Close\Models\Reserva\Reserva;
 
 class Api extends Model 
 {
@@ -250,19 +250,14 @@ class Api extends Model
                 'processado_api' => 'N',
                 'cancelada_api' => 'N',
                 'status_reserva' => 'Aceito',
-                'fase_api' => 2
+                'fase_api' => 2,
+                'notificao' => 'no',
             ],
             'WHERE id = :id_reserva',
             "id_reserva={$id_reserva}"
         );
 
-        $ok = $updatePagamento->getRowCount() > 0 || $updateReserva->getRowCount() > 0;
-
-        if ($ok) {
-            (new ReservaPushNotificationService())->notificarPagamentoAprovado((int) $id_reserva);
-        }
-
-        return $ok;
+        return $updatePagamento->getRowCount() > 0 || $updateReserva->getRowCount() > 0;
     }
 
     /**
@@ -285,12 +280,12 @@ class Api extends Model
         $updateReserva = new Update();
         $updateReserva->ExeUpdate(
             'reservas',
-            [
+            Reserva::comNotificaoEncerrada([
                 'processado_api' => 'S',
                 'cancelada_api' => 'S',
                 'fase_api' => 0,
-                'status_reserva' => 'Cancelado'
-            ],
+                'status_reserva' => 'Cancelado',
+            ]),
             'WHERE id = :id_reserva AND id_motel = :id_motel',
             "id_reserva={$id_reserva}&id_motel={$id_motel}"
         );
@@ -319,12 +314,12 @@ class Api extends Model
         $updateReserva = new Update();
         $updateReserva->ExeUpdate(
             'reservas',
-            [
+            Reserva::comNotificaoEncerrada([
                 'processado_api' => 'N',
                 'cancelada_api' => 'S',
                 'fase_api' => 0,
-                'status_reserva' => 'Recusado'
-            ],
+                'status_reserva' => 'Recusado',
+            ]),
             'WHERE id = :id_reserva AND id_motel = :id_motel',
             "id_reserva={$id_reserva}&id_motel={$id_motel}"
         );
@@ -374,7 +369,10 @@ class Api extends Model
         $update = new Update();
         $update->ExeUpdate(
             'reservas',
-            ['processado_api' => 'S', 'status_reserva' => $status_reserva],
+            Reserva::comNotificaoEncerrada([
+                'processado_api' => 'S',
+                'status_reserva' => $status_reserva,
+            ]),
             'WHERE id = :id_reserva AND id_motel = :id_motel AND integracao = "api"',
             "id_reserva={$id_reserva}&id_motel={$id_motel}"
         );

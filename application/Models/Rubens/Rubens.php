@@ -2,11 +2,11 @@
 
 namespace Agencia\Close\Models\Rubens;
 
-use Agencia\Close\Services\Notificacao\ReservaPushNotificationService;
 use Agencia\Close\Conn\Read;
 use Agencia\Close\Conn\Update;
 use Agencia\Close\Conn\Create;
 use Agencia\Close\Models\Model;
+use Agencia\Close\Models\Reserva\Reserva;
 
 class Rubens extends Model 
 {
@@ -233,19 +233,14 @@ class Rubens extends Model
                 'processado_api' => 'S',
                 'cancelada_api' => 'N',
                 'status_reserva' => 'Aceito',
-                'fase_api' => 2
+                'fase_api' => 2,
+                'notificao' => 'no',
             ],
             'WHERE id = :id_reserva',
             "id_reserva={$id_reserva}"
         );
 
-        $ok = $updatePagamento->getRowCount() > 0 || $updateReserva->getRowCount() > 0;
-
-        if ($ok) {
-            (new ReservaPushNotificationService())->notificarPagamentoAprovado((int) $id_reserva);
-        }
-
-        return $ok;
+        return $updatePagamento->getRowCount() > 0 || $updateReserva->getRowCount() > 0;
     }
 
     /**
@@ -269,12 +264,12 @@ class Rubens extends Model
         $updateReserva = new Update();
         $updateReserva->ExeUpdate(
             'reservas',
-            [
+            Reserva::comNotificaoEncerrada([
                 'processado_api' => 'S',
                 'cancelada_api' => 'S',
                 'fase_api' => 0,
-                'status_reserva' => 'Cancelado'
-            ],
+                'status_reserva' => 'Cancelado',
+            ]),
             'WHERE id = :id_reserva AND id_motel = :id_motel',
             "id_reserva={$id_reserva}&id_motel={$id_motel}"
         );
@@ -304,12 +299,12 @@ class Rubens extends Model
         $updateReserva = new Update();
         $updateReserva->ExeUpdate(
             'reservas',
-            [
+            Reserva::comNotificaoEncerrada([
                 'processado_api' => 'N',
                 'cancelada_api' => 'S',
                 'fase_api' => 0,
-                'status_reserva' => 'Recusado'
-            ],
+                'status_reserva' => 'Recusado',
+            ]),
             'WHERE id = :id_reserva AND id_motel = :id_motel',
             "id_reserva={$id_reserva}&id_motel={$id_motel}"
         );
