@@ -1,6 +1,8 @@
 <?php
 
-use Agencia\Close\Adapters\Twig\PayStatus;
+require_once dirname(__DIR__) . '/application/Helpers/MercadoPagoPaymentStatus.php';
+
+use Agencia\Close\Helpers\MercadoPagoPaymentStatus;
 
 function converterDiaSemana($dia) {
     $dias_semana_br = array('Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab');
@@ -69,7 +71,7 @@ function limparCPF($cpf) {
 
 
 function traduzirStatusPagamento($status) {
-    $statusTraduzido = PayStatus::opcoesMercadoPago();
+    $statusTraduzido = MercadoPagoPaymentStatus::opcoes();
     $statusTraduzido['Pendente'] = 'Aprovação Pendente';
     $statusTraduzido['Aceito'] = 'Aguardando Pagamento';
     $statusTraduzido['Recusado'] = 'Reserva Recusada';

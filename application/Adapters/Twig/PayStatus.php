@@ -2,6 +2,7 @@
 
 namespace Agencia\Close\Adapters\Twig;
 
+use Agencia\Close\Helpers\MercadoPagoPaymentStatus;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
@@ -31,17 +32,7 @@ class PayStatus extends AbstractExtension
      */
     public static function opcoesMercadoPago(): array
     {
-        return [
-            'pending' => 'Pendente',
-            'approved' => 'Aprovado',
-            'authorized' => 'Autorizado',
-            'in_process' => 'Em processamento',
-            'in_mediation' => 'Em mediação',
-            'rejected' => 'Rejeitado',
-            'cancelled' => 'Cancelado',
-            'refunded' => 'Reembolsado',
-            'charged_back' => 'Estornado',
-        ];
+        return MercadoPagoPaymentStatus::opcoes();
     }
 
     public function payStatus($status): string
