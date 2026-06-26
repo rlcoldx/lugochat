@@ -7,6 +7,20 @@ use Agencia\Close\Models\Model;
 
 class ReservaRelatorio extends Model
 {
+    /**
+     * Filtro SQL por status Mercado Pago. Valor `all` = sem filtro de status.
+     */
+    private function filtroSqlPagamentoStatus(string $pagamentoStatus, string &$params): string
+    {
+        if ($pagamentoStatus === 'all') {
+            return '';
+        }
+
+        $params .= '&pagamento_status=' . rawurlencode($pagamentoStatus);
+
+        return " AND p.pagamento_status = :pagamento_status";
+    }
+
     public function getProprietariosMotels(): array
     {
         $read = new Read();
@@ -43,10 +57,11 @@ class ReservaRelatorio extends Model
     /**
      * Resumo geral no período (admin).
      */
-    public function getResumoGeral(string $dataInicio, string $dataFim, ?int $idMotel = null, ?string $cidade = null, ?string $proprietario = null): array
+    public function getResumoGeral(string $dataInicio, string $dataFim, ?int $idMotel = null, ?string $cidade = null, ?string $proprietario = null, string $pagamentoStatus = 'approved'): array
     {
         $read = new Read();
         $params = "data_inicio={$dataInicio}&data_fim={$dataFim}";
+        $filtroPagamento = $this->filtroSqlPagamentoStatus($pagamentoStatus, $params);
         $filtroMotel = '';
         if ($idMotel !== null && $idMotel > 0) {
             $filtroMotel = ' AND r.id_motel = :id_motel';
@@ -78,7 +93,7 @@ class ReservaRelatorio extends Model
                 INNER JOIN usuarios u ON u.id = r.id_motel
                 INNER JOIN pagamentos p ON p.id_reserva = r.id
                 WHERE DATE(r.date_create) BETWEEN :data_inicio AND :data_fim
-                AND p.pagamento_status = 'approved'
+                {$filtroPagamento}
                 AND (p.id_user IS NULL OR p.id_user <> '1')
                 AND (r.id_usuario IS NULL OR r.id_usuario <> '1')
                 {$filtroMotel}
@@ -98,7 +113,7 @@ class ReservaRelatorio extends Model
             ];
         }
 
-        $lucro = $this->calcularLucroPlataformaPeriodo($dataInicio, $dataFim, $idMotel, $cidade, $proprietario);
+        $lucro = $this->calcularLucroPlataformaPeriodo($dataInicio, $dataFim, $idMotel, $cidade, $proprietario, $pagamentoStatus);
 
         return [
             'qtd_reservas' => (int) ($row['qtd_reservas'] ?? 0),
@@ -112,10 +127,11 @@ class ReservaRelatorio extends Model
     /**
      * Lucro da plataforma (percentual contrato sobre pagamentos aprovados), mesmo critério de Home::getLucroTotal.
      */
-    private function calcularLucroPlataformaPeriodo(string $dataInicio, string $dataFim, ?int $idMotel = null, ?string $cidade = null, ?string $proprietario = null): float
+    private function calcularLucroPlataformaPeriodo(string $dataInicio, string $dataFim, ?int $idMotel = null, ?string $cidade = null, ?string $proprietario = null, string $pagamentoStatus = 'approved'): float
     {
         $read = new Read();
         $params = "data_inicio={$dataInicio}&data_fim={$dataFim}";
+        $filtroPagamento = $this->filtroSqlPagamentoStatus($pagamentoStatus, $params);
         $filtroMotel = '';
         if ($idMotel !== null && $idMotel > 0) {
             $filtroMotel = ' AND r.id_motel = :id_motel';
@@ -137,7 +153,8 @@ class ReservaRelatorio extends Model
             FROM pagamentos p
             JOIN usuarios u ON u.id = p.id_motel
             JOIN reservas r ON r.id = p.id_reserva
-            WHERE p.pagamento_status = 'approved'
+            WHERE 1=1
+            {$filtroPagamento}
             AND (p.id_user IS NULL OR p.id_user <> '1')
             AND (r.id_usuario IS NULL OR r.id_usuario <> '1')
             AND DATE(r.date_create) BETWEEN :data_inicio AND :data_fim
@@ -162,9 +179,10 @@ class ReservaRelatorio extends Model
      * Agregados por motel no período (uma linha por reserva no subselect, depois soma por motel).
      * total_valor_pago = soma dos pagamentos aprovados de todas as reservas daquele motel nos filtros.
      */
-    public function getAgregadoPorMotel(string $dataInicio, string $dataFim, ?string $cidade = null, ?string $proprietario = null): array
+    public function getAgregadoPorMotel(string $dataInicio, string $dataFim, ?string $cidade = null, ?string $proprietario = null, string $pagamentoStatus = 'approved'): array
     {
         $params = "data_inicio={$dataInicio}&data_fim={$dataFim}";
+        $filtroPagamento = $this->filtroSqlPagamentoStatus($pagamentoStatus, $params);
         $filtroCidade = '';
         if ($cidade !== null && $cidade !== '') {
             $filtroCidade = ' AND u.cidade = :cidade';
@@ -199,7 +217,7 @@ class ReservaRelatorio extends Model
                 INNER JOIN usuarios u ON u.id = r.id_motel
                 INNER JOIN pagamentos p ON p.id_reserva = r.id
                 WHERE DATE(r.date_create) BETWEEN :data_inicio AND :data_fim
-                AND p.pagamento_status = 'approved'
+                {$filtroPagamento}
                 AND (p.id_user IS NULL OR p.id_user <> '1')
                 AND (r.id_usuario IS NULL OR r.id_usuario <> '1')
                 {$filtroCidade}
@@ -216,12 +234,13 @@ class ReservaRelatorio extends Model
     }
 
     /**
-     * Todas as reservas com pagamento aprovado no período (sucesso), ordenadas por ID decrescente.
+     * Reservas no período conforme status de pagamento (padrão: approved).
      */
-    public function getReservasPagasSucesso(string $dataInicio, string $dataFim, ?int $idMotel = null, ?string $cidade = null, ?string $proprietario = null): array
+    public function getReservasPagasSucesso(string $dataInicio, string $dataFim, ?int $idMotel = null, ?string $cidade = null, ?string $proprietario = null, string $pagamentoStatus = 'approved'): array
     {
         $read = new Read();
         $params = "data_inicio={$dataInicio}&data_fim={$dataFim}";
+        $filtroPagamento = $this->filtroSqlPagamentoStatus($pagamentoStatus, $params);
         $filtroMotel = '';
         if ($idMotel !== null && $idMotel > 0) {
             $filtroMotel = ' AND r.id_motel = :id_motel';
@@ -260,7 +279,8 @@ class ReservaRelatorio extends Model
             INNER JOIN usuarios u ON u.id = r.id_motel
             INNER JOIN suites s ON s.id = r.id_suite
             INNER JOIN pagamentos p ON p.id_reserva = r.id
-            WHERE p.pagamento_status = 'approved'
+            WHERE 1=1
+            {$filtroPagamento}
             AND (p.id_user IS NULL OR p.id_user <> '1')
             AND (r.id_usuario IS NULL OR r.id_usuario <> '1')
             AND DATE(r.date_create) BETWEEN :data_inicio AND :data_fim

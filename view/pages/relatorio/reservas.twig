@@ -56,13 +56,22 @@
                             {% endfor %}
                         </select>
                     </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Status pagamento</label>
+                        <select name="pagamento_status" class="form-control">
+                            <option value="all" {{ filtro_pagamento_status == 'all' ? 'selected' : '' }}>Todos os status</option>
+                            {% for value, label in payStatusOpcoes() %}
+                            <option value="{{ value }}" {{ filtro_pagamento_status == value ? 'selected' : '' }}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
                     <div class="col-md-1">
                         <button type="submit" class="btn btn-primary w-100">Aplicar</button>
                     </div>
                     <div class="col-md-1">
                         <a
                             class="btn btn-outline-success w-100"
-                            href="{{ DOMAIN }}/admin/relatorio/reservas?export=1&data_inicio={{ filtro_data_inicio }}&data_fim={{ filtro_data_fim }}{% if filtro_id_motel %}&id_motel={{ filtro_id_motel }}{% endif %}{% if filtro_proprietario %}&proprietario={{ filtro_proprietario }}{% endif %}{% if filtro_cidade %}&cidade={{ filtro_cidade }}{% endif %}"
+                            href="{{ DOMAIN }}/admin/relatorio/reservas?export=1&data_inicio={{ filtro_data_inicio }}&data_fim={{ filtro_data_fim }}&pagamento_status={{ filtro_pagamento_status }}{% if filtro_id_motel %}&id_motel={{ filtro_id_motel }}{% endif %}{% if filtro_proprietario %}&proprietario={{ filtro_proprietario }}{% endif %}{% if filtro_cidade %}&cidade={{ filtro_cidade }}{% endif %}"
                             title="Exportar Excel (CSV)"
                         >Excel</a>
                     </div>

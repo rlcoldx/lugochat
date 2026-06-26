@@ -22,6 +22,10 @@ class RelatorioReservasController extends Controller
         $idMotel = isset($_GET['id_motel']) ? (int) $_GET['id_motel'] : 0;
         $proprietario = isset($_GET['proprietario']) ? trim((string) $_GET['proprietario']) : '';
         $cidade = isset($_GET['cidade']) ? trim((string) $_GET['cidade']) : '';
+        $pagamentoStatus = isset($_GET['pagamento_status']) ? trim((string) $_GET['pagamento_status']) : 'approved';
+        if ($pagamentoStatus === '') {
+            $pagamentoStatus = 'approved';
+        }
 
         if ($dataInicio === '' || $dataFim === '') {
             $dataInicio = date('Y-m-01');
@@ -44,9 +48,9 @@ class RelatorioReservasController extends Controller
         $cidadeFiltro = $cidade !== '' ? $cidade : null;
         $proprietarioFiltro = $proprietario !== '' ? $proprietario : null;
 
-        $resumo = $model->getResumoGeral($dataInicio, $dataFim, $idMotelFiltro, $cidadeFiltro, $proprietarioFiltro);
+        $resumo = $model->getResumoGeral($dataInicio, $dataFim, $idMotelFiltro, $cidadeFiltro, $proprietarioFiltro, $pagamentoStatus);
         $resumo['total_repasse_motel'] = (float) ($resumo['total_valor_pago'] ?? 0) - (float) ($resumo['lucro_plataforma'] ?? 0);
-        $porMotel = $model->getAgregadoPorMotel($dataInicio, $dataFim, $cidadeFiltro, $proprietarioFiltro);
+        $porMotel = $model->getAgregadoPorMotel($dataInicio, $dataFim, $cidadeFiltro, $proprietarioFiltro, $pagamentoStatus);
         if ($idMotelFiltro !== null) {
             $porMotel = array_values(array_filter($porMotel, static function ($row) use ($idMotelFiltro) {
                 return (int) $row['id_motel'] === $idMotelFiltro;
@@ -57,7 +61,7 @@ class RelatorioReservasController extends Controller
             return ((int) ($b['qtd_reservas'] ?? 0)) <=> ((int) ($a['qtd_reservas'] ?? 0));
         });
 
-        $itens = $model->getReservasPagasSucesso($dataInicio, $dataFim, $idMotelFiltro, $cidadeFiltro, $proprietarioFiltro);
+        $itens = $model->getReservasPagasSucesso($dataInicio, $dataFim, $idMotelFiltro, $cidadeFiltro, $proprietarioFiltro, $pagamentoStatus);
         foreach ($itens as $k => $row) {
             $pago = (float) ($row['pagamento_valor'] ?? 0);
             $contrato = (float) ($row['contrato'] ?? 0);
@@ -130,6 +134,7 @@ class RelatorioReservasController extends Controller
             'filtro_id_motel' => $idMotel,
             'filtro_proprietario' => $proprietario,
             'filtro_cidade' => $cidade,
+            'filtro_pagamento_status' => $pagamentoStatus,
         ]);
     }
 

@@ -19,6 +19,7 @@ class PayStatusColor extends AbstractExtension
         $classeBadge = [
             'approved' => 'success',
             'pending' => 'warning',
+            'authorized' => 'info',
             'in_process' => 'info',
             'rejected' => 'danger',
             'cancelled' => 'danger',

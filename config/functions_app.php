@@ -1,4 +1,7 @@
 <?php
+
+use Agencia\Close\Adapters\Twig\PayStatus;
+
 function converterDiaSemana($dia) {
     $dias_semana_br = array('Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab');
     $dias_semana_en = array('Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat');
@@ -66,19 +69,10 @@ function limparCPF($cpf) {
 
 
 function traduzirStatusPagamento($status) {
-    $statusTraduzido = [
-        'approved' => 'Aprovado',
-        'pending' => 'Pendente',
-        'in_process' => 'Em Processo',
-        'rejected' => 'Rejeitado',
-        'cancelled' => 'Cancelado',
-        'refunded' => 'Reembolsado',
-        'in_mediation' => 'Em Mediação',
-        'charged_back' => 'Estornado',
-        'Pendente' => 'Aprovação Pendente',
-        'Aceito' => 'Aguardando Pagamento',
-        'Recusado' => 'Reserva Recusada',
-    ];
+    $statusTraduzido = PayStatus::opcoesMercadoPago();
+    $statusTraduzido['Pendente'] = 'Aprovação Pendente';
+    $statusTraduzido['Aceito'] = 'Aguardando Pagamento';
+    $statusTraduzido['Recusado'] = 'Reserva Recusada';
 
     return $statusTraduzido[$status] ?? 'Status desconhecido';
 }
@@ -87,6 +81,7 @@ function corStatusPagamento($status) {
     $classeBadge = [
         'approved' => 'success',
         'pending' => 'warning',
+        'authorized' => 'info',
         'in_process' => 'info',
         'rejected' => 'danger',
         'cancelled' => 'secondary',

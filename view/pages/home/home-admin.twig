@@ -75,12 +75,9 @@
                                     <label class="form-label">Status Pagamento</label>
                                     <select name="pagamento_status" class="form-control">
                                         <option value="">Todos</option>
-                                        <option value="approved" {{ filters.pagamento_status == 'approved' ? 'selected' : '' }}>Aprovado</option>
-                                        <option value="pending" {{ filters.pagamento_status == 'pending' ? 'selected' : '' }}>Pendente</option>
-                                        <option value="cancelled" {{ filters.pagamento_status == 'cancelled' ? 'selected' : '' }}>Cancelado</option>
-                                        <option value="refused" {{ filters.pagamento_status == 'refused' ? 'selected' : '' }}>Recusado</option>
-                                        <option value="rejected" {{ filters.pagamento_status == 'rejected' ? 'selected' : '' }}>Rejeitado</option>
-                                        <option value="refunded" {{ filters.pagamento_status == 'refunded' ? 'selected' : '' }}>Reembolso</option>
+                                        {% for value, label in payStatusOpcoes() %}
+                                        <option value="{{ value }}" {{ filters.pagamento_status == value ? 'selected' : '' }}>{{ label }}</option>
+                                        {% endfor %}
                                     </select>
                                 </div>
                                 <div class="col-xl-3 col-md-6 mb-3">
