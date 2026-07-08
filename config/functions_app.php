@@ -195,3 +195,115 @@ function converterHoraPara24h($hora) {
 
     return '';
 }
+
+/**
+ * Obtém o IP real do cliente, considerando proxies/CDN (Cloudflare) comuns.
+ */
+function obterIpCliente(): string
+{
+    $chaves = ['HTTP_CF_CONNECTING_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_REAL_IP', 'REMOTE_ADDR'];
+    foreach ($chaves as $chave) {
+        if (empty($_SERVER[$chave])) {
+            continue;
+        }
+        // X-Forwarded-For pode conter uma lista: usa o primeiro IP válido.
+        foreach (explode(',', $_SERVER[$chave]) as $ip) {
+            $ip = trim($ip);
+            if (filter_var($ip, FILTER_VALIDATE_IP)) {
+                return $ip;
+            }
+        }
+    }
+    return '';
+}
+
+/**
+ * Normaliza telefone para apenas dígitos, removendo o código do país (55) quando presente,
+ * de modo a comparar números salvos em formatos diferentes (ex: +5511999999999 e 11999999999).
+ */
+function normalizarTelefone($telefone): string
+{
+    $digitos = preg_replace('/\D/', '', (string) $telefone);
+    if (strlen($digitos) > 11 && strpos($digitos, '55') === 0) {
+        $digitos = substr($digitos, 2);
+    }
+    return $digitos;
+}
+
+/**
+ * Verifica se um cliente está banido, cruzando id_usuario, e-mail, telefone, CPF e IP.
+ * Sempre que um banimento é identificado, o IP atual é registrado para reforçar o bloqueio
+ * de novas contas/reservas a partir do mesmo dispositivo/rede.
+ *
+ * @param PDO   $db    Conexão PDO ativa.
+ * @param array $dados Campos disponíveis: id_usuario, email, telefone, cpf.
+ * @return bool  TRUE se estiver banido.
+ */
+function verificarUsuarioBanido($db, array $dados = []): bool
+{
+    if (!($db instanceof PDO)) {
+        return false;
+    }
+
+    $idUsuario = isset($dados['id_usuario']) && $dados['id_usuario'] !== '' ? (int) $dados['id_usuario'] : null;
+    $email     = isset($dados['email']) ? strtolower(trim($dados['email'])) : '';
+    $telefone  = isset($dados['telefone']) ? normalizarTelefone($dados['telefone']) : '';
+    $cpf       = isset($dados['cpf']) ? preg_replace('/\D/', '', (string) $dados['cpf']) : '';
+    $ip        = obterIpCliente();
+
+    $condicoes = [];
+    $params = [];
+
+    if ($idUsuario) {
+        $condicoes[] = 'b.id_usuario = :id_usuario';
+        $params[':id_usuario'] = $idUsuario;
+    }
+    if ($email !== '') {
+        $condicoes[] = 'LOWER(b.email) = :email';
+        $params[':email'] = $email;
+    }
+    if ($telefone !== '') {
+        $condicoes[] = 'b.telefone = :telefone';
+        $params[':telefone'] = $telefone;
+    }
+    if ($cpf !== '') {
+        $condicoes[] = 'b.cpf = :cpf';
+        $params[':cpf'] = $cpf;
+    }
+
+    $idBanido = null;
+
+    if (!empty($condicoes)) {
+        $sql = "SELECT b.id FROM usuarios_banidos b
+                WHERE b.status = 'ativo' AND (" . implode(' OR ', $condicoes) . ")
+                LIMIT 1";
+        $stmt = $db->prepare($sql);
+        $stmt->execute($params);
+        $linha = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!empty($linha['id'])) {
+            $idBanido = (int) $linha['id'];
+        }
+    }
+
+    // Bloqueio por IP já associado a algum banimento ativo.
+    if (!$idBanido && $ip !== '') {
+        $stmt = $db->prepare("SELECT b.id FROM usuarios_banidos b
+            INNER JOIN usuarios_banidos_ips i ON i.id_banido = b.id
+            WHERE b.status = 'ativo' AND i.ip = :ip LIMIT 1");
+        $stmt->execute([':ip' => $ip]);
+        $linha = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!empty($linha['id'])) {
+            $idBanido = (int) $linha['id'];
+        }
+    }
+
+    if ($idBanido) {
+        if ($ip !== '') {
+            $ins = $db->prepare("INSERT IGNORE INTO usuarios_banidos_ips (id_banido, ip) VALUES (:id_banido, :ip)");
+            $ins->execute([':id_banido' => $idBanido, ':ip' => $ip]);
+        }
+        return true;
+    }
+
+    return false;
+}

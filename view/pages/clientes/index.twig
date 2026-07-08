@@ -20,26 +20,54 @@
         <div class="card">
             <div class="card-body">
                 <div class="table-responsive">
-                    <table id="datatable" class="table dataTable">
+                    <table id="datatable" class="table dataTable align-middle">
                         <thead>
                             <tr role="row">
                                 <th width="50"></th>
                                 <th>Nome</th>
                                 <th>Email</th>
                                 <th>CPF</th>
-                                <th>Telefone</thasc>
+                                <th>Telefone</th>
+                                <th>Status</th>
                                 <th class="text-end">Data</th>
+                                <th class="text-end" width="120">Ações</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for cliente in clientes %}
-                            <tr class="produto-{{ cliente.id }}">
+                            <tr class="cliente-{{ cliente.id }}">
                                 <td width="50">#{{ loop.index }}</td>
                                 <td>{{ cliente.nome }}</td>
                                 <td>{{ cliente.email }}</td>
                                 <td>{{ cliente.cpf }}</td>
                                 <td>{{ cliente.telefone }}</td>
+                                <td class="status-cliente-{{ cliente.id }}">
+                                    {% if cliente.banido > 0 %}
+                                        <span class="badge bg-danger">Banido</span>
+                                    {% else %}
+                                        <span class="badge bg-success">Ativo</span>
+                                    {% endif %}
+                                </td>
                                 <td class="text-end text-nowrap">{{ cliente.data|date("d-m-Y \\a\\s H:i", "America/Sao_Paulo") }}</td>
+                                <td class="text-end acoes-cliente-{{ cliente.id }}">
+                                    {% if cliente.banido > 0 %}
+                                        <button type="button"
+                                                class="btn btn-success shadow btn-xs sharp"
+                                                onclick="desbanirCliente({{ cliente.id }}, '{{ cliente.nome|e('js') }}')"
+                                                data-bs-toggle="tooltip"
+                                                data-bs-title="Remover banimento">
+                                            <i class="fa fa-unlock"></i>
+                                        </button>
+                                    {% else %}
+                                        <button type="button"
+                                                class="btn btn-danger shadow btn-xs sharp"
+                                                onclick="banirCliente({{ cliente.id }}, '{{ cliente.nome|e('js') }}')"
+                                                data-bs-toggle="tooltip"
+                                                data-bs-title="Banir cliente">
+                                            <i class="fa fa-ban"></i>
+                                        </button>
+                                    {% endif %}
+                                </td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -55,5 +83,75 @@
 <script src="{{ DOMAIN }}/view/assets/vendor/datatables/js/jquery.dataTables.min.js"></script>
 <script src="{{ DOMAIN }}/view/assets/js/plugins-init/datatables.init.js"></script>
 <script src="{{ DOMAIN }}/view/assets/js/pages/suites.js"></script>
+
+<script>
+function atualizarLinhaCliente(id, banido) {
+    var status = document.querySelector('.status-cliente-' + id);
+    var acoes = document.querySelector('.acoes-cliente-' + id);
+
+    if (banido) {
+        if (status) status.innerHTML = '<span class="badge bg-danger">Banido</span>';
+        if (acoes) acoes.innerHTML = '<button type="button" class="btn btn-success shadow btn-xs sharp" onclick="desbanirCliente(' + id + ', \'\')" title="Remover banimento"><i class="fa fa-unlock"></i></button>';
+    } else {
+        if (status) status.innerHTML = '<span class="badge bg-success">Ativo</span>';
+        if (acoes) acoes.innerHTML = '<button type="button" class="btn btn-danger shadow btn-xs sharp" onclick="banirCliente(' + id + ', \'\')" title="Banir cliente"><i class="fa fa-ban"></i></button>';
+    }
+}
+
+function enviarAcaoCliente(url, id) {
+    return fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'id=' + encodeURIComponent(id)
+    }).then(function (r) { return r.json(); });
+}
+
+function banirCliente(id, nome) {
+    Swal.fire({
+        icon: 'warning',
+        title: 'Banir cliente?',
+        html: 'O cliente <strong>' + (nome || '') + '</strong> não poderá mais fazer login, criar novas contas ou reservas — do mesmo celular, CPF, e-mail ou IP.',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        confirmButtonText: 'Sim, banir',
+        cancelButtonText: 'Cancelar'
+    }).then(function (res) {
+        if (!res.isConfirmed) return;
+        enviarAcaoCliente('{{ DOMAIN }}/clientes/banir', id).then(function (data) {
+            if (data.success) {
+                atualizarLinhaCliente(id, true);
+                Swal.fire({ icon: 'success', title: 'Banido!', text: data.message, timer: 2000, showConfirmButton: false });
+            } else {
+                Swal.fire({ icon: 'error', title: 'Erro!', text: data.message });
+            }
+        }).catch(function () {
+            Swal.fire({ icon: 'error', title: 'Erro!', text: 'Ocorreu um erro ao banir o cliente.' });
+        });
+    });
+}
+
+function desbanirCliente(id, nome) {
+    Swal.fire({
+        icon: 'question',
+        title: 'Remover banimento?',
+        html: 'O cliente <strong>' + (nome || '') + '</strong> voltará a poder usar o aplicativo normalmente.',
+        showCancelButton: true,
+        confirmButtonText: 'Sim, remover',
+        cancelButtonText: 'Cancelar'
+    }).then(function (res) {
+        if (!res.isConfirmed) return;
+        enviarAcaoCliente('{{ DOMAIN }}/clientes/desbanir', id).then(function (data) {
+            if (data.success) {
+                atualizarLinhaCliente(id, false);
+                Swal.fire({ icon: 'success', title: 'Pronto!', text: data.message, timer: 2000, showConfirmButton: false });
+            } else {
+                Swal.fire({ icon: 'error', title: 'Erro!', text: data.message });
+            }
+        }).catch(function () {
+            Swal.fire({ icon: 'error', title: 'Erro!', text: 'Ocorreu um erro ao remover o banimento.' });
+        });
+    });
+}
+</script>
 
 {% endblock %}
