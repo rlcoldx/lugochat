@@ -19,8 +19,26 @@
 
         <div class="card">
             <div class="card-body">
+                <form method="get" action="{{ DOMAIN }}/clientes" class="row g-2 align-items-end mb-4">
+                    <div class="col-md-6 col-lg-4">
+                        <label class="form-label">Buscar cliente</label>
+                        <input type="text" name="search" class="form-control" placeholder="Nome, e-mail, CPF ou telefone" value="{{ filters.search }}">
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-primary"><i class="fa fa-search me-1"></i> Buscar</button>
+                    </div>
+                    {% if filters.search %}
+                    <div class="col-auto">
+                        <a href="{{ DOMAIN }}/clientes" class="btn btn-outline-secondary">Limpar</a>
+                    </div>
+                    {% endif %}
+                    <div class="col-12">
+                        <small>{{ total }} cliente(s) encontrado(s).</small>
+                    </div>
+                </form>
+
                 <div class="table-responsive">
-                    <table id="datatable" class="table dataTable align-middle">
+                    <table class="table align-middle">
                         <thead>
                             <tr role="row">
                                 <th width="50"></th>
@@ -30,13 +48,13 @@
                                 <th>Telefone</th>
                                 <th>Status</th>
                                 <th class="text-end">Data</th>
-                                <th class="text-end" width="120">Ações</th>
+                                <th class="text-end">Ações</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for cliente in clientes %}
                             <tr class="cliente-{{ cliente.id }}">
-                                <td width="50">#{{ loop.index }}</td>
+                                <td width="50">#{{ offset + loop.index }}</td>
                                 <td>{{ cliente.nome }}</td>
                                 <td>{{ cliente.email }}</td>
                                 <td>{{ cliente.cpf }}</td>
@@ -70,19 +88,49 @@
                                 </td>
                             </tr>
                             {% endfor %}
+                            {% if clientes|length == 0 %}
+                            <tr>
+                                <td colspan="8" class="text-center py-4">Nenhum cliente encontrado.</td>
+                            </tr>
+                            {% endif %}
                         </tbody>
                     </table>
                 </div>
+
+                {% if pagination %}
+                <nav aria-label="Paginação" class="mt-4">
+                    <ul class="pagination pagination-circle justify-content-center">
+                        {% if pagination.before %}
+                            {% for p in pagination.before %}
+                            <li class="page-item"><a class="page-link" href="?page={{ p.number }}{% if filters.search %}&search={{ filters.search }}{% endif %}">{{ p.number }}</a></li>
+                            {% endfor %}
+                        {% endif %}
+                        {% if pagination.beforeMiddle %}
+                            {% for p in pagination.beforeMiddle %}
+                            <li class="page-item"><a class="page-link" href="?page={{ p.number }}{% if filters.search %}&search={{ filters.search }}{% endif %}">{{ p.number }}</a></li>
+                            {% endfor %}
+                        {% endif %}
+                        {% if pagination.actual %}
+                        <li class="page-item active"><a class="page-link" href="#">{{ pagination.actual }}</a></li>
+                        {% endif %}
+                        {% if pagination.lateMiddle %}
+                            {% for p in pagination.lateMiddle %}
+                            <li class="page-item"><a class="page-link" href="?page={{ p.number }}{% if filters.search %}&search={{ filters.search }}{% endif %}">{{ p.number }}</a></li>
+                            {% endfor %}
+                        {% endif %}
+                        {% if pagination.late %}
+                            {% for p in pagination.late %}
+                            <li class="page-item"><a class="page-link" href="?page={{ p.number }}{% if filters.search %}&search={{ filters.search }}{% endif %}">{{ p.number }}</a></li>
+                            {% endfor %}
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
             </div>
         </div>
 
     </div>
 </div>
-<!-- Datatable -->
-
-<script src="{{ DOMAIN }}/view/assets/vendor/datatables/js/jquery.dataTables.min.js"></script>
-<script src="{{ DOMAIN }}/view/assets/js/plugins-init/datatables.init.js"></script>
-<script src="{{ DOMAIN }}/view/assets/js/pages/suites.js"></script>
 
 <script>
 function atualizarLinhaCliente(id, banido) {

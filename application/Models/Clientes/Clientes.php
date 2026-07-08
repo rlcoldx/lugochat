@@ -11,24 +11,70 @@ use Agencia\Close\Models\Model;
 class Clientes extends Model 
 {
 
-    public function getClientes(): Read
+    /**
+     * Monta o filtro de busca por nome, e-mail, CPF ou telefone.
+     * @param array $params Recebe (por referência) os placeholders no formato do FullRead.
+     */
+    private function filtroBusca(string $busca, array &$params): string
     {
+        $busca = trim($busca);
+        if ($busca === '') {
+            return '';
+        }
+        $params[] = 'busca=' . '%' . $busca . '%';
+        return " AND (u.nome LIKE :busca OR u.email LIKE :busca OR u.cpf LIKE :busca OR u.telefone LIKE :busca) ";
+    }
+
+    public function getClientes(int $limit = 25, int $offset = 0, string $busca = ''): Read
+    {
+        $params = [];
+        $where = $this->filtroBusca($busca, $params);
+
         $read = new Read();
-        $read->FullRead("SELECT u.*,
+        $read->FullRead("SELECT u.id, u.nome, u.email, u.cpf, u.telefone, u.data,
             (SELECT COUNT(*) FROM usuarios_banidos b WHERE b.id_usuario = u.id AND b.status = 'ativo') AS banido
-            FROM usuarios AS u WHERE u.tipo = '1' ORDER BY u.id DESC");
+            FROM usuarios AS u
+            WHERE u.tipo = '1' {$where}
+            ORDER BY u.id DESC LIMIT {$limit} OFFSET {$offset}", implode('&', $params));
         return $read;
     }
 
-    public function getClientesByCompany(): Read
+    public function contarClientes(string $busca = ''): int
     {
+        $params = [];
+        $where = $this->filtroBusca($busca, $params);
+
         $read = new Read();
-        $read->FullRead("SELECT u.*,
+        $read->FullRead("SELECT COUNT(*) AS total FROM usuarios AS u
+            WHERE u.tipo = '1' {$where}", implode('&', $params));
+        return (int) ($read->getResultSingle()['total'] ?? 0);
+    }
+
+    public function getClientesByCompany(int $limit = 25, int $offset = 0, string $busca = ''): Read
+    {
+        $params = [];
+        $where = $this->filtroBusca($busca, $params);
+
+        $read = new Read();
+        $read->FullRead("SELECT u.id, u.nome, u.email, u.cpf, u.telefone, u.data,
             (SELECT COUNT(*) FROM usuarios_banidos b WHERE b.id_usuario = u.id AND b.status = 'ativo') AS banido
             FROM usuarios AS u
             INNER JOIN reservas AS r ON r.id_usuario = u.id
-            WHERE u.tipo = '1' ".$this->byCompany('r.id_motel')." GROUP BY u.id ORDER BY u.id DESC");
+            WHERE u.tipo = '1' ".$this->byCompany('r.id_motel')." {$where}
+            GROUP BY u.id ORDER BY u.id DESC LIMIT {$limit} OFFSET {$offset}", implode('&', $params));
         return $read;
+    }
+
+    public function contarClientesByCompany(string $busca = ''): int
+    {
+        $params = [];
+        $where = $this->filtroBusca($busca, $params);
+
+        $read = new Read();
+        $read->FullRead("SELECT COUNT(DISTINCT u.id) AS total FROM usuarios AS u
+            INNER JOIN reservas AS r ON r.id_usuario = u.id
+            WHERE u.tipo = '1' ".$this->byCompany('r.id_motel')." {$where}", implode('&', $params));
+        return (int) ($read->getResultSingle()['total'] ?? 0);
     }
 
     public function getUsuarioById($id): Read

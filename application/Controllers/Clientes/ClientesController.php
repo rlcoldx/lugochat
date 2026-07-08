@@ -4,22 +4,46 @@ namespace Agencia\Close\Controllers\Clientes;
 
 use Agencia\Close\Controllers\Controller;
 use Agencia\Close\Models\Clientes\Clientes;
+use Agencia\Close\Helpers\Pagination\Pagination;
 
 class ClientesController extends Controller
 {	
 
   public function index($params)
   {
-    if($_SESSION['busca_perfil_tipo'] != '0'){
-      $clientes = new Clientes();
-      $clientes = $clientes->getClientesByCompany()->getResult();
-    }else{
-      $clientes = new Clientes();
-      $clientes = $clientes->getClientes()->getResult();
+    $this->setParams($params);
+
+    $busca = trim((string) ($_GET['search'] ?? ''));
+    $page = (int) ($_GET['page'] ?? 1);
+    if ($page < 1) {
+      $page = 1;
+    }
+    $limit = 25;
+    $offset = ($page - 1) * $limit;
+
+    $model = new Clientes();
+
+    if ($_SESSION['busca_perfil_tipo'] != '0') {
+      $clientes = $model->getClientesByCompany($limit, $offset, $busca)->getResult();
+      $total = $model->contarClientesByCompany($busca);
+    } else {
+      $clientes = $model->getClientes($limit, $offset, $busca)->getResult();
+      $total = $model->contarClientes($busca);
     }
 
-    $this->setParams($params);
-    $this->render('pages/clientes/index.twig', ['titulo' => 'Lista de Clientes', 'clientes' => $clientes]);
+    $pagination = new Pagination();
+    $pagination->setActualPage($page);
+    $pagination->setLastPage((int) ceil(($total ?: 1) / $limit));
+    $pagination->setUrl(DOMAIN . '/clientes');
+
+    $this->render('pages/clientes/index.twig', [
+      'titulo' => 'Lista de Clientes',
+      'clientes' => $clientes,
+      'pagination' => $pagination->getArray(),
+      'filters' => ['search' => $busca],
+      'total' => $total,
+      'offset' => $offset,
+    ]);
   }
 
   public function banir($params)
