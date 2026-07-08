@@ -70,7 +70,7 @@
                                 <td class="text-end acoes-cliente-{{ cliente.id }}">
                                     {% if cliente.banido > 0 %}
                                         <button type="button"
-                                                class="btn btn-success"
+                                                class="btn btn-success btn-sm"
                                                 onclick="desbanirCliente({{ cliente.id }}, '{{ cliente.nome|e('js') }}')"
                                                 data-bs-toggle="tooltip"
                                                 data-bs-title="Remover banimento">
@@ -78,7 +78,7 @@
                                         </button>
                                     {% else %}
                                         <button type="button"
-                                                class="btn btn-danger"
+                                                class="btn btn-danger btn-sm"
                                                 onclick="banirCliente({{ cliente.id }}, '{{ cliente.nome|e('js') }}')"
                                                 data-bs-toggle="tooltip"
                                                 data-bs-title="Banir cliente">
