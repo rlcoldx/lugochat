@@ -21,7 +21,9 @@ class Clientes extends Model
         if ($busca === '') {
             return '';
         }
-        $params[] = 'busca=' . '%' . $busca . '%';
+        // FullRead usa parse_str (espera query string codificada): urlencode evita que
+        // trechos como "%da" sejam interpretados como sequência hex e corrompam o termo.
+        $params[] = 'busca=' . urlencode('%' . $busca . '%');
         return " AND (u.nome LIKE :busca OR u.email LIKE :busca OR u.cpf LIKE :busca OR u.telefone LIKE :busca) ";
     }
 
