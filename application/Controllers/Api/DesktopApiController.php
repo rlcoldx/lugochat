@@ -21,7 +21,7 @@ class DesktopApiController extends Controller
     }
 
     /**
-     * Login do app desktop — apenas usuários tipo 3 (motel).
+     * Login do app desktop — apenas usuários tipo 2 (motel).
      *
      * POST JSON: { "email": "...", "senha": "..." }
      * Respostas: result = Ok | Inativo | Erro

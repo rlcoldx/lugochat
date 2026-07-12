@@ -8,7 +8,7 @@ use Agencia\Close\Models\Model;
 class Desktop extends Model
 {
     /**
-     * Busca usuário do app desktop (tipo 3 — motel/equipe).
+     * Busca usuário do app desktop (tipo 2 — motel).
      */
     public function getUsuarioByEmail(string $email): Read
     {
@@ -16,7 +16,7 @@ class Desktop extends Model
         $read->FullRead(
             "SELECT id, nome, email, empresa, tipo, status, logo, codigo, cargo
              FROM usuarios
-             WHERE email = :email AND tipo = '3'
+             WHERE email = :email AND tipo = '2'
              LIMIT 1",
             'email=' . urlencode($email)
         );
@@ -28,7 +28,7 @@ class Desktop extends Model
         $read = new Read();
         $read->FullRead(
             "SELECT id FROM usuarios
-             WHERE email = :email AND tipo = '3'
+             WHERE email = :email AND tipo = '2'
              AND (senha = :senha OR senhapadrao = :senha)
              LIMIT 1",
             'email=' . urlencode($email) . '&senha=' . urlencode($senhaHash)
