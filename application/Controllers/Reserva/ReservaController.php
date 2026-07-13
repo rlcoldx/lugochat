@@ -88,9 +88,15 @@ class ReservaController extends Controller
 	  public function status_reserva_save($params)
   	{
 		$this->setParams($params);
-		$save = new Reserva();
-		$save = $save->statusReservaSave($params);
-		if($save->getResult()) {
+		$model = new Reserva();
+
+		if ($model->pagamentoAprovado($params['id'])) {
+			echo 'bloqueado';
+			return;
+		}
+
+		$save = $model->statusReservaSave($params);
+		if ($save->getResult()) {
 			echo '1';
 		}
 		

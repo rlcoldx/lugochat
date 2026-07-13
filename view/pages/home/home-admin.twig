@@ -161,11 +161,15 @@
                                                 </span>                                  
                                             </td>
                                             <td class="align-middle">
+                                                {% if reserva.pagamento_status == 'approved' %}
+                                                <span class="badge bg-{{ reserva.status_reserva }} py-1">{{ reserva.status_reserva }}</span>
+                                                {% else %}
                                                 <a class="badge bg-{{ reserva.status_reserva }} py-1" href="javascript:void(0)" 
                                                    data-bs-remote="{{ DOMAIN }}/reservas/status/{{ reserva.id }}" 
                                                    data-bs-toggle="offcanvas" 
                                                    data-bs-target="#statusReserva">{{ reserva.status_reserva }}
                                                 </a>
+                                                {% endif %}
                                             </td>
                                             <td class="align-middle">
                                                 <div class="d-flex justify-content-end">

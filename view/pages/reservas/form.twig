@@ -28,6 +28,11 @@
         </ul>
        
         <hr>
+        {% if reserva.pagamento_status == 'approved' %}
+        <div class="alert alert-warning mb-0">
+            Esta reserva possui pagamento <strong>aprovado</strong> e o status não pode ser alterado.
+        </div>
+        {% else %}
         <div class="mb-3">
             <label class="form-label">Selecione o Status</label>
             <select name="status_reserva" class="form-control py-3">
@@ -41,6 +46,7 @@
             <input type="hidden" name="id" value="{{ reserva.id }}">
             <button class="btn btn-primary w-100 text-center" type="submit">SALVAR ALTERAÇÕES</button>
         </div>
+        {% endif %}
     </form>
 </div>
 <script src="{{ PATH }}/view/assets/js/pages/reservas.js"></script>

@@ -15,6 +15,7 @@
                     <li class="breadcrumb-item"><a href="{{ DOMAIN }}/reservas">Reservas</a></li>
                     <li class="breadcrumb-item active"><a href="javascript:void(0)">Reserva</a></li>
                 </ol>
+                {% if reserva.pagamento_status != 'approved' %}
                 <a href="javascript:void(0)"
                    class="btn btn-primary btn-sm text-uppercase fw-bold"
                    data-bs-remote="{{ DOMAIN }}/reservas/status/{{ reserva.id }}"
@@ -22,6 +23,7 @@
                    data-bs-target="#statusReserva">
                     <i class="fa-solid fa-pen-to-square"></i> Alterar Status
                 </a>
+                {% endif %}
             </div>
         </div>
 
@@ -42,6 +44,11 @@
                         <ul class="list-group list-group-flush mt-3">
                             <li class="list-group-item py-2 px-0 d-flex justify-content-between align-items-center">
                                 Status da Reserva
+                                {% if reserva.pagamento_status == 'approved' %}
+                                <span class="badge bg-{{ reserva.status_reserva }} text-dark text-uppercase fw-bold py-2 px-3">
+                                    {{ reserva.status_reserva }}
+                                </span>
+                                {% else %}
                                 <a href="javascript:void(0)"
                                    class="badge bg-{{ reserva.status_reserva }} text-dark text-uppercase fw-bold py-2 px-3"
                                    data-bs-remote="{{ DOMAIN }}/reservas/status/{{ reserva.id }}"
@@ -49,6 +56,7 @@
                                    data-bs-target="#statusReserva">
                                     <i class="fa-solid fa-pen-to-square"></i> {{ reserva.status_reserva }}
                                 </a>
+                                {% endif %}
                             </li>
                             <li class="list-group-item py-2 px-0 d-flex justify-content-between align-items-center">
                                 Suíte Escolhida <span class="text-primary fw-bolder">{{ reserva.suite_nome }}</span>

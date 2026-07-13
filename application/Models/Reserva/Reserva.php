@@ -247,10 +247,30 @@ class Reserva extends Model
         ORDER BY r.id DESC", "id_reserva={$id_reserva}");
         return $read;
     }
+
+    /**
+     * Pagamento aprovado bloqueia cancelamento pela API e alteração de status no painel.
+     */
+    public function pagamentoAprovado($id_reserva): bool
+    {
+        $read = new Read();
+        $read->FullRead(
+            "SELECT p.pagamento_status FROM pagamentos p WHERE p.id_reserva = :id_reserva LIMIT 1",
+            "id_reserva={$id_reserva}"
+        );
+
+        return ($read->getResultSingle()['pagamento_status'] ?? '') === 'approved';
+    }
     
     public function statusReservaSave($params): Update
     {
         $id = $params['id'];
+
+        if ($this->pagamentoAprovado($id)) {
+            $update = new Update();
+            return $update;
+        }
+
         unset($params['id']);
         $params = self::comNotificaoEncerrada($params);
         $update = new Update();

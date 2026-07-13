@@ -188,9 +188,13 @@
                                                 <span class="badge bg-{{ reserva.pagamento_status|payStatusColor }} py-1 ms-0 ms-md-1">{{ reserva.pagamento_status|payStatus }}</span>                                  
                                             </td>
                                             <td>
+                                                {% if reserva.pagamento_status == 'approved' %}
+                                                <span class="badge bg-{{ reserva.status_reserva }} py-1">{{ reserva.status_reserva }}</span>
+                                                {% else %}
                                                 <a class="badge bg-{{ reserva.status_reserva }} py-1" href="javascript:void(0)" data-bs-remote="{{ DOMAIN }}/reservas/status/{{ reserva.id }}" data-bs-toggle="offcanvas" data-bs-target="#statusReserva">
                                                     <i class="fa-solid fa-pen-to-square"></i> {{ reserva.status_reserva }}
                                                 </a>
+                                                {% endif %}
                                             </td>
                                             <td>
                                                 <div class="d-flex justify-content-end">

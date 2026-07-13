@@ -56,9 +56,13 @@
                                     <span class="py-1 ms-0 ms-md-1 text-dark">{{ reserva.pagamento_status|payStatus }}</span>                                  
                                 </td>
                                 <td class="bg-{{ reserva.status_reserva }} text-center text-uppercase">
+                                    {% if reserva.pagamento_status == 'approved' %}
+                                    <span class="py-1 text-dark fw-bold">{{ reserva.status_reserva }}</span>
+                                    {% else %}
                                     <a class="py-1 text-dark fw-bold" href="javascript:void(0)" data-bs-remote="{{ DOMAIN }}/reservas/status/{{ reserva.id }}" data-bs-toggle="offcanvas" data-bs-target="#statusReserva">
                                         <i class="fa-solid fa-pen-to-square"></i> {{ reserva.status_reserva }}
                                     </a>
+                                    {% endif %}
                                 </td>
                                 <td class="bg-primary text-center text-uppercase">
                                     <a href="{{ DOMAIN }}/reserva/{{ reserva.id }}" class="text-uppercase text-dark fw-bold"><i class="fa fa-eye"></i> Ver Reserva</a>

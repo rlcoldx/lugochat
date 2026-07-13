@@ -267,6 +267,10 @@ class Api extends Model
      */
     public function simularCancelamentoReserva($id_reserva, $id_motel)
     {
+        if ((new Reserva())->pagamentoAprovado($id_reserva)) {
+            return false;
+        }
+
         // Atualiza pagamento
         $updatePagamento = new Update();
         $updatePagamento->ExeUpdate(

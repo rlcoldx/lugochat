@@ -4,6 +4,7 @@ namespace Agencia\Close\Controllers\Api;
 use Agencia\Close\Controllers\Controller;
 use Agencia\Close\Models\Api\Api;
 use Agencia\Close\Models\ApiIntegracao\ApiIntegracao;
+use Agencia\Close\Models\Reserva\Reserva;
 
 class ApiController extends Controller
 {
@@ -217,6 +218,19 @@ class ApiController extends Controller
         return $id_reserva ? (int) $id_reserva : null;
     }
 
+    private function bloquearSePagamentoAprovado(int $id_reserva): bool
+    {
+        if ((new Reserva())->pagamentoAprovado($id_reserva)) {
+            http_response_code(403);
+            echo json_encode([
+                'erro' => 'Reserva com pagamento aprovado não pode ser cancelada.',
+            ], JSON_UNESCAPED_UNICODE);
+            return true;
+        }
+
+        return false;
+    }
+
     public function verReserva()
     {
         $codigo_reserva = isset($_GET['codigo']) ? $_GET['codigo'] : null;
@@ -293,6 +307,10 @@ class ApiController extends Controller
         if (!$id_reserva) {
             http_response_code(404);
             echo json_encode(['erro' => 'Reserva não encontrada.'], JSON_UNESCAPED_UNICODE);
+            return;
+        }
+
+        if ($this->bloquearSePagamentoAprovado($id_reserva)) {
             return;
         }
 
@@ -385,11 +403,18 @@ class ApiController extends Controller
         }else{
             $status_reserva = 'Aceito';
         }
+
+        if ($status_reserva == 'Recusado' || $status_reserva == 'Cancelado') {
+            if ($this->bloquearSePagamentoAprovado($id_reserva)) {
+                return;
+            }
+        }
+
         $model = new Api;
         $model->marcarReservasComoProcessadasPorMotel($id_reserva, $id_motel, $status_reserva);
 
         // Se atualizou o banco, tenta cancelar se necessário (mas não falha se já estiver cancelado)
-        if ($status_reserva == 'Recusado' || $status_reserva == 'Cancelado') {   
+        if ($status_reserva == 'Recusado' || $status_reserva == 'Cancelado') {
             $this->cancelarReservaAutomaticamente($id_reserva, $id_motel);
         }
         

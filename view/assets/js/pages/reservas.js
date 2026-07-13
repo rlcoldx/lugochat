@@ -27,6 +27,15 @@ $(document).ready(function () {
                         window.location.reload();
                         $('.form-load').removeClass('show');
                     }, 1500);
+                } else if (data == "bloqueado") {
+                    Swal.fire({
+                        icon: "warning",
+                        title: "Alteração bloqueada",
+                        html: "Reserva com pagamento aprovado não pode ter o status alterado.",
+                        showConfirmButton: true
+                    });
+                    $('button[type="submit"]').prop("disabled", false);
+                    $('.form-load').removeClass('show');
                 } else {
                     Swal.fire({icon: "error", title: "Error", html: "Contate o Suporte!", showConfirmButton: false});
                     $('button[type="submit"]').prop("disabled", false);
