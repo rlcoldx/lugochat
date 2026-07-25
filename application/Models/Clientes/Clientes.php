@@ -2,7 +2,6 @@
 
 namespace Agencia\Close\Models\Clientes;
 
-use Agencia\Close\Conn\Conn;
 use Agencia\Close\Conn\Create;
 use Agencia\Close\Conn\Read;
 use Agencia\Close\Conn\Update;
@@ -12,39 +11,78 @@ class Clientes extends Model
 {
 
     /**
-     * Monta o filtro de busca por nome, e-mail, CPF ou telefone.
+     * Monta filtros de busca, status, banimento.
+     * @param array $filters search|status|banido
      * @param array $params Recebe (por referência) os placeholders no formato do FullRead.
      */
-    private function filtroBusca(string $busca, array &$params): string
+    private function montarFiltros(array $filters, array &$params): string
     {
-        $busca = trim($busca);
-        if ($busca === '') {
-            return '';
+        $where = '';
+
+        $busca = trim((string) ($filters['search'] ?? ''));
+        if ($busca !== '') {
+            // FullRead usa parse_str (espera query string codificada): urlencode evita que
+            // trechos como "%da" sejam interpretados como sequência hex e corrompam o termo.
+            $params[] = 'busca=' . urlencode('%' . $busca . '%');
+            $where .= " AND (u.nome LIKE :busca OR u.email LIKE :busca OR u.cpf LIKE :busca OR u.telefone LIKE :busca) ";
         }
-        // FullRead usa parse_str (espera query string codificada): urlencode evita que
-        // trechos como "%da" sejam interpretados como sequência hex e corrompam o termo.
-        $params[] = 'busca=' . urlencode('%' . $busca . '%');
-        return " AND (u.nome LIKE :busca OR u.email LIKE :busca OR u.cpf LIKE :busca OR u.telefone LIKE :busca) ";
+
+        $status = trim((string) ($filters['status'] ?? ''));
+        if ($status === 'Ativo' || $status === 'Inativo') {
+            $params[] = 'status_user=' . urlencode($status);
+            $where .= " AND u.status = :status_user ";
+        }
+
+        $banido = trim((string) ($filters['banido'] ?? ''));
+        if ($banido === '1') {
+            $where .= " AND EXISTS (
+                SELECT 1 FROM usuarios_banidos b
+                WHERE b.id_usuario = u.id AND b.status = 'ativo'
+            ) ";
+        } elseif ($banido === '0') {
+            $where .= " AND NOT EXISTS (
+                SELECT 1 FROM usuarios_banidos b
+                WHERE b.id_usuario = u.id AND b.status = 'ativo'
+            ) ";
+        }
+
+        return $where;
     }
 
-    public function getClientes(int $limit = 25, int $offset = 0, string $busca = ''): Read
+    private function selectListagem(string $whereCompany = ''): string
+    {
+        return "SELECT u.id, u.nome, u.email, u.cpf, u.telefone, u.status, u.data,
+            (SELECT COUNT(*) FROM usuarios_banidos b WHERE b.id_usuario = u.id AND b.status = 'ativo') AS banido,
+            (
+                SELECT COUNT(DISTINCT r.id)
+                FROM reservas r
+                INNER JOIN pagamentos p ON p.id_reserva = r.id
+                WHERE r.id_usuario = u.id
+                AND p.pagamento_status = 'approved'
+                {$whereCompany}
+            ) AS qtd_reservas";
+    }
+
+    public function getClientes(int $limit = 25, int $offset = 0, array $filters = []): Read
     {
         $params = [];
-        $where = $this->filtroBusca($busca, $params);
+        $where = $this->montarFiltros($filters, $params);
 
         $read = new Read();
-        $read->FullRead("SELECT u.id, u.nome, u.email, u.cpf, u.telefone, u.data,
-            (SELECT COUNT(*) FROM usuarios_banidos b WHERE b.id_usuario = u.id AND b.status = 'ativo') AS banido
+        $read->FullRead(
+            $this->selectListagem() . "
             FROM usuarios AS u
             WHERE u.tipo = '1' {$where}
-            ORDER BY u.id DESC LIMIT {$limit} OFFSET {$offset}", implode('&', $params));
+            ORDER BY u.id DESC LIMIT {$limit} OFFSET {$offset}",
+            implode('&', $params)
+        );
         return $read;
     }
 
-    public function contarClientes(string $busca = ''): int
+    public function contarClientes(array $filters = []): int
     {
         $params = [];
-        $where = $this->filtroBusca($busca, $params);
+        $where = $this->montarFiltros($filters, $params);
 
         $read = new Read();
         $read->FullRead("SELECT COUNT(*) AS total FROM usuarios AS u
@@ -52,25 +90,28 @@ class Clientes extends Model
         return (int) ($read->getResultSingle()['total'] ?? 0);
     }
 
-    public function getClientesByCompany(int $limit = 25, int $offset = 0, string $busca = ''): Read
+    public function getClientesByCompany(int $limit = 25, int $offset = 0, array $filters = []): Read
     {
         $params = [];
-        $where = $this->filtroBusca($busca, $params);
+        $where = $this->montarFiltros($filters, $params);
+        $whereMotel = $this->byCompany('r.id_motel');
 
         $read = new Read();
-        $read->FullRead("SELECT u.id, u.nome, u.email, u.cpf, u.telefone, u.data,
-            (SELECT COUNT(*) FROM usuarios_banidos b WHERE b.id_usuario = u.id AND b.status = 'ativo') AS banido
+        $read->FullRead(
+            $this->selectListagem($whereMotel) . "
             FROM usuarios AS u
             INNER JOIN reservas AS r ON r.id_usuario = u.id
             WHERE u.tipo = '1' ".$this->byCompany('r.id_motel')." {$where}
-            GROUP BY u.id ORDER BY u.id DESC LIMIT {$limit} OFFSET {$offset}", implode('&', $params));
+            GROUP BY u.id ORDER BY u.id DESC LIMIT {$limit} OFFSET {$offset}",
+            implode('&', $params)
+        );
         return $read;
     }
 
-    public function contarClientesByCompany(string $busca = ''): int
+    public function contarClientesByCompany(array $filters = []): int
     {
         $params = [];
-        $where = $this->filtroBusca($busca, $params);
+        $where = $this->montarFiltros($filters, $params);
 
         $read = new Read();
         $read->FullRead("SELECT COUNT(DISTINCT u.id) AS total FROM usuarios AS u

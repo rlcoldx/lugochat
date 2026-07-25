@@ -13,7 +13,19 @@ class ClientesController extends Controller
   {
     $this->setParams($params);
 
-    $busca = trim((string) ($_GET['search'] ?? ''));
+    $filters = [
+      'search' => trim((string) ($_GET['search'] ?? '')),
+      'status' => trim((string) ($_GET['status'] ?? '')),
+      'banido' => trim((string) ($_GET['banido'] ?? '')),
+    ];
+
+    if (!in_array($filters['status'], ['Ativo', 'Inativo', ''], true)) {
+      $filters['status'] = '';
+    }
+    if (!in_array($filters['banido'], ['0', '1', ''], true)) {
+      $filters['banido'] = '';
+    }
+
     $page = (int) ($_GET['page'] ?? 1);
     if ($page < 1) {
       $page = 1;
@@ -24,11 +36,11 @@ class ClientesController extends Controller
     $model = new Clientes();
 
     if ($_SESSION['busca_perfil_tipo'] != '0') {
-      $clientes = $model->getClientesByCompany($limit, $offset, $busca)->getResult();
-      $total = $model->contarClientesByCompany($busca);
+      $clientes = $model->getClientesByCompany($limit, $offset, $filters)->getResult();
+      $total = $model->contarClientesByCompany($filters);
     } else {
-      $clientes = $model->getClientes($limit, $offset, $busca)->getResult();
-      $total = $model->contarClientes($busca);
+      $clientes = $model->getClientes($limit, $offset, $filters)->getResult();
+      $total = $model->contarClientes($filters);
     }
 
     $pagination = new Pagination();
@@ -40,7 +52,7 @@ class ClientesController extends Controller
       'titulo' => 'Lista de Clientes',
       'clientes' => $clientes,
       'pagination' => $pagination->getArray(),
-      'filters' => ['search' => $busca],
+      'filters' => $filters,
       'total' => $total,
       'offset' => $offset,
     ]);

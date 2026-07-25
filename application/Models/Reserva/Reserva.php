@@ -69,14 +69,19 @@ class Reserva extends Model
 
     public function checkReservasExpiradas(): array
     {
-        // Busca reservas que não estão recusadas/canceladas, pagamento não aprovado e passaram de 10 minutos
+        // Cancela reservas com mais de 20 minutos sem pagamento aprovado
+        // (com ou sem integração; Pendente ou Aceito — se não pagou, cancela).
         $this->read = new Read();
-        $this->read->FullRead("SELECT r.*, p.pagamento_status 
+        $this->read->FullRead("SELECT r.*
             FROM reservas AS r
-            LEFT JOIN pagamentos AS p ON p.id_reserva = r.id
             WHERE r.status_reserva NOT IN ('Recusado', 'Cancelado')
-            AND (p.pagamento_status IS NULL OR p.pagamento_status <> 'approved')
             AND r.date_create < DATE_SUB(NOW(), INTERVAL 20 MINUTE)
+            AND NOT EXISTS (
+                SELECT 1
+                FROM pagamentos AS p
+                WHERE p.id_reserva = r.id
+                AND p.pagamento_status = 'approved'
+            )
             ORDER BY r.date_create ASC");
         
         $reservasExpiradas = $this->read->getResult();
@@ -93,6 +98,14 @@ class Reserva extends Model
                     "id={$reserva['id']}"
                 );
 
+                // Se existir pagamento não aprovado, marca como cancelled
+                $update->ExeUpdate(
+                    'pagamentos',
+                    ['pagamento_status' => 'cancelled'],
+                    'WHERE id_reserva = :id',
+                    "id={$reserva['id']}"
+                );
+
                 if ($reserva['integracao'] == 'api') {
                     $update->ExeUpdate('reservas', ['fase_api' => 0, 'processado_api' => 'N', 'cancelada_api' => 'S'], 'WHERE id = :id',  "id={$reserva['id']}");
                 }
@@ -104,6 +117,7 @@ class Reserva extends Model
                     $update->ExeUpdate('reservas', ['status_sis' => 8], 'WHERE id = :id',  "id={$reserva['id']}");
                 }
 
+                $reservasCanceladas[] = $reserva['id'];
             }
         }
         
