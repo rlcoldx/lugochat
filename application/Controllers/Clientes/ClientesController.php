@@ -17,6 +17,8 @@ class ClientesController extends Controller
       'search' => trim((string) ($_GET['search'] ?? '')),
       'status' => trim((string) ($_GET['status'] ?? '')),
       'banido' => trim((string) ($_GET['banido'] ?? '')),
+      'order' => trim((string) ($_GET['order'] ?? 'data')),
+      'dir' => strtoupper(trim((string) ($_GET['dir'] ?? 'DESC'))),
     ];
 
     if (!in_array($filters['status'], ['Ativo', 'Inativo', ''], true)) {
@@ -24,6 +26,12 @@ class ClientesController extends Controller
     }
     if (!in_array($filters['banido'], ['0', '1', ''], true)) {
       $filters['banido'] = '';
+    }
+    if (!in_array($filters['order'], ['nome', 'qtd_reservas', 'data'], true)) {
+      $filters['order'] = 'data';
+    }
+    if (!in_array($filters['dir'], ['ASC', 'DESC'], true)) {
+      $filters['dir'] = 'DESC';
     }
 
     $page = (int) ($_GET['page'] ?? 1);
@@ -34,14 +42,17 @@ class ClientesController extends Controller
     $offset = ($page - 1) * $limit;
 
     $model = new Clientes();
+    $porEmpresa = $_SESSION['busca_perfil_tipo'] != '0';
 
-    if ($_SESSION['busca_perfil_tipo'] != '0') {
+    if ($porEmpresa) {
       $clientes = $model->getClientesByCompany($limit, $offset, $filters)->getResult();
       $total = $model->contarClientesByCompany($filters);
     } else {
       $clientes = $model->getClientes($limit, $offset, $filters)->getResult();
       $total = $model->contarClientes($filters);
     }
+
+    $contadores = $model->getResumoContadores($porEmpresa);
 
     $pagination = new Pagination();
     $pagination->setActualPage($page);
@@ -55,6 +66,7 @@ class ClientesController extends Controller
       'filters' => $filters,
       'total' => $total,
       'offset' => $offset,
+      'contadores' => $contadores,
     ]);
   }
 

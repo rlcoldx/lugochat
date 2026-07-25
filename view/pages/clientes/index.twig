@@ -17,6 +17,42 @@
             </div>
         </div>
 
+        <div class="row mb-3">
+            <div class="col-md-4 mb-2 mb-md-0">
+                <div class="card mb-0">
+                    <div class="card-body py-3 d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="small">Total de usuários</div>
+                            <div class="fs-4 fw-bold">{{ contadores.total|number_format(0, ',', '.') }}</div>
+                        </div>
+                        <span class="badge bg-primary rounded-pill px-3 py-2">{{ contadores.total|number_format(0, ',', '.') }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-2 mb-md-0">
+                <div class="card mb-0">
+                    <div class="card-body py-3 d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="small">Usuários ativos</div>
+                            <div class="fs-4 fw-bold">{{ contadores.ativos|number_format(0, ',', '.') }}</div>
+                        </div>
+                        <span class="badge bg-success rounded-pill px-3 py-2">{{ contadores.ativos|number_format(0, ',', '.') }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card mb-0">
+                    <div class="card-body py-3 d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="small">Usuários banidos</div>
+                            <div class="fs-4 fw-bold">{{ contadores.banidos|number_format(0, ',', '.') }}</div>
+                        </div>
+                        <span class="badge bg-danger rounded-pill px-3 py-2">{{ contadores.banidos|number_format(0, ',', '.') }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="card">
             <div class="card-body">
                 <form method="get" action="{{ DOMAIN }}/clientes" class="row g-2 align-items-end mb-4">
@@ -43,13 +79,15 @@
                     <div class="col-auto">
                         <button type="submit" class="btn btn-primary"><i class="fa fa-search me-1"></i> Filtrar</button>
                     </div>
+                    <input type="hidden" name="order" value="{{ filters.order }}">
+                    <input type="hidden" name="dir" value="{{ filters.dir }}">
                     {% if filters.search or filters.status or filters.banido %}
                     <div class="col-auto">
                         <a href="{{ DOMAIN }}/clientes" class="btn btn-outline-secondary">Limpar</a>
                     </div>
                     {% endif %}
                     <div class="col-12">
-                        <small>{{ total }} cliente(s) encontrado(s).</small>
+                        <small>{{ total }} cliente(s) encontrado(s) com o filtro atual.</small>
                     </div>
                 </form>
 
@@ -57,19 +95,32 @@
                 {% if filters.search %}{% set qs = qs ~ '&search=' ~ filters.search|url_encode %}{% endif %}
                 {% if filters.status %}{% set qs = qs ~ '&status=' ~ filters.status|url_encode %}{% endif %}
                 {% if filters.banido != '' %}{% set qs = qs ~ '&banido=' ~ filters.banido|url_encode %}{% endif %}
+                {% set qs_base = qs %}
+                {% if filters.order %}{% set qs = qs ~ '&order=' ~ filters.order|url_encode %}{% endif %}
+                {% if filters.dir %}{% set qs = qs ~ '&dir=' ~ filters.dir|url_encode %}{% endif %}
+
+                {% macro sort_link(label, campo, filters, qs_base, align) %}
+                    {% set ativa = filters.order == campo %}
+                    {% set proxima = (ativa and filters.dir == 'ASC') ? 'DESC' : 'ASC' %}
+                    {% set icone = ativa ? (filters.dir == 'ASC' ? 'fa-sort-up' : 'fa-sort-down') : 'fa-sort' %}
+                    <a href="?page=1{{ qs_base }}&order={{ campo }}&dir={{ proxima }}" class="text-dark text-decoration-none {{ align }}">
+                        {{ label }} <i class="fa {{ icone }} ms-1"></i>
+                    </a>
+                {% endmacro %}
+                {% import _self as ui %}
 
                 <div class="table-responsive">
                     <table class="table align-middle">
                         <thead>
                             <tr role="row">
                                 <th width="50"></th>
-                                <th>Nome</th>
+                                <th>{{ ui.sort_link('Nome', 'nome', filters, qs_base, '') }}</th>
                                 <th>Email</th>
                                 <th>CPF</th>
                                 <th>Telefone</th>
-                                <th class="text-center">Qtd. Reserva</th>
+                                <th class="text-center">{{ ui.sort_link('Qtd. Reserva', 'qtd_reservas', filters, qs_base, '') }}</th>
                                 <th>Status</th>
-                                <th class="text-end">Data</th>
+                                <th class="text-end">{{ ui.sort_link('Data', 'data', filters, qs_base, '') }}</th>
                                 <th class="text-end">Ações</th>
                             </tr>
                         </thead>

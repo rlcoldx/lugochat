@@ -49,6 +49,24 @@ class Clientes extends Model
         return $where;
     }
 
+    private function orderBySql(array $filters): string
+    {
+        $order = trim((string) ($filters['order'] ?? 'data'));
+        $dir = strtoupper(trim((string) ($filters['dir'] ?? 'DESC')));
+        if ($dir !== 'ASC' && $dir !== 'DESC') {
+            $dir = 'DESC';
+        }
+
+        $map = [
+            'nome' => 'u.nome',
+            'qtd_reservas' => 'qtd_reservas',
+            'data' => 'u.data',
+        ];
+
+        $coluna = $map[$order] ?? 'u.data';
+        return " ORDER BY {$coluna} {$dir}, u.id DESC ";
+    }
+
     private function selectListagem(string $whereCompany = ''): string
     {
         return "SELECT u.id, u.nome, u.email, u.cpf, u.telefone, u.status, u.data,
@@ -67,13 +85,15 @@ class Clientes extends Model
     {
         $params = [];
         $where = $this->montarFiltros($filters, $params);
+        $orderBy = $this->orderBySql($filters);
 
         $read = new Read();
         $read->FullRead(
             $this->selectListagem() . "
             FROM usuarios AS u
             WHERE u.tipo = '1' {$where}
-            ORDER BY u.id DESC LIMIT {$limit} OFFSET {$offset}",
+            {$orderBy}
+            LIMIT {$limit} OFFSET {$offset}",
             implode('&', $params)
         );
         return $read;
@@ -90,11 +110,56 @@ class Clientes extends Model
         return (int) ($read->getResultSingle()['total'] ?? 0);
     }
 
+    /**
+     * Contadores gerais (independentes dos filtros da listagem).
+     * @return array{total:int,ativos:int,banidos:int}
+     */
+    public function getResumoContadores(bool $porEmpresa = false): array
+    {
+        $read = new Read();
+
+        if ($porEmpresa) {
+            $empresa = $this->byCompany('r.id_motel');
+            $read->FullRead(
+                "SELECT
+                    COUNT(DISTINCT u.id) AS total,
+                    COUNT(DISTINCT CASE WHEN u.status = 'Ativo' THEN u.id END) AS ativos,
+                    COUNT(DISTINCT CASE WHEN EXISTS (
+                        SELECT 1 FROM usuarios_banidos b
+                        WHERE b.id_usuario = u.id AND b.status = 'ativo'
+                    ) THEN u.id END) AS banidos
+                 FROM usuarios AS u
+                 INNER JOIN reservas AS r ON r.id_usuario = u.id
+                 WHERE u.tipo = '1' {$empresa}"
+            );
+        } else {
+            $read->FullRead(
+                "SELECT
+                    COUNT(*) AS total,
+                    SUM(CASE WHEN u.status = 'Ativo' THEN 1 ELSE 0 END) AS ativos,
+                    SUM(CASE WHEN EXISTS (
+                        SELECT 1 FROM usuarios_banidos b
+                        WHERE b.id_usuario = u.id AND b.status = 'ativo'
+                    ) THEN 1 ELSE 0 END) AS banidos
+                 FROM usuarios AS u
+                 WHERE u.tipo = '1'"
+            );
+        }
+
+        $row = $read->getResultSingle();
+        return [
+            'total' => (int) ($row['total'] ?? 0),
+            'ativos' => (int) ($row['ativos'] ?? 0),
+            'banidos' => (int) ($row['banidos'] ?? 0),
+        ];
+    }
+
     public function getClientesByCompany(int $limit = 25, int $offset = 0, array $filters = []): Read
     {
         $params = [];
         $where = $this->montarFiltros($filters, $params);
         $whereMotel = $this->byCompany('r.id_motel');
+        $orderBy = $this->orderBySql($filters);
 
         $read = new Read();
         $read->FullRead(
@@ -102,7 +167,8 @@ class Clientes extends Model
             FROM usuarios AS u
             INNER JOIN reservas AS r ON r.id_usuario = u.id
             WHERE u.tipo = '1' ".$this->byCompany('r.id_motel')." {$where}
-            GROUP BY u.id ORDER BY u.id DESC LIMIT {$limit} OFFSET {$offset}",
+            GROUP BY u.id {$orderBy}
+            LIMIT {$limit} OFFSET {$offset}",
             implode('&', $params)
         );
         return $read;
