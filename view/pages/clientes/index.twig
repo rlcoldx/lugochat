@@ -69,7 +69,6 @@
                                 <th>Telefone</th>
                                 <th class="text-center">Qtd. Reserva</th>
                                 <th>Status</th>
-                                <th>Banimento</th>
                                 <th class="text-end">Data</th>
                                 <th class="text-end">Ações</th>
                             </tr>
@@ -96,13 +95,6 @@
                                         <span class="badge bg-secondary">{{ cliente.status|default('Inativo') }}</span>
                                     {% endif %}
                                 </td>
-                                <td class="banimento-cliente-{{ cliente.id }}">
-                                    {% if cliente.banido > 0 %}
-                                        <span class="badge bg-danger">Banido</span>
-                                    {% else %}
-                                        <span class="badge bg-success">Liberado</span>
-                                    {% endif %}
-                                </td>
                                 <td class="text-end text-nowrap">{{ cliente.data|date("d-m-Y \\a\\s H:i", "America/Sao_Paulo") }}</td>
                                 <td class="text-end acoes-cliente-{{ cliente.id }}">
                                     {% if cliente.banido > 0 %}
@@ -127,7 +119,7 @@
                             {% endfor %}
                             {% if clientes|length == 0 %}
                             <tr>
-                                <td colspan="10" class="text-center py-4">Nenhum cliente encontrado.</td>
+                                <td colspan="9" class="text-center py-4">Nenhum cliente encontrado.</td>
                             </tr>
                             {% endif %}
                         </tbody>
@@ -171,14 +163,11 @@
 
 <script>
 function atualizarLinhaCliente(id, banido) {
-    var banimento = document.querySelector('.banimento-cliente-' + id);
     var acoes = document.querySelector('.acoes-cliente-' + id);
 
     if (banido) {
-        if (banimento) banimento.innerHTML = '<span class="badge bg-danger">Banido</span>';
         if (acoes) acoes.innerHTML = '<button type="button" class="btn btn-success btn-sm" onclick="desbanirCliente(' + id + ', \'\')" title="Remover banimento"><i class="fa fa-unlock"></i> Desbanir</button>';
     } else {
-        if (banimento) banimento.innerHTML = '<span class="badge bg-success">Liberado</span>';
         if (acoes) acoes.innerHTML = '<button type="button" class="btn btn-danger btn-sm" onclick="banirCliente(' + id + ', \'\')" title="Banir cliente"><i class="fa fa-ban"></i> Banir</button>';
     }
 }
