@@ -33,10 +33,10 @@
                 <div class="card mb-0">
                     <div class="card-body py-3 d-flex justify-content-between align-items-center">
                         <div>
-                            <div class="small">Usuários ativos</div>
-                            <div class="fs-4 fw-bold">{{ contadores.ativos|number_format(0, ',', '.') }}</div>
+                            <div class="small">Usuários inativos</div>
+                            <div class="fs-4 fw-bold">{{ contadores.inativos|number_format(0, ',', '.') }}</div>
                         </div>
-                        <span class="badge bg-success rounded-pill px-3 py-2">{{ contadores.ativos|number_format(0, ',', '.') }}</span>
+                        <span class="badge bg-secondary rounded-pill px-3 py-2">{{ contadores.inativos|number_format(0, ',', '.') }}</span>
                     </div>
                 </div>
             </div>

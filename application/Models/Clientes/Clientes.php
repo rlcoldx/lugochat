@@ -112,7 +112,7 @@ class Clientes extends Model
 
     /**
      * Contadores gerais (independentes dos filtros da listagem).
-     * @return array{total:int,ativos:int,banidos:int}
+     * @return array{total:int,inativos:int,banidos:int}
      */
     public function getResumoContadores(bool $porEmpresa = false): array
     {
@@ -123,7 +123,7 @@ class Clientes extends Model
             $read->FullRead(
                 "SELECT
                     COUNT(DISTINCT u.id) AS total,
-                    COUNT(DISTINCT CASE WHEN u.status = 'Ativo' THEN u.id END) AS ativos,
+                    COUNT(DISTINCT CASE WHEN u.status = 'Inativo' THEN u.id END) AS inativos,
                     COUNT(DISTINCT CASE WHEN EXISTS (
                         SELECT 1 FROM usuarios_banidos b
                         WHERE b.id_usuario = u.id AND b.status = 'ativo'
@@ -136,7 +136,7 @@ class Clientes extends Model
             $read->FullRead(
                 "SELECT
                     COUNT(*) AS total,
-                    SUM(CASE WHEN u.status = 'Ativo' THEN 1 ELSE 0 END) AS ativos,
+                    SUM(CASE WHEN u.status = 'Inativo' THEN 1 ELSE 0 END) AS inativos,
                     SUM(CASE WHEN EXISTS (
                         SELECT 1 FROM usuarios_banidos b
                         WHERE b.id_usuario = u.id AND b.status = 'ativo'
@@ -149,7 +149,7 @@ class Clientes extends Model
         $row = $read->getResultSingle();
         return [
             'total' => (int) ($row['total'] ?? 0),
-            'ativos' => (int) ($row['ativos'] ?? 0),
+            'inativos' => (int) ($row['inativos'] ?? 0),
             'banidos' => (int) ($row['banidos'] ?? 0),
         ];
     }
