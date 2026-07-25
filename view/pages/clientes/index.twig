@@ -103,7 +103,7 @@
                     {% set ativa = filters.order == campo %}
                     {% set proxima = (ativa and filters.dir == 'ASC') ? 'DESC' : 'ASC' %}
                     {% set icone = ativa ? (filters.dir == 'ASC' ? 'fa-sort-up' : 'fa-sort-down') : 'fa-sort' %}
-                    <a href="?page=1{{ qs_base }}&order={{ campo }}&dir={{ proxima }}" class="text-dark text-decoration-none {{ align }}">
+                    <a href="?page=1{{ qs_base }}&order={{ campo }}&dir={{ proxima }}" class="text-decoration-none {{ align }}">
                         {{ label }} <i class="fa {{ icone }} ms-1"></i>
                     </a>
                 {% endmacro %}
